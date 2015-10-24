@@ -17,7 +17,7 @@
         android:layout_marginBottom="24dp"
         />
 
-    <com.facebook.login.widget.LoginButton
+    <com.djkim.slap.login.ParseButton
         android:id="@+id/login_with_facebook"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
