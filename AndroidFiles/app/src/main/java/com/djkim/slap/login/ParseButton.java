@@ -1,8 +1,10 @@
 package com.djkim.slap.login;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.util.AttributeSet;
 
+import com.facebook.AccessToken;
 import com.facebook.login.widget.LoginButton;
 
 /**
@@ -25,5 +27,6 @@ public class ParseButton extends LoginButton {
     protected void configureButton(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super.configureButton(context, attrs, defStyleAttr, defStyleRes);
         this.setInternalOnClickListener(null);
+        this.setText("Login with Facebook");
     }
 }
