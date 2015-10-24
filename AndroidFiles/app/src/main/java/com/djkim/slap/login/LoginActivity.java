@@ -9,13 +9,12 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 
 import com.djkim.slap.R;
 import com.viewpagerindicator.CirclePageIndicator;
-import com.viewpagerindicator.TitlePageIndicator;
+import com.facebook.FacebookSdk;
 
 public class LoginActivity extends FragmentActivity {
     //The number of pictures / pages to show
@@ -27,6 +26,7 @@ public class LoginActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_activity);
+        FacebookSdk.sdkInitialize(getApplicationContext());
 
         // Instantiate a ViewPager and a PagerAdapter.
         mPager = (ViewPager) findViewById(R.id.pager);
