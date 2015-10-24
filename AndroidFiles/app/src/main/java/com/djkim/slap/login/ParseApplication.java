@@ -22,7 +22,7 @@ public class ParseApplication extends Application {
 
         //TODO: remove l8r
         ParseObject testObject = new ParseObject("TestObject");
-        testObject.put("foo", "bar");
+        testObject.put("foo", "yoohooooo");
         testObject.saveInBackground();
 
         ParseFacebookUtils.initialize(getApplicationContext());
