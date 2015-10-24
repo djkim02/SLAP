@@ -17,15 +17,12 @@
         android:layout_marginBottom="24dp"
         />
 
-    <Button
+    <com.facebook.login.widget.LoginButton
         android:id="@+id/login_with_facebook"
-        android:layout_width="300dp"
-        android:layout_height="50dp"
-        android:layout_marginLeft="24dp"
-        android:layout_marginRight="24dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="60dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:background="@drawable/facebook_login"
         />
 </RelativeLayout>
