@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <android.support.v7.widget.CardView
+        android:id="@+id/group_list_item_card_view"
+        android:layout_gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="240dp"
+        android:layout_margin="8dp"
+        android:background="#e6e6e6">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <ImageView
+                android:id="@+id/group_list_item_image_view"
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                android:layout_alignParentTop="true"
+                android:scaleType="centerCrop"
+                android:src="@drawable/com_facebook_profile_picture_blank_square" />
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:alpha="0.5"
+                android:layout_alignBottom="@id/group_list_item_image_view"
+                android:src="@drawable/rectangle" />
+            <TextView
+                android:id="@+id/group_list_item_group_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@id/group_list_item_image_view"
+                android:layout_alignLeft="@id/group_list_item_image_view"
+                android:layout_marginBottom="3dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:fontFamily="sans-serif-light"
+                android:textColor="@android:color/white"
+                android:textSize="28sp"
+                android:singleLine="true" />
+            <TextView
+                android:id="@+id/group_list_item_group_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
+                android:textColor="@android:color/black"
+                android:textSize="16sp"
+                android:singleLine="true"
+                android:textStyle="bold"
+                android:layout_below="@+id/group_list_item_image_view"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="8dp" />
+            <TextView
+                android:id="@+id/group_list_item_group_extra"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
+                android:textColor="@android:color/black"
+                android:textSize="16sp"
+                android:singleLine="true"
+                android:layout_below="@+id/group_list_item_group_description"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp" />
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
+</LinearLayout>
