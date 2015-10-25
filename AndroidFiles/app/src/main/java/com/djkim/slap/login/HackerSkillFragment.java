@@ -7,11 +7,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import com.djkim.slap.R;
+import com.parse.ParseObject;
+
+import java.util.Map;
 
 /**
  * Created by ryan on 10/24/15.
  */
 public class HackerSkillFragment extends Fragment {
+    private Map<String, Integer> m_hacker_skills;
+    Integer True = new Integer(1);
+    Integer False = new Integer(0);
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -25,17 +32,28 @@ public class HackerSkillFragment extends Fragment {
         // Check which checkbox was clicked
         switch(view.getId()) {
             case R.id.checkbox_cpp:
-                if (checked){}
-                // Put some meat on the sandwich
-                else{}
-                // Remove the meat
+                if (checked){
+                    m_hacker_skills.put("cpp", True);
+                }
+                else{
+                    m_hacker_skills.put("cpp", False);
+                }
                 break;
             case R.id.checkbox_java:
-                if (checked){}
-                // Cheese me
-                else{}
-                // I'm lactose intolerant
+                if (checked){
+                    m_hacker_skills.put("java", True);
+                }
+                else{
+                    m_hacker_skills.put("java", False);
+                }
                 break;
+        }
+    }
+
+    public void onSubmitButtonClicked(View view) {
+        ParseObject hacker_skills = new ParseObject("hacker_profile");
+        for (String key : m_hacker_skills.keySet()) {
+            hacker_skills.put(key, m_hacker_skills.get(key));
         }
     }
 }

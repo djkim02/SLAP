@@ -8,5 +8,6 @@
 
     <string name="hacker_skills_cpp">C++</string>
     <string name="hacker_skills_java">Java</string>
+    <string name="hacker_skills_button_text">Submit</string>
 
 </resources>
