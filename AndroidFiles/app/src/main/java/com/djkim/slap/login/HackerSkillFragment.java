@@ -11,8 +11,12 @@ import com.djkim.slap.R;
 /**
  * Created by ryan on 10/24/15.
  */
-public class HackerSkillFragment {
-
+public class HackerSkillFragment extends Fragment {
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.hacker_skills_fragment_layout, container, false);
+    }
 
     public void onCheckboxClicked(View view) {
         // Is the view now checked?

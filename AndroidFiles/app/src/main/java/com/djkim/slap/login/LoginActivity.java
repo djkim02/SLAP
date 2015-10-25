@@ -191,7 +191,8 @@ public class LoginActivity extends FragmentActivity {
                 case 1:
                     return new GroupsFragment();
                 case 2:
-                    return new HackerFragment();
+                    // return new HackerFragment();
+                    return new HackerSkillFragment();
                 case 3:
                     return new AthleteFragment();
                 default:
