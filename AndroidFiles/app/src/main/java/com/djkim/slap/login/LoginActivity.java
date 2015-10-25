@@ -4,14 +4,12 @@ package com.djkim.slap.login;
  * Created by dongjoonkim on 10/8/15.
  */
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -20,22 +18,15 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.djkim.slap.R;
 import com.facebook.AccessToken;
-import com.facebook.CallbackManager;
-import com.facebook.FacebookButtonBase;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
 import com.facebook.Profile;
-import com.facebook.login.LoginResult;
-import com.facebook.login.widget.LoginButton;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
@@ -54,11 +45,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 public class LoginActivity extends FragmentActivity {
     //The number of pictures / pages to show
@@ -66,11 +53,8 @@ public class LoginActivity extends FragmentActivity {
     private ViewPager mPager;
     private PagerAdapter mPagerAdapter;
     private ParseButton loginButton;
-    private CallbackManager callbackManager;
-    private Activity currentActivity;
     private ParseUser parseUser;
     private String name = null;
-    private String email = null;
     private ImageView profilePicture;
     private Profile mFbProfile;
 
@@ -78,17 +62,19 @@ public class LoginActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(getApplicationContext());
-        callbackManager = CallbackManager.Factory.create();
         setContentView(R.layout.login_activity);
-        currentActivity = this;
 
         // Instantiate a ViewPager and a PagerAdapter.
         mPager = (ViewPager) findViewById(R.id.pager);
         mPagerAdapter = new LoginPagerAdapter(getSupportFragmentManager());
         mPager.setAdapter(mPagerAdapter);
         mPager.setPageTransformer(true, new ZoomOutPageTransformer());
+
+        // Instantiate a page indicator
         CirclePageIndicator circlePageIndicator = (CirclePageIndicator) findViewById(R.id.indicator);
         circlePageIndicator.setViewPager(mPager);
+
+        // get current profile
         mFbProfile = Profile.getCurrentProfile();
         profilePicture = new ImageView(this);
 
@@ -112,6 +98,7 @@ public class LoginActivity extends FragmentActivity {
                         } else if (user.isNew()) {
                             Log.d("MyApp", "User signed up and logged in through Facebook!");
                             getUserDetailsFromFB();
+                            saveNewUser();
                         } else {
                             Log.d("MyApp", "User logged in through Facebook!");
                             getUserDetailsFromFB();
@@ -123,8 +110,8 @@ public class LoginActivity extends FragmentActivity {
     }
 
     private void getUserDetailsFromFB() {
-        ProfilePhotoAsync profilePhotoAsync = new ProfilePhotoAsync(mFbProfile);
-        profilePhotoAsync.execute();
+        DownloadProfilePictureAsync downloadProfilePictureAsync = new DownloadProfilePictureAsync(mFbProfile);
+        downloadProfilePictureAsync.execute();
         new GraphRequest(
                 AccessToken.getCurrentAccessToken(),
                 "/me",
@@ -134,9 +121,7 @@ public class LoginActivity extends FragmentActivity {
                     public void onCompleted(GraphResponse response) {
            /* handle the result */
                         try {
-                            //email = response.getJSONObject().getString("email");
                             name = response.getJSONObject().getString("name");
-                            saveNewUser();
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -205,10 +190,10 @@ public class LoginActivity extends FragmentActivity {
         }
     }
 
-    private class ProfilePhotoAsync extends AsyncTask<String, String, String> {
+    private class DownloadProfilePictureAsync extends AsyncTask<String, String, String> {
         Profile profile;
         public Bitmap bitmap;
-        public ProfilePhotoAsync(Profile profile) {
+        public DownloadProfilePictureAsync(Profile profile) {
             this.profile = profile;
         }
         @Override
