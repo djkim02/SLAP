@@ -8,6 +8,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.djkim.slap.R;
@@ -38,26 +40,40 @@ public class GroupListFragment extends Fragment {
 
     private class GroupHolder extends RecyclerView.ViewHolder {
         private Group mGroup;
+        private ImageView mThumbnailImageView;
+        private ImageView mCoverImageView;
         private TextView mTitleTextView;
-        private TextView mDescriptionTextView;
-        private TextView mSecondaryDescriptionTextView;
+        private TextView mSubheadTextView;
+        private TextView mSupportingTextView;
+        private Button mDetailsButton;
+        private Button mRemainingSlotsButton;
 
         // TODO(victorkwan): Declare and assign the relevant fields.
         public GroupHolder(View itemView) {
             super(itemView);
 
-            mTitleTextView = (TextView) itemView.findViewById(R.id.group_list_item_group_name);
+            mThumbnailImageView =
+                    (ImageView) itemView.findViewById(R.id.group_list_item_thumbnail_image_view);
+            mCoverImageView =
+                    (ImageView) itemView.findViewById(R.id.group_list_item_image_view);
+
+            mTitleTextView = (TextView) itemView.findViewById(R.id.group_list_item_title_text_view);
             mTitleTextView.setText("Friday Night Soccer!");
 
-            mDescriptionTextView =
-                    (TextView) itemView.findViewById(R.id.group_list_item_group_description);
-            mDescriptionTextView.setText(
-                    "Here's a long long description string. Let's see how it fares.");
+            mSubheadTextView =
+                    (TextView) itemView.findViewById(R.id.group_list_item_subhead_text_view);
+            mSubheadTextView.setText("John Wooden Center");
 
-            mSecondaryDescriptionTextView =
-                    (TextView) itemView.findViewById(R.id.group_list_item_group_extra);
-            mSecondaryDescriptionTextView.setText(
-                    "Here's yet another long description string. How does this fare?");
+            mSupportingTextView =
+                    (TextView) itemView.findViewById(R.id.group_list_item_supporting_text_view);
+            mSupportingTextView.setText(
+                    "We're a group of three lads looking for two more to play soccer with us.");
+
+            mDetailsButton = (Button) itemView.findViewById(R.id.group_list_item_details_button);
+
+            mRemainingSlotsButton =
+                    (Button) itemView.findViewById(R.id.group_list_item_remaining_slots_button);
+            mRemainingSlotsButton.setText("5 slots remaining");
         }
 
         // TODO(victorkwan): Configure the view for the given Group.
