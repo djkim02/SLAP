@@ -21,6 +21,7 @@ import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -120,6 +121,7 @@ public class LoginActivity extends FragmentActivity {
                 });
             }
         });
+
     }
 
     private void getUserDetailsFromFB() {
@@ -236,5 +238,39 @@ public class LoginActivity extends FragmentActivity {
             Log.e("IMAGE", "Error getting bitmap", e);
         }
         return bm;
+    }
+
+    public void onCheckboxClicked(View view) {
+        Toast.makeText(this.getApplicationContext(), "onCheckboxClicked", Toast.LENGTH_SHORT).show();
+        // Is the view now checked?
+        boolean checked = ((CheckBox) view).isChecked();
+
+        // Check which checkbox was clicked
+//        switch(view.getId()) {
+//            case R.id.checkbox_cpp:
+//                if (checked){
+//                    m_hacker_skills.put("cpp", True);
+//                }
+//                else{
+//                    m_hacker_skills.put("cpp", False);
+//                }
+//                break;
+//            case R.id.checkbox_java:
+//                if (checked){
+//                    m_hacker_skills.put("java", True);
+//                }
+//                else{
+//                    m_hacker_skills.put("java", False);
+//                }
+//                break;
+//        }
+    }
+
+    public void onSubmitButtonClicked(View view) {
+        Toast.makeText(this.getApplicationContext(), "onSubmitButton", Toast.LENGTH_SHORT).show();
+//        ParseObject hacker_skills = new ParseObject("hacker_profile");
+//        for (String key : m_hacker_skills.keySet()) {
+//            hacker_skills.put(key, m_hacker_skills.get(key));
+//        }
     }
 }

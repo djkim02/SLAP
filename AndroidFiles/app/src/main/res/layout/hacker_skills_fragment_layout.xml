@@ -10,17 +10,17 @@
         android:text="@string/hacker_skills_cpp"
         android:onClick="onCheckboxClicked"/>
 
+
     <CheckBox android:id="@+id/checkbox_java"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/hacker_skills_java"
-        android:onClick="onCheckboxClicked"/>
+        android:text="@string/hacker_skills_java" />
+        <!--android:onClick="onCheckboxClicked"-->
 
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/hacker_skills_button_text"
-        android:drawableLeft="@drawable/facebook_login"
         android:onClick="onSubmitButtonClicked"/>
 </LinearLayout>

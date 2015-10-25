@@ -6,54 +6,36 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.Toast;
+
 import com.djkim.slap.R;
 import com.parse.ParseObject;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Created by ryan on 10/24/15.
  */
 public class HackerSkillFragment extends Fragment {
-    private Map<String, Integer> m_hacker_skills;
+    private static Map<String, Integer> m_hacker_skills = new HashMap<String, Integer>();
     Integer True = new Integer(1);
     Integer False = new Integer(0);
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+//        CheckBox c = (CheckBox) getView().findViewById(R.id.checkbox_cpp);
+        Toast.makeText(getActivity().getApplicationContext(), "onCreateView", Toast.LENGTH_SHORT).show();
+
+//        c.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                onCheckboxClicked(v);
+//            }
+//        });
         return inflater.inflate(R.layout.hacker_skills_fragment_layout, container, false);
     }
 
-    public void onCheckboxClicked(View view) {
-        // Is the view now checked?
-        boolean checked = ((CheckBox) view).isChecked();
 
-        // Check which checkbox was clicked
-        switch(view.getId()) {
-            case R.id.checkbox_cpp:
-                if (checked){
-                    m_hacker_skills.put("cpp", True);
-                }
-                else{
-                    m_hacker_skills.put("cpp", False);
-                }
-                break;
-            case R.id.checkbox_java:
-                if (checked){
-                    m_hacker_skills.put("java", True);
-                }
-                else{
-                    m_hacker_skills.put("java", False);
-                }
-                break;
-        }
-    }
-
-    public void onSubmitButtonClicked(View view) {
-        ParseObject hacker_skills = new ParseObject("hacker_profile");
-        for (String key : m_hacker_skills.keySet()) {
-            hacker_skills.put(key, m_hacker_skills.get(key));
-        }
-    }
 }
