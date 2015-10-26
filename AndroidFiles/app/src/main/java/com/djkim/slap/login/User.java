@@ -11,14 +11,17 @@ import java.io.Serializable;
 public class User implements Serializable {
     private String user_id;
     private String user_name;
-    private CircularImageView user_profile_pic;
+    private String user_profile_pic_uri;
 
-    public User(String id) {
-        user_id = id;
+    public User() {
     }
 
     public String get_id() {
         return user_id;
+    }
+
+    public void set_id(String id) {
+        user_id = id;
     }
 
     public String get_name() {
@@ -29,11 +32,11 @@ public class User implements Serializable {
         user_name = name;
     }
 
-    public CircularImageView get_user_profile_pic() {
-        return user_profile_pic;
+    public String get_user_profile_pic_uri() {
+        return user_profile_pic_uri;
     }
 
-    public void set_user_profile_pic(CircularImageView profilePic) {
-        user_profile_pic = profilePic;
+    public void set_user_profile_pic_uri(String profilePicUri) {
+        user_profile_pic_uri = profilePicUri;
     }
 }

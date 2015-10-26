@@ -5,10 +5,6 @@ package com.djkim.slap.login;
  */
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -18,8 +14,6 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.djkim.slap.R;
 import com.facebook.AccessToken;
@@ -28,23 +22,14 @@ import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
 import com.facebook.Profile;
 import com.parse.LogInCallback;
-import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
-import com.parse.ParseFile;
 import com.parse.ParseUser;
-import com.parse.SaveCallback;
 import com.viewpagerindicator.CirclePageIndicator;
 import com.facebook.FacebookSdk;
 
 import org.json.JSONException;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,7 +41,7 @@ public class LoginActivity extends FragmentActivity {
     private ParseButton loginButton;
     private ParseUser parseUser;
     private String name = null;
-    private ImageView profilePicture;
+    private String profilePictureUri;
     private Profile mFbProfile;
     private User mUser;
     private CircularImageView circularProfilePicture;
@@ -77,10 +62,6 @@ public class LoginActivity extends FragmentActivity {
         CirclePageIndicator circlePageIndicator = (CirclePageIndicator) findViewById(R.id.indicator);
         circlePageIndicator.setViewPager(mPager);
 
-        // get current profile
-        mFbProfile = Profile.getCurrentProfile();
-        profilePicture = new ImageView(this);
-
         // setup login button
         loginButton = (ParseButton) findViewById(R.id.login_with_facebook);
         loginButton.setBackgroundColor(getResources().getColor(com.facebook.R.color.com_facebook_blue));
@@ -100,18 +81,11 @@ public class LoginActivity extends FragmentActivity {
                             Log.d("MyApp", "Uh oh. The user cancelled the Facebook login.");
                         } else if (user.isNew()) {
                             Log.d("MyApp", "User signed up and logged in through Facebook!");
+                            mFbProfile = Profile.getCurrentProfile();
                             getUserDetailsFromFB();
-                            saveNewUser();
-
-                            // Creating a user class
-                            mUser = new User(parseUser.getObjectId());
-                            mUser.set_name(name);
-                            mUser.set_user_profile_pic(circularProfilePicture);
-                            Intent intent = new Intent(LoginActivity.this, CreateProfileActivity.class);
-                            intent.putExtra("user", mUser);
-                            startActivity(intent);
                         } else {
                             Log.d("MyApp", "User logged in through Facebook!");
+                            mFbProfile = Profile.getCurrentProfile();
                             getUserDetailsFromFB();
                         }
                     }
@@ -122,8 +96,6 @@ public class LoginActivity extends FragmentActivity {
 
     // This method fetches user details (name, profile picture) from Facebook
     private void getUserDetailsFromFB() {
-        DownloadProfilePictureAsync downloadProfilePictureAsync = new DownloadProfilePictureAsync(mFbProfile);
-        downloadProfilePictureAsync.execute();
         new GraphRequest(
                 AccessToken.getCurrentAccessToken(),
                 "/me",
@@ -134,42 +106,18 @@ public class LoginActivity extends FragmentActivity {
            /* handle the result */
                         try {
                             name = response.getJSONObject().getString("name");
+                            profilePictureUri = mFbProfile.getProfilePictureUri(200, 200).toString();
+                            Intent intent = new Intent(LoginActivity.this, CreateProfileActivity.class);
+                            intent.putExtra("name", name);
+                            intent.putExtra("profilePictureUri", profilePictureUri);
+                            startActivity(intent);
+                            LoginActivity.this.finish();
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
                     }
                 }
         ).executeAsync();
-    }
-
-    private void saveNewUser() {
-        parseUser = ParseUser.getCurrentUser();
-        parseUser.setUsername(name);
-
-        // Saving profile photo as a ParseFile
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        Bitmap bitmap = ((BitmapDrawable) profilePicture.getDrawable()).getBitmap();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 70, stream);
-        byte[] data = stream.toByteArray();
-        String thumbName = parseUser.getUsername().replaceAll("\\s+", "");
-        final ParseFile parseFile = new ParseFile(thumbName + "_thumb.jpg", data);
-
-        parseFile.saveInBackground(new SaveCallback() {
-            @Override
-            public void done(ParseException e) {
-                parseUser.put("profileThumb", parseFile);
-                //Finally save all the user details
-                parseUser.saveInBackground(new SaveCallback() {
-                    @Override
-                    public void done(ParseException e) {
-                        Toast.makeText(LoginActivity.this, "New user:" + name + " Signed up", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-        });
-
-        circularProfilePicture = new CircularImageView(this);
-        circularProfilePicture.setImageBitmap(bitmap);
     }
 
     @Override
@@ -203,37 +151,5 @@ public class LoginActivity extends FragmentActivity {
         public int getCount() {
             return NUM_PAGES;
         }
-    }
-
-    private class DownloadProfilePictureAsync extends AsyncTask<String, String, String> {
-        Profile profile;
-        public Bitmap bitmap;
-        public DownloadProfilePictureAsync(Profile profile) {
-            this.profile = profile;
-        }
-        @Override
-        protected String doInBackground(String... params) {
-            // Fetching data from URI and storing in bitmap
-            bitmap = DownloadImageBitmap(profile.getProfilePictureUri(200, 200).toString());
-            profilePicture.setImageBitmap(bitmap);
-            return null;
-        }
-    }
-
-    public static Bitmap DownloadImageBitmap(String url) {
-        Bitmap bm = null;
-        try {
-            URL aURL = new URL(url);
-            URLConnection conn = aURL.openConnection();
-            conn.connect();
-            InputStream is = conn.getInputStream();
-            BufferedInputStream bis = new BufferedInputStream(is);
-            bm = BitmapFactory.decodeStream(bis);
-            bis.close();
-            is.close();
-        } catch (IOException e) {
-            Log.e("IMAGE", "Error getting bitmap", e);
-        }
-        return bm;
     }
 }
