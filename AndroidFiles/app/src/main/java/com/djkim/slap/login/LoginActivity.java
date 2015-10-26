@@ -21,6 +21,7 @@ import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
 import com.facebook.Profile;
+import com.facebook.ProfileTracker;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
@@ -29,7 +30,9 @@ import com.viewpagerindicator.CirclePageIndicator;
 import com.facebook.FacebookSdk;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,10 +44,7 @@ public class LoginActivity extends FragmentActivity {
     private ParseButton loginButton;
     private ParseUser parseUser;
     private String name = null;
-    private String profilePictureUri;
-    private Profile mFbProfile;
-    private User mUser;
-    private CircularImageView circularProfilePicture;
+    private long facebookId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,10 +62,19 @@ public class LoginActivity extends FragmentActivity {
         CirclePageIndicator circlePageIndicator = (CirclePageIndicator) findViewById(R.id.indicator);
         circlePageIndicator.setViewPager(mPager);
 
+        ProfileTracker profileTracker = new ProfileTracker() {
+            @Override
+            protected void onCurrentProfileChanged(Profile oldProfile, Profile currentProfile) {
+                this.stopTracking();
+                Profile.setCurrentProfile(currentProfile);
+
+            }
+        };
+        profileTracker.startTracking();
+
         // setup login button
         loginButton = (ParseButton) findViewById(R.id.login_with_facebook);
         loginButton.setBackgroundColor(getResources().getColor(com.facebook.R.color.com_facebook_blue));
-        loginButton.setText("Login with Facebook");
         final List<String> permissions = new ArrayList<>();
         permissions.add("public_profile");
         permissions.add("user_friends");
@@ -81,12 +90,10 @@ public class LoginActivity extends FragmentActivity {
                             Log.d("MyApp", "Uh oh. The user cancelled the Facebook login.");
                         } else if (user.isNew()) {
                             Log.d("MyApp", "User signed up and logged in through Facebook!");
-                            mFbProfile = Profile.getCurrentProfile();
-                            getUserDetailsFromFB();
+                            getUserDetailsFromFacebook();
                         } else {
                             Log.d("MyApp", "User logged in through Facebook!");
-                            mFbProfile = Profile.getCurrentProfile();
-                            getUserDetailsFromFB();
+                            getUserDetailsFromFacebook();
                         }
                     }
                 });
@@ -95,29 +102,32 @@ public class LoginActivity extends FragmentActivity {
     }
 
     // This method fetches user details (name, profile picture) from Facebook
-    private void getUserDetailsFromFB() {
-        new GraphRequest(
-                AccessToken.getCurrentAccessToken(),
-                "/me",
-                null,
-                HttpMethod.GET,
-                new GraphRequest.Callback() {
-                    public void onCompleted(GraphResponse response) {
-           /* handle the result */
-                        try {
-                            name = response.getJSONObject().getString("name");
-                            profilePictureUri = mFbProfile.getProfilePictureUri(200, 200).toString();
-                            Intent intent = new Intent(LoginActivity.this, CreateProfileActivity.class);
-                            intent.putExtra("name", name);
-                            intent.putExtra("profilePictureUri", profilePictureUri);
-                            startActivity(intent);
-                            LoginActivity.this.finish();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+    private void getUserDetailsFromFacebook() {
+        GraphRequest request = GraphRequest.newMeRequest(AccessToken.getCurrentAccessToken(),
+                new GraphRequest.GraphJSONObjectCallback() {
+                    @Override
+                    public void onCompleted(JSONObject jsonObject, GraphResponse graphResponse) {
+                        if (jsonObject != null) {
+                            try {
+                                facebookId = jsonObject.getLong("id");
+                                name = jsonObject.getString("name");
+                                User user = new User();
+                                user.set_name(name);
+                                user.set_user_facebook_id(facebookId);
+                                Intent intent = new Intent(LoginActivity.this, CreateProfileActivity.class);
+                                intent.putExtra("user", user);
+                                startActivity(intent);
+                            }
+                            catch (JSONException e) {
+                                Log.d("", "Error parsing returned user data. " + e);
+                            }
                         }
                     }
-                }
-        ).executeAsync();
+                });
+        Bundle parameters = new Bundle();
+        parameters.putString("fields", "id,name");
+        request.setParameters(parameters);
+        request.executeAsync();
     }
 
     @Override

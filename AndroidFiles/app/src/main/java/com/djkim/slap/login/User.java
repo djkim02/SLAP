@@ -11,7 +11,7 @@ import java.io.Serializable;
 public class User implements Serializable {
     private String user_id;
     private String user_name;
-    private String user_profile_pic_uri;
+    private long user_facebook_id;
 
     public User() {
     }
@@ -32,11 +32,11 @@ public class User implements Serializable {
         user_name = name;
     }
 
-    public String get_user_profile_pic_uri() {
-        return user_profile_pic_uri;
+    public long get_user_facebook_id() {
+        return user_facebook_id;
     }
 
-    public void set_user_profile_pic_uri(String profilePicUri) {
-        user_profile_pic_uri = profilePicUri;
+    public void set_user_facebook_id(long facebook_id) {
+        user_facebook_id = facebook_id;
     }
 }
