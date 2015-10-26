@@ -28,6 +28,7 @@ import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
 import com.facebook.Profile;
 import com.parse.LogInCallback;
+import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseFile;
@@ -57,6 +58,8 @@ public class LoginActivity extends FragmentActivity {
     private String name = null;
     private ImageView profilePicture;
     private Profile mFbProfile;
+    private User mUser;
+    private CircularImageView circularProfilePicture;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,6 +102,14 @@ public class LoginActivity extends FragmentActivity {
                             Log.d("MyApp", "User signed up and logged in through Facebook!");
                             getUserDetailsFromFB();
                             saveNewUser();
+
+                            // Creating a user class
+                            mUser = new User(parseUser.getObjectId());
+                            mUser.set_name(name);
+                            mUser.set_user_profile_pic(circularProfilePicture);
+                            Intent intent = new Intent(LoginActivity.this, CreateProfileActivity.class);
+                            intent.putExtra("user", mUser);
+                            startActivity(intent);
                         } else {
                             Log.d("MyApp", "User logged in through Facebook!");
                             getUserDetailsFromFB();
@@ -109,6 +120,7 @@ public class LoginActivity extends FragmentActivity {
         });
     }
 
+    // This method fetches user details (name, profile picture) from Facebook
     private void getUserDetailsFromFB() {
         DownloadProfilePictureAsync downloadProfilePictureAsync = new DownloadProfilePictureAsync(mFbProfile);
         downloadProfilePictureAsync.execute();
@@ -155,6 +167,9 @@ public class LoginActivity extends FragmentActivity {
                 });
             }
         });
+
+        circularProfilePicture = new CircularImageView(this);
+        circularProfilePicture.setImageBitmap(bitmap);
     }
 
     @Override
