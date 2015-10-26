@@ -1,4 +1,4 @@
-package com.djkim.slap.login;
+package com.djkim.slap.home;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
