@@ -36,6 +36,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+//TODO: There should be another activity that checks the cached login data so that we can skip this activity
 public class LoginActivity extends FragmentActivity {
     //The number of pictures / pages to show
     private static final int NUM_PAGES = 4;
@@ -92,6 +93,7 @@ public class LoginActivity extends FragmentActivity {
                             Log.d("MyApp", "User signed up and logged in through Facebook!");
                             getUserDetailsFromFacebook();
                         } else {
+                            //TODO: Implement this section for returning users
                             Log.d("MyApp", "User logged in through Facebook!");
                             getUserDetailsFromFacebook();
                         }
