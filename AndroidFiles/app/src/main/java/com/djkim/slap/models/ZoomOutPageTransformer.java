@@ -1,4 +1,4 @@
-package com.djkim.slap.login;
+package com.djkim.slap.models;
 
 import android.support.v4.view.ViewPager;
 import android.view.View;
