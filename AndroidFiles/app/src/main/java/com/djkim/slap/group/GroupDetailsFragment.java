@@ -1,6 +1,7 @@
 package com.djkim.slap.group;
 
 
+import android.app.ActionBar;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -21,57 +22,113 @@ import java.util.List;
  * Created by kylemn on 10/26/15.
  */
 public class GroupDetailsFragment extends Fragment {
-    private RecyclerView mGroupRecyclerView;
+    private static int VIEW_TYPE_HEADER = 0;
+
+    // Placeholder for the future "Convert to FB group" option.
+    private static int VIEW_TYPE_ACTION = 1;
+    private static int VIEW_TYPE_CONTENT = 2;
+
+    private RecyclerView mGroupDetailsRecyclerView;
     private UserAdapter mGroupDetailsAdapter;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(
+            LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.group_details_fragment, container, false);
 
-        mGroupRecyclerView = (RecyclerView) rootView.findViewById(R.id.group_recycler_view);
-        mGroupRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mGroupDetailsRecyclerView = (RecyclerView) rootView.findViewById(R.id.group_recycler_view);
+        mGroupDetailsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         List<User> groupUsers = new ArrayList<>();
         mGroupDetailsAdapter = new UserAdapter(groupUsers);
-        mGroupRecyclerView.setAdapter(mGroupDetailsAdapter);
+        mGroupDetailsRecyclerView.setAdapter(mGroupDetailsAdapter);
 
         return rootView;
     }
 
-    public class User {
+    public class User {}
+
+    private class SectionHeaderHolder extends RecyclerView.ViewHolder {
+        private TextView mSectionHeaderTextView;
+
+        public SectionHeaderHolder(View itemView) {
+            super(itemView);
+
+            mSectionHeaderTextView = (TextView) itemView;
+        }
+
+        public void setText(String text) {
+            mSectionHeaderTextView.setText(text);
+        }
     }
 
     private class UserHolder extends RecyclerView.ViewHolder {
         private User mUser;
         private ImageView mThumbnailImageView;
         private TextView mTitleTextView;
+        private TextView mSubheadTextView;
 
         public UserHolder(View itemView) {
             super(itemView);
+
+            mThumbnailImageView =
+                    (ImageView) itemView.findViewById(R.id.group_details_item_thumbnail_image_view);
+            mTitleTextView =
+                    (TextView) itemView.findViewById(R.id.group_details_item_title_text_view);
+            mSubheadTextView =
+                    (TextView) itemView.findViewById(R.id.group_details_item_subhead_text_view);
         }
 
         public void bindUser(User user) { mUser = user; }
     }
 
-    private class UserAdapter extends RecyclerView.Adapter<UserHolder> {
+    private class UserAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         private List<User> mGroupUsers;
 
         public UserAdapter(List<User> groupUsers) { mGroupUsers = groupUsers; }
 
         @Override
-        public UserHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
-            View view = layoutInflater.inflate(R.layout.group_details_item, parent, false);
-            return new UserHolder(view);
+        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            if (viewType == VIEW_TYPE_HEADER) {
+                LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
+                View view = layoutInflater.inflate(R.layout.group_details_header, parent, false);
+                return new SectionHeaderHolder(view);
+            } else if (viewType == VIEW_TYPE_ACTION) {
+                // TODO(victorkwan): Add "Convert to Group" ViewHolder behavior here.
+                return null;
+            } else {
+                LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
+                View view = layoutInflater.inflate(R.layout.group_details_item, parent, false);
+                return new UserHolder(view);
+            }
         }
 
         @Override
-        public void onBindViewHolder(UserHolder holder, int position) {
-            User user = mGroupUsers.get(position);
-            holder.bindUser(user);
+        public int getItemViewType(int position) {
+            switch (position) {
+                case 0:
+                    return VIEW_TYPE_HEADER;
+                default:
+                    return VIEW_TYPE_CONTENT;
+            }
         }
 
         @Override
-        public int getItemCount() { return mGroupUsers.size(); }
+        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+            switch (position) {
+                case 0: {
+                    ((SectionHeaderHolder) holder).setText(
+                            getResources().getString(R.string.group_details_group_members));
+                }
+                break;
+                default: {
+                    User user = mGroupUsers.get(position-1);
+                    ((UserHolder) holder).bindUser(user);
+                }
+            }
+        }
+
+        @Override
+        public int getItemCount() { return mGroupUsers.size() + 1; }
     }
 }
