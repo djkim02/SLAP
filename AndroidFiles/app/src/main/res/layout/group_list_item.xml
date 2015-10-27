@@ -21,6 +21,7 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_marginRight="16dp"
+                    android:layout_marginEnd="16dp"
                     android:src="@drawable/com_facebook_profile_picture_blank_square" />
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -31,17 +32,17 @@
                     android:orientation="vertical">
                     <TextView
                         android:id="@+id/group_list_item_title_text_view"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:singleLine="true"
                         style="@style/Base.TextAppearance.AppCompat.Subhead" />
                     <TextView
                         android:id="@+id/group_list_item_subhead_text_view"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/group_list_item_title_text_view"
+                        android:singleLine="true"
                         style="@style/TextAppearance.AppCompat.Caption" />
                 </LinearLayout>
-
             </RelativeLayout>
             <ImageView
                 android:id="@+id/group_list_item_image_view"
