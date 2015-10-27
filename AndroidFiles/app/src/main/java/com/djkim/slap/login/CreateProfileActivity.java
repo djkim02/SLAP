@@ -72,7 +72,6 @@ public class CreateProfileActivity extends FragmentActivity {
         TextView idView = (TextView) findViewById(R.id.profileUriText);
         String fbid = String.valueOf(user.get_user_facebook_id());
         idView.setText(fbid);
-
     }
 
     private class profilePageAdapter extends FragmentPagerAdapter {
