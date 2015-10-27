@@ -44,12 +44,7 @@ public class GroupDetailsFragment extends Fragment {
     private class UserHolder extends RecyclerView.ViewHolder {
         private User mUser;
         private ImageView mThumbnailImageView;
-        private ImageView mCoverImageView;
         private TextView mTitleTextView;
-        private TextView mSubheadTextView;
-        private TextView mSupportingTextView;
-        private Button mDetailsButton;
-        private Button mRemainingSlotsButton;
 
         public UserHolder(View itemView) {
             super(itemView);

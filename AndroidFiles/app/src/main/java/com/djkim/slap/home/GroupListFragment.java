@@ -1,5 +1,6 @@
 package com.djkim.slap.home;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -13,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.djkim.slap.R;
+import com.djkim.slap.group.GroupDetailsActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,6 +72,14 @@ public class GroupListFragment extends Fragment {
                     "We're a group of three lads looking for two more to play soccer with us.");
 
             mDetailsButton = (Button) itemView.findViewById(R.id.group_list_item_details_button);
+            mDetailsButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // TODO(victorkwan): Pass the current Group's ID to the GroupDetailsActivity.
+                    Intent intent = new Intent(getActivity(), GroupDetailsActivity.class);
+                    startActivity(intent);
+                }
+            });
 
             mRemainingSlotsButton =
                     (Button) itemView.findViewById(R.id.group_list_item_remaining_slots_button);
@@ -98,13 +108,13 @@ public class GroupListFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(GroupHolder holder, int position) {
-            Group group = mGroups.get(position);
-            holder.bindGroup(group);
+//            Group group = mGroups.get(position);
+//            holder.bindGroup(group);
         }
 
         @Override
         public int getItemCount() {
-            return mGroups.size();
+            return 1;
         }
     }
 }
