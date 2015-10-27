@@ -1,4 +1,4 @@
-package com.djkim.slap.login;
+package com.djkim.slap.profile;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,12 +8,13 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 import com.djkim.slap.R;
+import com.djkim.slap.models.User;
+import com.djkim.slap.models.ZoomOutPageTransformer;
 
 /**
  * Created by dongjoonkim on 10/25/15.

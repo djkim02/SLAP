@@ -1,4 +1,4 @@
-package com.djkim.slap.login;
+package com.djkim.slap.models;
 
 import java.io.Serializable;
 

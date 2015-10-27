@@ -16,6 +16,10 @@ import android.util.Log;
 import android.view.View;
 
 import com.djkim.slap.R;
+import com.djkim.slap.models.ParseButton;
+import com.djkim.slap.models.User;
+import com.djkim.slap.models.ZoomOutPageTransformer;
+import com.djkim.slap.profile.CreateProfileActivity;
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
@@ -31,7 +35,6 @@ import com.facebook.FacebookSdk;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 

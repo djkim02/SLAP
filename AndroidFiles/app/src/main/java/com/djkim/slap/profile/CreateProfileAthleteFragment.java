@@ -1,4 +1,4 @@
-package com.djkim.slap.login;
+package com.djkim.slap.profile;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -11,10 +11,10 @@ import com.djkim.slap.R;
 /**
  * Created by dongjoonkim on 10/25/15.
  */
-public class CreateProfileWelcomeFragment extends Fragment {
+public class CreateProfileAthleteFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.create_profile_welcome_fragment_layout, container, false);
+        return inflater.inflate(R.layout.create_profile_athlete_fragment_layout, container, false);
     }
 }
