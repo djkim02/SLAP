@@ -32,6 +32,7 @@ public class CreateProfileActivity extends FragmentActivity {
     private CreateProfileDoneFragment doneFragment;
     private Button prevButton;
     private Button nextButton;
+    private TextView createProfileTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,27 +55,43 @@ public class CreateProfileActivity extends FragmentActivity {
 
         prevButton = (Button) findViewById(R.id.prev_button);
         nextButton = (Button) findViewById(R.id.next_button);
+        createProfileTitle = (TextView) findViewById(R.id.create_profile_title);
 
         prevButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPager.setCurrentItem(mPager.getCurrentItem() - 1, true);
+                int currentItem = mPager.getCurrentItem();
+                if (currentItem == 1) {
+                    prevButton.setText("");
+                    user.set_hacker_skills(hackerFragment.updateHackerSkills());
+                    createProfileTitle.setText("Tell us about yourself");
+                } else if (currentItem == 2) {
+                    createProfileTitle.setText("Programming Skills");
+                } else if (currentItem == 3) {
+                    nextButton.setText("Next");
+                    createProfileTitle.setText("Athlete Skills");
+                }
+                mPager.setCurrentItem(currentItem - 1, true);
             }
         });
 
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPager.setCurrentItem(mPager.getCurrentItem() + 1, true);
+                int currentItem = mPager.getCurrentItem();
+                if (currentItem == 0) {
+                    prevButton.setText("Back");
+                    createProfileTitle.setText("Programming Skills");
+                } else if (currentItem == 1) {
+                    user.set_hacker_skills(hackerFragment.updateHackerSkills());
+                    createProfileTitle.setText("Athlete Skills");
+                } else if (currentItem == 2) {
+                    createProfileTitle.setText("Congratulations!");
+                    nextButton.setText("Done");
+                }
+                mPager.setCurrentItem(currentItem + 1, true);
             }
         });
-
-        TextView nameView = (TextView) findViewById(R.id.nametext);
-        String name = user.get_name();
-        nameView.setText(name);
-        TextView idView = (TextView) findViewById(R.id.profileUriText);
-        String fbid = String.valueOf(user.get_user_facebook_id());
-        idView.setText(fbid);
     }
 
     private class profilePageAdapter extends FragmentPagerAdapter {

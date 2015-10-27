@@ -13,11 +13,11 @@ import java.util.ArrayList;
  * Created by dongjoonkim on 10/26/15.
  */
 public class Skill {
-    private ImageView icon;
+    private int icon;
     private String skillName;
     private boolean selected;
 
-    public Skill(ImageView icon, String skillName) {
+    public Skill(int icon, String skillName) {
         this.icon = icon;
         this.skillName = skillName;
         this.selected = false;
@@ -38,118 +38,100 @@ public class Skill {
         this.selected = selected;
     }
 
-    public static ArrayList<Skill> returnHackerSkillsList(Context context) {
+    public int getImageId() {
+        return icon;
+    }
+
+    public static ArrayList<Skill> returnHackerSkillsList() {
         ArrayList<Skill> hackerSkillsList = new ArrayList<>();
-        ImageView icon = new ImageView(context);
 
-        icon.setImageResource(R.drawable.android);
-        Skill hackerSkill = new Skill(icon, "Android Development");
+        Skill hackerSkill = new Skill(R.mipmap.android, "Android Development");
         hackerSkillsList.add(hackerSkill);
 
-        icon.setImageResource(R.drawable.ios);
-        hackerSkill = new Skill(icon, "iOS Development");
+        hackerSkill = new Skill(R.mipmap.ios, "iOS Development");
         hackerSkillsList.add(hackerSkill);
 
-        icon.setImageResource(R.drawable.webdev);
-        hackerSkill = new Skill(icon, "Web Development");
+        hackerSkill = new Skill(R.mipmap.webdev, "Web Development");
         hackerSkillsList.add(hackerSkill);
 
-        icon.setImageResource(R.drawable.frontend);
-        hackerSkill = new Skill(icon, "Front-end Development");
+        hackerSkill = new Skill(R.mipmap.frontend, "Front-end Development");
         hackerSkillsList.add(hackerSkill);
 
-        icon.setImageResource(R.drawable.backend);
-        hackerSkill = new Skill(icon, "Back-end Development");
+        hackerSkill = new Skill(R.mipmap.backend, "Back-end Development");
         hackerSkillsList.add(hackerSkill);
 
-        icon.setImageResource(R.drawable.java);
-        hackerSkill = new Skill(icon, "Java");
+        hackerSkill = new Skill(R.mipmap.java, "Java");
         hackerSkillsList.add(hackerSkill);
 
-        icon.setImageResource(R.drawable.cplusplus);
-        hackerSkill = new Skill(icon, "C++");
+        hackerSkill = new Skill(R.mipmap.cplusplus, "C++");
         hackerSkillsList.add(hackerSkill);
 
-        icon.setImageResource(R.drawable.c);
-        hackerSkill = new Skill(icon, "C");
+        hackerSkill = new Skill(R.mipmap.c, "C");
         hackerSkillsList.add(hackerSkill);
 
-        icon.setImageResource(R.drawable.csharp);
-        hackerSkill = new Skill(icon, "C#");
+        hackerSkill = new Skill(R.mipmap.csharp, "C#");
         hackerSkillsList.add(hackerSkill);
 
-        icon.setImageResource(R.drawable.python);
-        hackerSkill = new Skill(icon, "Python");
+        hackerSkill = new Skill(R.mipmap.python, "Python");
         hackerSkillsList.add(hackerSkill);
 
-        icon.setImageResource(R.drawable.php);
-        hackerSkill = new Skill(icon, "PHP");
+        hackerSkill = new Skill(R.mipmap.php, "PHP");
         hackerSkillsList.add(hackerSkill);
 
-        icon.setImageResource(R.drawable.html);
-        hackerSkill = new Skill(icon, "HTML");
+        hackerSkill = new Skill(R.mipmap.html, "HTML");
         hackerSkillsList.add(hackerSkill);
 
-        icon.setImageResource(R.drawable.css3);
-        hackerSkill = new Skill(icon, "CSS");
+        hackerSkill = new Skill(R.mipmap.css3, "CSS");
         hackerSkillsList.add(hackerSkill);
 
-        icon.setImageResource(R.drawable.javascript);
-        hackerSkill = new Skill(icon, "JavaScript");
+        hackerSkill = new Skill(R.mipmap.javascript, "JavaScript");
         hackerSkillsList.add(hackerSkill);
 
-        icon.setImageResource(R.drawable.nodejs);
-        hackerSkill = new Skill(icon, "Node.js");
+        hackerSkill = new Skill(R.mipmap.nodejs, "Node.js");
         hackerSkillsList.add(hackerSkill);
 
-        icon.setImageResource(R.drawable.angularjs);
-        hackerSkill = new Skill(icon, "AngularJS");
+        hackerSkill = new Skill(R.mipmap.angularjs, "AngularJS");
         hackerSkillsList.add(hackerSkill);
 
-        icon.setImageResource(R.drawable.ruby);
-        hackerSkill = new Skill(icon, "Ruby");
+        hackerSkill = new Skill(R.mipmap.ruby, "Ruby");
         hackerSkillsList.add(hackerSkill);
 
-        icon.setImageResource(R.drawable.rails);
-        hackerSkill = new Skill(icon, "Rails");
+        hackerSkill = new Skill(R.mipmap.rails, "Rails");
         hackerSkillsList.add(hackerSkill);
 
-        icon.setImageResource(R.drawable.coffeescript);
-        hackerSkill = new Skill(icon, "Coffeescript");
+        hackerSkill = new Skill(R.mipmap.coffeescript, "Coffeescript");
         hackerSkillsList.add(hackerSkill);
 
-        icon.setImageResource(R.drawable.mongodb);
-        hackerSkill = new Skill(icon, "MongoDB");
+        hackerSkill = new Skill(R.mipmap.mongodb, "MongoDB");
         hackerSkillsList.add(hackerSkill);
 
-        icon.setImageResource(R.drawable.mysql);
-        hackerSkill = new Skill(icon, "MySQL");
+        hackerSkill = new Skill(R.mipmap.mysql, "MySQL");
         hackerSkillsList.add(hackerSkill);
 
-        icon.setImageResource(R.drawable.postgresql);
-        hackerSkill = new Skill(icon, "PostgreSQL");
+        hackerSkill = new Skill(R.mipmap.postgresql, "PostgreSQL");
         hackerSkillsList.add(hackerSkill);
 
-        icon.setImageResource(R.drawable.dotnet);
-        hackerSkill = new Skill(icon, ".NET");
+        hackerSkill = new Skill(R.mipmap.dotnet, ".NET");
         hackerSkillsList.add(hackerSkill);
 
-        icon.setImageResource(R.drawable.git);
-        hackerSkill = new Skill(icon, "Git");
+        hackerSkill = new Skill(R.mipmap.git, "Git");
         hackerSkillsList.add(hackerSkill);
 
-        icon.setImageResource(R.drawable.linux);
-        hackerSkill = new Skill(icon, "Linux");
+        hackerSkill = new Skill(R.mipmap.linux, "Linux");
         hackerSkillsList.add(hackerSkill);
 
-        icon.setImageResource(R.drawable.photoshop);
-        hackerSkill = new Skill(icon, "Photoshop");
+        hackerSkill = new Skill(R.mipmap.photoshop, "Photoshop");
         hackerSkillsList.add(hackerSkill);
 
-        icon.setImageResource(R.drawable.illustrator);
-        hackerSkill = new Skill(icon, "Illustrator");
+        hackerSkill = new Skill(R.mipmap.illustrator, "Illustrator");
         hackerSkillsList.add(hackerSkill);
 
         return hackerSkillsList;
+    }
+
+    public static ArrayList<Skill> returnAthleteSkillsList(Context context) {
+        ArrayList<Skill> athleteSkillsList = new ArrayList<>();
+        
+        return athleteSkillsList;
     }
 }

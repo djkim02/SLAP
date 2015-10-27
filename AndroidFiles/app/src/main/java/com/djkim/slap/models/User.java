@@ -1,6 +1,7 @@
 package com.djkim.slap.models;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 /**
  * Created by dongjoonkim on 10/25/15.
@@ -12,6 +13,8 @@ public class User implements Serializable {
     private String user_id;
     private String user_name;
     private long user_facebook_id;
+    private ArrayList<Skill> hacker_skills;
+    private ArrayList<Skill> athlete_skills;
 
     public User() {
     }
@@ -38,5 +41,21 @@ public class User implements Serializable {
 
     public void set_user_facebook_id(long facebook_id) {
         user_facebook_id = facebook_id;
+    }
+
+    public ArrayList<Skill> get_hacker_skills() {
+        return hacker_skills;
+    }
+
+    public ArrayList<Skill> get_athlete_skills() {
+        return athlete_skills;
+    }
+
+    public void set_hacker_skills(ArrayList<Skill> hacker_skills) {
+        this.hacker_skills = hacker_skills;
+    }
+
+    public void set_athlete_skills(ArrayList<Skill> athlete_skills) {
+        this.athlete_skills = athlete_skills;
     }
 }
