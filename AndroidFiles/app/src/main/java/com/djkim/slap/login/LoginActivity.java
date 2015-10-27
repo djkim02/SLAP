@@ -124,6 +124,8 @@ public class LoginActivity extends FragmentActivity {
                             }
                             catch (JSONException e) {
                                 Log.d("", "Error parsing returned user data. " + e);
+                            } catch (ParseException e) {
+                                e.printStackTrace();
                             }
                         }
                     }

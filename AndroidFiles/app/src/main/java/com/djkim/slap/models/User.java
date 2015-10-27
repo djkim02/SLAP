@@ -23,6 +23,7 @@ public class User implements Serializable {
     private String user_id;
     private String user_name;
     private long user_facebook_id;
+    // private ParseUser parseUser;
 
     public User() {
     }
@@ -62,12 +63,14 @@ public class User implements Serializable {
         return user_facebook_id;
     }
 
-    public void set_user_facebook_id(long facebook_id) {
+    public void set_user_facebook_id(long facebook_id) throws ParseException {
         user_facebook_id = facebook_id;
         // I'm not sure if I can safely assume getCurrentUser is what we want to update
-        ParseUser user = ParseUser.getCurrentUser();
-        user.put("facebookId", facebook_id);
-        user.saveInBackground();
+        ParseQuery<ParseUser> query = ParseUser.getQuery();
+        query.whereEqualTo("objectId", user_id);
+        ParseUser parseUser = query.getFirst();
+        parseUser.put("facebookId", facebook_id);
+        parseUser.saveInBackground();
     }
 
 }

@@ -35,6 +35,8 @@ public class Group {
         group_capacity = capacity;
         group_members.add(owner);
         createParseGroup(owner.get_id());
+        // initialize other defaults
+        // empty string description
 
     }
 
