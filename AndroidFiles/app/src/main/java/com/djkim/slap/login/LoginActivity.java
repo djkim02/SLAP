@@ -111,22 +111,21 @@ public class LoginActivity extends FragmentActivity {
                 new GraphRequest.GraphJSONObjectCallback() {
                     @Override
                     public void onCompleted(JSONObject jsonObject, GraphResponse graphResponse) {
-                        if (jsonObject != null) {
-                            try {
-                                facebookId = jsonObject.getLong("id");
-                                name = jsonObject.getString("name");
-                                User user = new User();
-                                user.set_name(name);
-                                user.set_user_facebook_id(facebookId);
-                                Intent intent = new Intent(LoginActivity.this, CreateProfileActivity.class);
-                                intent.putExtra("user", user);
-                                startActivity(intent);
-                            }
-                            catch (JSONException e) {
-                                Log.d("", "Error parsing returned user data. " + e);
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                            }
+                        if (jsonObject != null) try {
+                            // get the facebook ID and create a User
+                            facebookId = jsonObject.getLong("id");
+                            User user = new User(facebookId);
+                            // set User's name
+                            name = jsonObject.getString("name");
+                            user.set_name(name);
+
+                            Intent intent = new Intent(LoginActivity.this, CreateProfileActivity.class);
+                            intent.putExtra("user", user);
+                            startActivity(intent);
+                        } catch (JSONException e) {
+                            Log.d("", "Error parsing returned user data. " + e);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
                         }
                     }
                 });
