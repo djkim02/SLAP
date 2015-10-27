@@ -77,7 +77,7 @@ public class CreateProfileActivity extends FragmentActivity {
         String name = user.get_name();
         nameView.setText(name);
         TextView idView = (TextView) findViewById(R.id.profileUriText);
-        String fbid = String.valueOf(user.get_user_facebook_id());
+        String fbid = String.valueOf(user.get_facebook_id());
         idView.setText(fbid);
     }
 
@@ -98,22 +98,6 @@ public class CreateProfileActivity extends FragmentActivity {
             } else if (position == 1) {
                 return hackerFragment;
             } else if (position == 2) {
-                Utils u = new Utils();
-                Log.e("MyApp", "Created Util!");
-                User user_test = null;
-                try {
-                    user_test = u.get_user_by_facebook_id(10205507903037488L);  // Joanna Chen
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-                String s = user_test.get_id();
-                Toast.makeText(CreateProfileActivity.this, s + " " + user_test.get_name(), Toast.LENGTH_SHORT).show();
-                try {
-                    Group g = new Group("Group1", user_test, 10);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-                Log.e("MyApp", "Creating Group1!");
                 return athleteFragment;
             } else if (position == 3) {
                 return doneFragment;
