@@ -7,7 +7,6 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -31,11 +30,13 @@ public class CreateProfileActivity extends FragmentActivity {
     private CreateProfileHackerFragment hackerFragment;
     private CreateProfileAthleteFragment athleteFragment;
     private CreateProfileDoneFragment doneFragment;
+    private Button prevButton;
+    private Button nextButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.profile_activity_layout);
+        setContentView(R.layout.create_profile_activity_layout);
 
         Intent intent = getIntent();
         user = (User) intent.getSerializableExtra("user");
@@ -51,8 +52,8 @@ public class CreateProfileActivity extends FragmentActivity {
         athleteFragment = new CreateProfileAthleteFragment();
         doneFragment = new CreateProfileDoneFragment();
 
-        Button prevButton = (Button) findViewById(R.id.prev_button);
-        Button nextButton = (Button) findViewById(R.id.next_button);
+        prevButton = (Button) findViewById(R.id.prev_button);
+        nextButton = (Button) findViewById(R.id.next_button);
 
         prevButton.setOnClickListener(new View.OnClickListener() {
             @Override
