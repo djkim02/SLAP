@@ -27,10 +27,15 @@ public class User implements Serializable, UserInterface {
     // private ParseUser parseUser;
 
     // Constructors
-    public User(Long facebook_id) throws ParseException{
+    public User(Long facebook_id) throws ParseException {
         ParseQuery<ParseUser> query = ParseUser.getQuery();
         query.whereEqualTo("facebookId", facebook_id);
-        ParseUser parseUser = query.getFirst();
+        ParseUser parseUser = null;
+        try {
+            parseUser = query.getFirst();
+        } catch (ParseException e) {
+            throw new ParseException(e);
+        }
         m_objectId = parseUser.getObjectId();
         m_username = parseUser.getUsername();
         m_facebookId = parseUser.getLong("facebookId");
