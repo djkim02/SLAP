@@ -129,9 +129,60 @@ public class Skill {
         return hackerSkillsList;
     }
 
-    public static ArrayList<Skill> returnAthleteSkillsList(Context context) {
+    public static ArrayList<Skill> returnAthleteSkillsList() {
         ArrayList<Skill> athleteSkillsList = new ArrayList<>();
-        
+
+        Skill athleteSkill = new Skill(R.mipmap.running, "Running");
+        athleteSkillsList.add(athleteSkill);
+
+        athleteSkill = new Skill(R.mipmap.soccer, "Soccer");
+        athleteSkillsList.add(athleteSkill);
+
+        athleteSkill = new Skill(R.mipmap.basketball, "Basketball");
+        athleteSkillsList.add(athleteSkill);
+
+        athleteSkill = new Skill(R.mipmap.baseball, "Baseball");
+        athleteSkillsList.add(athleteSkill);
+
+        athleteSkill = new Skill(R.mipmap.football, "Football");
+        athleteSkillsList.add(athleteSkill);
+
+        athleteSkill = new Skill(R.mipmap.weight, "Weight Training");
+        athleteSkillsList.add(athleteSkill);
+
+        athleteSkill = new Skill(R.mipmap.frisbee, "Frisbee");
+        athleteSkillsList.add(athleteSkill);
+
+        athleteSkill = new Skill(R.mipmap.biking, "Biking");
+        athleteSkillsList.add(athleteSkill);
+
+        athleteSkill = new Skill(R.mipmap.bowling, "Bowling");
+        athleteSkillsList.add(athleteSkill);
+
+        athleteSkill = new Skill(R.mipmap.badminton, "Badminton");
+        athleteSkillsList.add(athleteSkill);
+
+        athleteSkill = new Skill(R.mipmap.pingpong, "Ping Pong");
+        athleteSkillsList.add(athleteSkill);
+
+        athleteSkill = new Skill(R.mipmap.cricket, "Cricket");
+        athleteSkillsList.add(athleteSkill);
+
+        athleteSkill = new Skill(R.mipmap.golf, "Golf");
+        athleteSkillsList.add(athleteSkill);
+
+        athleteSkill = new Skill(R.mipmap.handball, "Handball");
+        athleteSkillsList.add(athleteSkill);
+
+        athleteSkill = new Skill(R.mipmap.yoga, "Yoga");
+        athleteSkillsList.add(athleteSkill);
+
+        athleteSkill = new Skill(R.mipmap.boxing, "Boxing");
+        athleteSkillsList.add(athleteSkill);
+
+        athleteSkill = new Skill(R.mipmap.yoga, "Yoga");
+        athleteSkillsList.add(athleteSkill);
+
         return athleteSkillsList;
     }
 }
