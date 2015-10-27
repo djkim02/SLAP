@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.djkim.slap.R;
+import com.djkim.slap.models.NonSwipeableViewPager;
 import com.djkim.slap.models.User;
 import com.djkim.slap.models.ZoomOutPageTransformer;
 
@@ -22,7 +23,7 @@ import com.djkim.slap.models.ZoomOutPageTransformer;
 
 public class CreateProfileActivity extends FragmentActivity {
 
-    private ViewPager mPager;
+    private NonSwipeableViewPager mPager;
     private PagerAdapter mPagerAdapter;
     private FragmentManager fragmentManager;
     private User user;
@@ -39,7 +40,7 @@ public class CreateProfileActivity extends FragmentActivity {
         Intent intent = getIntent();
         user = (User) intent.getSerializableExtra("user");
 
-        mPager = (ViewPager) findViewById(R.id.profile_pager);
+        mPager = (NonSwipeableViewPager) findViewById(R.id.profile_pager);
         fragmentManager = getSupportFragmentManager();
         mPagerAdapter = new profilePageAdapter(fragmentManager);
         mPager.setAdapter(mPagerAdapter);
@@ -96,7 +97,6 @@ public class CreateProfileActivity extends FragmentActivity {
             } else if (position == 3) {
                 return doneFragment;
             }
-
             return welcomeFragment;
         }
     }

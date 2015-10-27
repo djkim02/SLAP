@@ -22,7 +22,7 @@
         android:layout_height="4dp"
         android:background="@drawable/shadow"/>
 
-    <android.support.v4.view.ViewPager
+    <com.djkim.slap.models.NonSwipeableViewPager
         android:id="@+id/profile_pager"
         android:layout_width="match_parent"
         android:layout_height="0dp"
