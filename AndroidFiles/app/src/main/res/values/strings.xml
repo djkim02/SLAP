@@ -5,6 +5,9 @@
     <string name="action_settings">Settings</string>
     <string name="page_number">Page</string>
     <string name="facebook_app_id">769018689893229</string>
+    <string name="back">Back</string>
+    <string name="next">Next</string>
+    <string name="setup">Let\'s setup your profile</string>
 
     <string name="group_list_item_details">Details</string>
 </resources>
