@@ -22,7 +22,8 @@ import java.util.List;
  * profile for a user
  */
 public class User implements Serializable {
-
+    private ArrayList<Skill> hacker_skills;
+    private ArrayList<Skill> athlete_skills;
     private String m_objectId;
     private String m_username;
     private Long m_facebookId;
@@ -183,5 +184,20 @@ public class User implements Serializable {
 //        }
     }
 
+    public ArrayList<Skill> get_hacker_skills() {
+        return hacker_skills;
+    }
+
+    public ArrayList<Skill> get_athlete_skills() {
+        return athlete_skills;
+    }
+
+    public void set_hacker_skills(ArrayList<Skill> hacker_skills) {
+        this.hacker_skills = hacker_skills;
+    }
+
+    public void set_athlete_skills(ArrayList<Skill> athlete_skills) {
+        this.athlete_skills = athlete_skills;
+    }
 }
 

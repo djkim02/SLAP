@@ -16,6 +16,6 @@
         android:text="@string/create_profile"
         android:textSize="24sp"
         android:textColor="@color/textColorPrimary"
-        android:textStyle="italic"
+        android:textStyle="bold"
         />
 </android.support.v7.widget.Toolbar>
