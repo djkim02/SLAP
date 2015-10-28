@@ -40,6 +40,8 @@ public class CreateProfileActivity extends FragmentActivity {
         setContentView(R.layout.create_profile_activity_layout);
 
         Intent intent = getIntent();
+        // Make sure that user is non-null.
+        // Current flow should ensure that CreateProfileActivity is only created from LoginActivity
         user = (User) intent.getSerializableExtra("user");
 
         mPager = (NonSwipeableViewPager) findViewById(R.id.profile_pager);
