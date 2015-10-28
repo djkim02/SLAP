@@ -14,6 +14,16 @@ public interface UserInterface {
     /*
      * Getters and Setters
      */
+
+    /*
+     * CALL SYNC() BEFORE GETTERS if you want up-to-date data from Parse
+     * Best effort approach :3
+     */
+    public void sync();
+
+    /*
+     * Returns name or empty string if a ParseException is thrown
+     */
     public String get_name();
 
     public void set_name(String name) throws ParseException;
@@ -34,4 +44,6 @@ public interface UserInterface {
      * All previous modifications on the User object is considered as an ENTIRE transaction
      */
     public void save();
+
+
 }

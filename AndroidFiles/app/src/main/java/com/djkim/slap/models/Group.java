@@ -23,11 +23,11 @@ import bolts.Task;
 public class Group implements GroupInterface{
     private String m_name;
     private String m_description;
-    private String m_objectId;
     private User m_owner;
     private int m_capacity;
     private ArrayList<User> m_members = new ArrayList<User>();
     private Hashtable<Long, Integer> m_membership = new Hashtable<Long, Integer>();
+    private ParseObject m_parseGroup = new ParseObject("Group");
 
     private Integer True = new Integer(1);
     private Integer False = new Integer(0);
@@ -35,7 +35,6 @@ public class Group implements GroupInterface{
     public Group(ParseObject parseGroup) throws ParseException {
         m_name = (String) parseGroup.get("name");
         m_description = (String) parseGroup.get("description");
-        m_objectId = parseGroup.getObjectId();
         m_owner = (User) parseGroup.get("owner");
         m_capacity = (int) parseGroup.get("capacity");
         ArrayList<ParseUser> members = (ArrayList<ParseUser>) parseGroup.get("members");
@@ -50,29 +49,35 @@ public class Group implements GroupInterface{
     }
 
     public Group(String name, User owner, int capacity) throws ParseException {
-        ParseObject parseGroup = new ParseObject("Group");
+        m_parseGroup = new ParseObject("Group");
+
         try {
-            createParseGroup(parseGroup, name, owner, capacity);
+            createParseGroup(m_parseGroup, name, owner, capacity);
         } catch (ParseException e) {
             throw new ParseException(e);
         }
         m_description = "";
-        parseGroup.put("description", m_description);
+        m_parseGroup.put("description", m_description);
+
+        m_parseGroup.saveInBackground();
     }
+
     public Group(String name, User owner, int capacity, String description) throws ParseException {
-        ParseObject parseGroup = new ParseObject("Group");
+        m_parseGroup = new ParseObject("Group");
+
         try {
-            createParseGroup(parseGroup, name, owner, capacity);
+            createParseGroup(m_parseGroup, name, owner, capacity);
         } catch (ParseException e) {
             throw new ParseException(e);
         }
         m_description = description;
-        parseGroup.put("description", m_description);
+        m_parseGroup.put("description", m_description);
+
+        m_parseGroup.saveInBackground();
     }
 
     public void createParseGroup(ParseObject parseGroup, String name, User owner, int capacity) throws ParseException {
         m_name = name;
-        m_objectId = parseGroup.getObjectId();
         m_owner = owner;
         m_capacity = capacity;
         addMember(owner);
@@ -81,31 +86,33 @@ public class Group implements GroupInterface{
         ParseUser parseOwner = owner.getParseUser();
         parseGroup.put("owner", parseOwner);
         parseGroup.put("capacity", m_capacity);
-        m_objectId = parseGroup.getObjectId();
+        m_parseGroup = parseGroup;
+
         Log.e("MyApp", "New Group Saved!");
 
     }
 
     // Getter for the corresponding ParseGroup object
-    public ParseObject getParseGroup() throws ParseException {
-        try {
-            ParseQuery<ParseObject> query = ParseQuery.getQuery("Group");
-            return query.get(m_objectId);
-        }catch(ParseException e){
-            throw new ParseException(e);
-        }
+    public ParseObject getParseGroup(){
+//        try {
+//            ParseQuery<ParseObject> query = ParseQuery.getQuery("Group");
+//            return query.get(m_objectId);
+//        }catch(ParseException e){
+//            throw new ParseException(e);
+//        }
+        return m_parseGroup;
+    }
+
+    public void sync(){
+            m_parseGroup.fetchInBackground();
     }
 
     public String get_name() {
         return m_name;
     }
-    public void set_name(String name) throws ParseException {
+    public void set_name(String name){
         m_name = name;
-        try {
-            getParseGroup().put("name", name);
-        } catch (ParseException e) {
-            throw new ParseException(e);
-        }
+        getParseGroup().put("name", name);
     }
 
     public String get_description() {
@@ -116,7 +123,7 @@ public class Group implements GroupInterface{
     }
 
     public String get_id() {
-        return m_objectId;
+        return m_parseGroup.getObjectId();
     }
 
     public User get_owner() {
@@ -130,13 +137,9 @@ public class Group implements GroupInterface{
     public int get_capacity() {
         return m_capacity;
     }
-    public void set_capacity(int capacity) throws ParseException {
+    public void set_capacity(int capacity){
         m_capacity = capacity;
-        try {
-            getParseGroup().put("capacity", capacity);
-        } catch (ParseException e) {
-            throw new ParseException(e);
-        }
+        getParseGroup().put("capacity", capacity);
     }
 
     public boolean isOwner(User user){
@@ -147,54 +150,44 @@ public class Group implements GroupInterface{
         return m_membership.containsKey(user.get_facebook_id());
     }
 
-    public void addMember(User member) throws ParseException {
+    public void addMember(User member){
         m_members.add(member);
         m_membership.put(member.get_facebook_id(), True);
-        try {
-            addParseMember(member.getParseUser());
-        } catch (ParseException e) {
-            throw new ParseException(e);
-        }
+        addParseMember(member.getParseUser());
     }
 
-    public void addMembers(ArrayList<User> users) throws ParseException {
+    public void addMembers(ArrayList<User> users){
         for (User user:users) {
             if (!isMember(user)) {
                 m_members.add(user);
                 m_membership.put(user.get_facebook_id(), True);
             }
         }
-        try {
             addParseMembers(users);
-        } catch (ParseException e) {
-            throw new ParseException(e);
+    }
+
+    public void addParseMember(ParseUser parseMember){
+        ParseObject parseGroup = null;
+        parseGroup = getParseGroup();
+        ParseRelation<ParseUser> relation = parseGroup.getRelation("members");
+        relation.add(parseMember);
+    }
+
+    public void addParseMembers(ArrayList<User> members){
+        ParseObject parseGroup = getParseGroup();
+        ParseRelation<ParseUser> relation = parseGroup.getRelation("members");
+        for (User member: members) {
+            relation.add(member.getParseUser());
         }
     }
 
-    public void addParseMember(ParseUser parseMember) throws ParseException {
-        ParseObject parseGroup = null;
-        try {
-            parseGroup = getParseGroup();
-            ParseRelation<ParseUser> relation = parseGroup.getRelation("members");
-            relation.add(parseMember);
-            parseGroup.save();
-        } catch (ParseException e) {
-            throw new ParseException(e);
-        }
+    public ArrayList<User> getMembers(){
+        return m_members;
     }
 
-    public void addParseMembers(ArrayList<User> members) throws ParseException {
-        ParseObject parseGroup = null;
-        try {
-            parseGroup = getParseGroup();
-            ParseRelation<ParseUser> relation = parseGroup.getRelation("members");
-            for (User member: members) {
-                relation.add(member.getParseUser());
-            }
-            parseGroup.save();
-        } catch (ParseException e) {
-            throw new ParseException(e);
-        }
+    public void save(){
+        // TODO: exception in callback?
+        m_parseGroup.saveInBackground();
     }
 
 }
