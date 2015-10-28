@@ -36,5 +36,8 @@ public class CreateProfileAthleteFragment extends Fragment {
         listView.setAdapter(skillsListAdapter);
         return view;
     }
-}
 
+    public ArrayList<Skill> updateAthleteSkills() {
+        return athleteSkills;
+    }
+}
