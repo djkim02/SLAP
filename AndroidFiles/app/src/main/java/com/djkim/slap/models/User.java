@@ -24,6 +24,7 @@ public class User implements Serializable, UserInterface {
     private String m_objectId;
     private String m_username;
     private Long m_facebookId;
+    private ParseUser m_parseUser;
     // private ParseUser parseUser;
 
     // Constructors
@@ -39,9 +40,18 @@ public class User implements Serializable, UserInterface {
         m_objectId = parseUser.getObjectId();
         m_username = parseUser.getUsername();
         m_facebookId = parseUser.getLong("facebookId");
+
+        try {
+            m_parseUser = query.get(m_objectId);
+        }catch(ParseException e){
+            throw new ParseException(e);
+        }
     }
 
-    // TO THINK ABOUT: USERNAME NOT UNIQUE
+    /*
+     * DEPRECATED
+     * TO THINK ABOUT: USERNAME NOT UNIQUE
+     */
     private User(String username) throws ParseException{
         ParseQuery<ParseUser> query = ParseUser.getQuery();
         query.whereEqualTo("username", username);
@@ -52,13 +62,14 @@ public class User implements Serializable, UserInterface {
     }
 
     // Getter for the corresponding ParseUser object
-    public ParseUser getParseUser() throws ParseException {
-        try {
-            ParseQuery<ParseUser> query = ParseUser.getQuery();
-            return query.get(m_objectId);
-        }catch(ParseException e){
-            throw new ParseException(e);
-        }
+    public ParseUser getParseUser(){
+//        try {
+//            ParseQuery<ParseUser> query = ParseUser.getQuery();
+//            return query.get(m_objectId);
+//        }catch(ParseException e){
+//            throw new ParseException(e);
+//        }
+        return m_parseUser;
     }
 
     // Getters and Setters
@@ -70,11 +81,7 @@ public class User implements Serializable, UserInterface {
         m_objectId = id;
         ParseUser user = null;
 
-        try {
-            user = getParseUser();
-        } catch (ParseException e) {
-            throw new ParseException(e);
-        }
+        user = getParseUser();
 
         user.put("objectId", id);
         user.saveInBackground();
@@ -84,14 +91,10 @@ public class User implements Serializable, UserInterface {
         return m_username;
     }
 
-    public void set_name(String name) throws ParseException{
+    public void set_name(String name){
         m_username = name;
         ParseUser user = null;
-        try {
-            user = getParseUser();
-        } catch (ParseException e) {
-            throw new ParseException(e);
-        }
+        user = getParseUser();
         user.put("username", name);
         user.saveInBackground();
     }
@@ -100,20 +103,20 @@ public class User implements Serializable, UserInterface {
         return m_facebookId;
     }
 
-    public void set_facebook_id(Long facebook_id) throws ParseException{
+    public void set_facebook_id(Long facebook_id){
         m_facebookId = facebook_id;
         ParseUser parseUser = null;
-        try {
-            parseUser = getParseUser();
-        } catch (ParseException e) {
-            throw new ParseException(e);
-        }
+        parseUser = getParseUser();
         parseUser.put("facebookId", facebook_id);
-        parseUser.saveInBackground();
+
     }
 
     public boolean equals(User anotherUser){
         return (anotherUser.get_facebook_id().equals(this.m_facebookId));
+    }
+
+    public void save(){
+        m_parseUser.saveInBackground();
     }
 
 }

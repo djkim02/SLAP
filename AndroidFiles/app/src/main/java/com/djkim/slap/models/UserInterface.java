@@ -28,4 +28,10 @@ public interface UserInterface {
      * this function checks whether they refer to the same object in database
      */
     public boolean equals(User anotherUser);
+
+    /*
+     * This action will write to the database
+     * All previous modifications on the User object is considered as an ENTIRE transaction
+     */
+    public void save();
 }
