@@ -8,4 +8,18 @@
     <string name="back">Back</string>
     <string name="next">Next</string>
     <string name="setup">Let\'s setup your profile</string>
+
+    <string name="prev">Previous</string>
+    <string name="finish">Submit</string>
+    <string name="review">Review</string>
+
+    <string name="label_group_name">Name</string>
+    <string name="hint_group_name">Enter Text Here</string>
+
+
+    <string name="submit_confirm_message">Are you happy with your choices?</string>
+    <string name="submit_confirm_button">OK</string>
+
+    <string name="herp_derpsum">Herp derpsum sherpus derpler berps tee herp ter sherper der derpus terp? Merp ner, dee der perp.
+        Sherpus ter berp derpler derperker pee herpler. Le ner derpus terpus, der ter herpy? Ner terp serp herpem berps herpy der ter.</string>
 </resources>
