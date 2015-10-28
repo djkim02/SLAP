@@ -29,18 +29,21 @@ public class User implements Serializable, UserInterface {
 
     // Constructors
     public User(Long facebook_id) throws ParseException {
+        Log.e("MyApp", "In the user constructor");
         ParseQuery<ParseUser> query = ParseUser.getQuery();
         query.whereEqualTo("facebookId", facebook_id);
-        ParseUser parseUser = null;
+        // ParseUser parseUser = null;
         try {
-            parseUser = query.getFirst();
+            m_parseUser = query.getFirst();
+            Log.e("MyApp", "Set m_parseUser initialized!");
         } catch (ParseException e) {
             throw new ParseException(e);
         }
-        m_objectId = parseUser.getObjectId();
-        sync();
-        m_username = parseUser.getUsername();
-        m_facebookId = parseUser.getLong("facebookId");
+        m_objectId = m_parseUser.getObjectId();
+        // sync();
+        // Log.e("MyApp", "constructor sync!");
+        m_username = m_parseUser.getUsername();
+        m_facebookId = m_parseUser.getLong("facebookId");
     }
 
     /*

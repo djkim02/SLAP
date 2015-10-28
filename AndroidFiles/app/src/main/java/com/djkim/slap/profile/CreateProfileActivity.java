@@ -8,19 +8,14 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.djkim.slap.R;
-import com.djkim.slap.models.Group;
 import com.djkim.slap.models.NonSwipeableViewPager;
 import com.djkim.slap.models.User;
-import com.djkim.slap.models.Utils;
 import com.djkim.slap.models.ZoomOutPageTransformer;
-import com.parse.ParseException;
 
 /**
  * Created by dongjoonkim on 10/25/15.
@@ -85,14 +80,14 @@ public class CreateProfileActivity extends FragmentActivity {
         public profilePageAdapter(FragmentManager fm) {
             super(fm);
         }
+
         @Override
-        public int getCount()
-        {
+        public int getCount() {
             return 4;
         }
+
         @Override
-        public Fragment getItem(int position)
-        {
+        public Fragment getItem(int position) {
             if (position == 0) {
                 return welcomeFragment;
             } else if (position == 1) {

@@ -18,6 +18,7 @@ import android.view.View;
 import com.djkim.slap.R;
 import com.djkim.slap.models.ParseButton;
 import com.djkim.slap.models.User;
+import com.djkim.slap.models.Utils;
 import com.djkim.slap.models.ZoomOutPageTransformer;
 import com.djkim.slap.profile.CreateProfileActivity;
 import com.facebook.AccessToken;
@@ -47,7 +48,7 @@ public class LoginActivity extends FragmentActivity {
     private ParseButton loginButton;
     private ParseUser parseUser;
     private String name = null;
-    private long facebookId;
+    private Long facebookId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,22 +112,26 @@ public class LoginActivity extends FragmentActivity {
                 new GraphRequest.GraphJSONObjectCallback() {
                     @Override
                     public void onCompleted(JSONObject jsonObject, GraphResponse graphResponse) {
-                        if (jsonObject != null) try {
-                            // get the facebook ID and create a User
-                            facebookId = jsonObject.getLong("id");
-                            User user = new User(facebookId);
-                            // set User's name
-                            name = jsonObject.getString("name");
-                            user.set_name(name);
-                            user.save();
-
-                            Intent intent = new Intent(LoginActivity.this, CreateProfileActivity.class);
-                            intent.putExtra("user", user);
-                            startActivity(intent);
-                        } catch (JSONException e) {
-                            Log.d("", "Error parsing returned user data. " + e);
-                        } catch (ParseException e) {
-                            e.printStackTrace();
+                        if (jsonObject != null) {
+                            try {
+                                facebookId = new Long(jsonObject.getLong("id"));
+                                name = jsonObject.getString("name");
+                                Log.e("MyApp", "" + facebookId);
+                                ParseUser parseUser = ParseUser.getCurrentUser();
+                                parseUser.put("facebookId", facebookId);
+                                parseUser.save();
+                                User user = new User(facebookId);
+                                user.set_name(name);
+                                user.save();
+                                Intent intent = new Intent(LoginActivity.this, CreateProfileActivity.class);
+                                intent.putExtra("user", user);
+                                startActivity(intent);
+                            }
+                            catch (JSONException e) {
+                                Log.d("", "Error parsing returned user data. " + e);
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
                 });
