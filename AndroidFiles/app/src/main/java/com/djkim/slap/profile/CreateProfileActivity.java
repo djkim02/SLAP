@@ -68,6 +68,7 @@ public class CreateProfileActivity extends FragmentActivity {
                     user.set_hacker_skills(hackerFragment.updateHackerSkills());
                     createProfileTitle.setText("Tell us about yourself");
                 } else if (currentItem == 2) {
+                    user.set_athlete_skills(athleteFragment.updateAthleteSkills());
                     createProfileTitle.setText("Programming Skills");
                 } else if (currentItem == 3) {
                     nextButton.setText("Next");
@@ -88,6 +89,7 @@ public class CreateProfileActivity extends FragmentActivity {
                     user.set_hacker_skills(hackerFragment.updateHackerSkills());
                     createProfileTitle.setText("Athlete Skills");
                 } else if (currentItem == 2) {
+                    user.set_athlete_skills(athleteFragment.updateAthleteSkills());
                     createProfileTitle.setText("Congratulations!");
                     nextButton.setText("Done");
                 }
