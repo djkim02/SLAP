@@ -118,6 +118,7 @@ public class LoginActivity extends FragmentActivity {
                             // set User's name
                             name = jsonObject.getString("name");
                             user.set_name(name);
+                            user.save();
 
                             Intent intent = new Intent(LoginActivity.this, CreateProfileActivity.class);
                             intent.putExtra("user", user);
