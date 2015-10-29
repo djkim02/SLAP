@@ -2,6 +2,7 @@ package com.djkim.slap.profile;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +17,7 @@ import java.util.ArrayList;
 /**
  * Created by dongjoonkim on 10/25/15.
  */
-public class CreateProfileHackerFragment extends Fragment {
+public class CreateProfileHackerFragment extends CreateProfileAbstractFragment {
     private ArrayList<Skill> hackerSkills = null;
     SkillsListAdapter skillsListAdapter = null;
 
@@ -33,7 +34,20 @@ public class CreateProfileHackerFragment extends Fragment {
         return view;
     }
 
-    public ArrayList<Skill> updateHackerSkills() {
-        return hackerSkills;
+    public void onPrevButtonClick() {
+        CreateProfileActivity createProfileActivity = (CreateProfileActivity) this.getActivity();
+        createProfileActivity.setPrevButtonText("");
+        createProfileActivity.updateHackerSkills(hackerSkills);
+        createProfileActivity.setTitleText("Tell us about yourself");
     }
+
+    public void onNextButtonClick() {
+        CreateProfileActivity createProfileActivity = (CreateProfileActivity) this.getActivity();
+        createProfileActivity.updateHackerSkills(hackerSkills);
+        createProfileActivity.setTitleText("Athlete Skills");
+    }
+
+//    public ArrayList<Skill> updateHackerSkills() {
+//        return hackerSkills;
+//    }
 }

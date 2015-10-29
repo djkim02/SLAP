@@ -180,9 +180,6 @@ public class Skill {
         athleteSkill = new Skill(R.mipmap.boxing, "Boxing");
         athleteSkillsList.add(athleteSkill);
 
-        athleteSkill = new Skill(R.mipmap.yoga, "Yoga");
-        athleteSkillsList.add(athleteSkill);
-
         return athleteSkillsList;
     }
 }
