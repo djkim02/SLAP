@@ -1,5 +1,6 @@
 package com.djkim.slap.profile;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -7,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.djkim.slap.R;
+import com.djkim.slap.menubar.MainActivity;
 
 /**
  * Created by dongjoonkim on 10/25/15.
@@ -24,5 +26,7 @@ public class CreateProfileDoneFragment extends CreateProfileAbstractFragment {
         createProfileActivity.setTitleText("Athlete Skills");
     }
 
-    public void onNextButtonClick() {}
+    public void onNextButtonClick() {
+        startActivity(new Intent(this.getActivity(), MainActivity.class));
+    }
 }
