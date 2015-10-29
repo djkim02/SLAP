@@ -49,77 +49,6 @@ public class Group implements Serializable {
         m_members.add(owner);
     }
 
-//    public Group(ParseObject parseGroup) throws ParseException {
-//        m_name = (String) parseGroup.get("name");
-//        m_description = (String) parseGroup.get("description");
-//        m_owner = (User) parseGroup.get("owner");
-//        m_capacity = (int) parseGroup.get("capacity");
-//        ArrayList<ParseUser> members = (ArrayList<ParseUser>) parseGroup.get("members");
-//        for (ParseUser member: members) {
-//            try {
-//                m_members.add(new User((Long) member.get("facebookId")));
-//            } catch (ParseException e) {
-//                throw new ParseException(e);
-//            }
-//        }
-//
-//    }
-
-//    public Group(String name, User owner, int capacity) throws ParseException {
-//        m_parseGroup = new ParseObject("Group");
-//
-//        try {
-//            createParseGroup(m_parseGroup, name, owner, capacity);
-//        } catch (ParseException e) {
-//            throw new ParseException(e);
-//        }
-//        m_description = "";
-//        m_parseGroup.put("description", m_description);
-//
-//        m_parseGroup.saveInBackground();
-//    }
-//
-//    public Group(String name, User owner, int capacity, String description) throws ParseException {
-//        m_parseGroup = new ParseObject("Group");
-//
-//        try {
-//            createParseGroup(m_parseGroup, name, owner, capacity);
-//        } catch (ParseException e) {
-//            throw new ParseException(e);
-//        }
-//        m_description = description;
-//        m_parseGroup.put("description", m_description);
-//
-//        m_parseGroup.saveInBackground();
-//    }
-//
-//    public void createParseGroup(ParseObject parseGroup, String name, User owner, int capacity) throws ParseException {
-//        m_name = name;
-//        m_owner = owner;
-//        m_capacity = capacity;
-//        addMember(owner);
-//
-//        parseGroup.put("name", m_name);
-//        ParseUser parseOwner = owner.getParseUser();
-//        parseGroup.put("owner", parseOwner);
-//        parseGroup.put("capacity", m_capacity);
-//        m_parseGroup = parseGroup;
-//
-//        Log.e("MyApp", "New Group Saved!");
-//
-//    }
-//
-//    // Getter for the corresponding ParseGroup object
-//    public ParseObject getParseGroup(){
-////        try {
-////            ParseQuery<ParseObject> query = ParseQuery.getQuery("Group");
-////            return query.get(m_objectId);
-////        }catch(ParseException e){
-////            throw new ParseException(e);
-////        }
-//        return m_parseGroup;
-//    }
-//
     private void updateAllFields(ParseObject parseGroup) {
         m_name = parseGroup.getString("name");
         m_description = parseGroup.getString("description");
@@ -212,27 +141,13 @@ public class Group implements Serializable {
     public void addMembers(ArrayList<User> users){
         for (User user:users) {
             m_membersToAdd.add(user);
+//            check for duplicates?
 //            if (!isMember(user)) {
 //                m_members.add(user);
 //                m_membership.put(user.get_facebook_id(), True);
 
         }
     }
-
-//    public void addParseMember(ParseUser parseMember){
-//        ParseObject parseGroup = null;
-//        parseGroup = getParseGroup();
-//        ParseRelation<ParseUser> relation = parseGroup.getRelation("members");
-//        relation.add(parseMember);
-//    }
-//
-//    public void addParseMembers(ArrayList<User> members){
-//        ParseObject parseGroup = getParseGroup();
-//        ParseRelation<ParseUser> relation = parseGroup.getRelation("members");
-//        for (User member: members) {
-//            relation.add(member.getParseUser());
-//        }
-//    }
 
     public ArrayList<User> getMembers(){
         return m_members;
@@ -272,7 +187,7 @@ public class Group implements Serializable {
         // iterate through and add all members that are not already in the array
         addMembersToParseGroup(parseGroup);
 
-        // parseOwner.saveInBackground();
+        parseOwner.saveInBackground();
     }
 
     public void save(){
@@ -292,3 +207,95 @@ public class Group implements Serializable {
 
 
 }
+
+
+
+
+// OUT WITH THE OLD
+//    public void addParseMember(ParseUser parseMember){
+//        ParseObject parseGroup = null;
+//        parseGroup = getParseGroup();
+//        ParseRelation<ParseUser> relation = parseGroup.getRelation("members");
+//        relation.add(parseMember);
+//    }
+//
+//    public void addParseMembers(ArrayList<User> members){
+//        ParseObject parseGroup = getParseGroup();
+//        ParseRelation<ParseUser> relation = parseGroup.getRelation("members");
+//        for (User member: members) {
+//            relation.add(member.getParseUser());
+//        }
+//    }
+
+
+//    public Group(ParseObject parseGroup) throws ParseException {
+//        m_name = (String) parseGroup.get("name");
+//        m_description = (String) parseGroup.get("description");
+//        m_owner = (User) parseGroup.get("owner");
+//        m_capacity = (int) parseGroup.get("capacity");
+//        ArrayList<ParseUser> members = (ArrayList<ParseUser>) parseGroup.get("members");
+//        for (ParseUser member: members) {
+//            try {
+//                m_members.add(new User((Long) member.get("facebookId")));
+//            } catch (ParseException e) {
+//                throw new ParseException(e);
+//            }
+//        }
+//
+//    }
+
+//    public Group(String name, User owner, int capacity) throws ParseException {
+//        m_parseGroup = new ParseObject("Group");
+//
+//        try {
+//            createParseGroup(m_parseGroup, name, owner, capacity);
+//        } catch (ParseException e) {
+//            throw new ParseException(e);
+//        }
+//        m_description = "";
+//        m_parseGroup.put("description", m_description);
+//
+//        m_parseGroup.saveInBackground();
+//    }
+//
+//    public Group(String name, User owner, int capacity, String description) throws ParseException {
+//        m_parseGroup = new ParseObject("Group");
+//
+//        try {
+//            createParseGroup(m_parseGroup, name, owner, capacity);
+//        } catch (ParseException e) {
+//            throw new ParseException(e);
+//        }
+//        m_description = description;
+//        m_parseGroup.put("description", m_description);
+//
+//        m_parseGroup.saveInBackground();
+//    }
+//
+//    public void createParseGroup(ParseObject parseGroup, String name, User owner, int capacity) throws ParseException {
+//        m_name = name;
+//        m_owner = owner;
+//        m_capacity = capacity;
+//        addMember(owner);
+//
+//        parseGroup.put("name", m_name);
+//        ParseUser parseOwner = owner.getParseUser();
+//        parseGroup.put("owner", parseOwner);
+//        parseGroup.put("capacity", m_capacity);
+//        m_parseGroup = parseGroup;
+//
+//        Log.e("MyApp", "New Group Saved!");
+//
+//    }
+//
+//    // Getter for the corresponding ParseGroup object
+//    public ParseObject getParseGroup(){
+////        try {
+////            ParseQuery<ParseObject> query = ParseQuery.getQuery("Group");
+////            return query.get(m_objectId);
+////        }catch(ParseException e){
+////            throw new ParseException(e);
+////        }
+//        return m_parseGroup;
+//    }
+//

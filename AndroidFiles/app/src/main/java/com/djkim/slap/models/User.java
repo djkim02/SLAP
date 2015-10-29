@@ -129,20 +129,22 @@ public class User implements Serializable {
         }
     }
 
+    private void saveAllFieldsToParse(ParseUser parseUser) {
+        parseUser.put("username", m_username);
+        parseUser.put("facebookId", m_facebookId);
+        saveGroupsToParse(parseUser);
+    }
+
     public void save(){
         ParseUser parseUser = new ParseUser();
         ParseQuery<ParseUser> query = ParseUser.getQuery();
         query.whereEqualTo("facebook_id", m_facebookId);
         try {
             parseUser = query.getFirst();
-            parseUser.put("username", m_username);
-            parseUser.put("facebookId", m_facebookId);
-            saveGroupsToParse(parseUser);
+            saveAllFieldsToParse(parseUser);
             parseUser.saveInBackground();
         } catch (ParseException e) {
-            parseUser.put("username", m_username);
-            parseUser.put("facebookId", m_facebookId);
-            saveGroupsToParse(parseUser);
+            saveAllFieldsToParse(parseUser);
             parseUser.saveInBackground();
             m_objectId = parseUser.getObjectId(); // do I need to do this?
         }
