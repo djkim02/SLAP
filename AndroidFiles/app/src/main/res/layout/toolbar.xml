@@ -7,4 +7,15 @@
     android:background="@color/colorPrimary"
     app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
     app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-    android:minHeight="?attr/actionBarSize" />
+    android:minHeight="?attr/actionBarSize">
+    <TextView
+        android:id="@+id/create_profile_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:text="@string/create_profile"
+        android:textSize="24sp"
+        android:textColor="@color/textColorPrimary"
+        android:textStyle="bold"
+        />
+</android.support.v7.widget.Toolbar>
