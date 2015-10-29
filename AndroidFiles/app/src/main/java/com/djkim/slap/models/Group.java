@@ -39,7 +39,7 @@ public class Group implements Serializable {
     private Integer True = new Integer(1);
     private Integer False = new Integer(0);
 
-    public Group(){}
+    public Group() {}
 
     public Group(String name, User owner, int capacity) {
         m_name = name;
@@ -55,21 +55,19 @@ public class Group implements Serializable {
         ParseUser parseOwner = parseGroup.getParseUser("owner");
         m_owner.setFieldsWithParseUser(parseOwner);
         m_capacity = parseGroup.getInt("capacity");
-        
-        m_members = new ArrayList<>();
+
         ParseRelation<ParseUser> membersRelation = parseGroup.getRelation("members");
-        membersRelation.getQuery().findInBackground(new FindCallback<ParseUser>() {
-            @Override
-            public void done(List<ParseUser> parseUsers, ParseException e) {
-                if (e == null) {
-                    for (ParseUser parseUser : parseUsers) {
-                        User user = new User();
-                        user.setFieldsWithParseUser(parseUser);
-                        m_members.add(user);
-                    }
-                }
+        try {
+            List<ParseUser> parseUsers = membersRelation.getQuery().find();
+            m_members = new ArrayList<>();
+            for (ParseUser parseUser : parseUsers) {
+                User user = new User();
+                user.setFieldsWithParseUser(parseUser);
+                m_members.add(user);
             }
-        });
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
 
     // this will fetch the Group object from Parse
