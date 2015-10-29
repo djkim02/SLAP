@@ -16,22 +16,27 @@ import java.util.ArrayList;
  */
 public class Utils{
 
-    public static User get_current_user() throws ParseException{
+    public static User get_current_user() {
         ParseUser parseUser = ParseUser.getCurrentUser();
-        // TO CHANGE
-        User user = null;
-        try {
-            return new User(parseUser.getLong("facebookId"));
-        } catch (ParseException e) {
-            throw new ParseException(e);
-        }
+        User user = new User(
+                parseUser.getObjectId(),
+                parseUser.getUsername(),
+                parseUser.getLong("facebookId"));
+        return user;
     }
 
-    public static User get_user_by_facebook_id(Long facebook_id) throws ParseException{
+    public static User get_user_by_facebook_id(Long facebook_id) {
+        ParseQuery<ParseUser> query = ParseUser.getQuery();
+        query.whereEqualTo("facebookId", facebook_id);
+        ParseUser parseUser = null;
         try {
-            return new User(facebook_id);
-        } catch (ParseException e){
-            throw new ParseException(e);
+            parseUser = query.getFirst();
+            User user = new User(   parseUser.getObjectId(),
+                    parseUser.getUsername(),
+                    parseUser.getLong("facebookId"));
+            return user;
+        } catch (ParseException e) {
+            return null; // couldn't find a user?? is this okay?
         }
     }
 

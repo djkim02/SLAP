@@ -13,8 +13,10 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.djkim.slap.R;
+import com.djkim.slap.models.Group;
 import com.djkim.slap.models.NonSwipeableViewPager;
 import com.djkim.slap.models.User;
+import com.djkim.slap.models.Utils;
 import com.djkim.slap.models.ZoomOutPageTransformer;
 
 /**

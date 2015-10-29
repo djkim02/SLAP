@@ -94,11 +94,11 @@ public class LoginActivity extends FragmentActivity {
                             Log.d("MyApp", "Uh oh. The user cancelled the Facebook login.");
                         } else if (user.isNew()) {
                             Log.d("MyApp", "User signed up and logged in through Facebook!");
-                            getUserDetailsFromFacebook();
+                            getUserDetailsFromFacebook(user);
                         } else {
                             //TODO: Implement this section for returning users
                             Log.d("MyApp", "User logged in through Facebook!");
-                            getUserDetailsFromFacebook();
+                            getUserDetailsFromFacebook(user);
                         }
                     }
                 });
@@ -107,7 +107,7 @@ public class LoginActivity extends FragmentActivity {
     }
 
     // This method fetches user details (name, profile picture) from Facebook
-    private void getUserDetailsFromFacebook() {
+    private void getUserDetailsFromFacebook(final ParseUser parseUser) {
         GraphRequest request = GraphRequest.newMeRequest(AccessToken.getCurrentAccessToken(),
                 new GraphRequest.GraphJSONObjectCallback() {
                     @Override
@@ -116,21 +116,16 @@ public class LoginActivity extends FragmentActivity {
                             try {
                                 facebookId = new Long(jsonObject.getLong("id"));
                                 name = jsonObject.getString("name");
-                                Log.e("MyApp", "" + facebookId);
-                                ParseUser parseUser = ParseUser.getCurrentUser();
+                                parseUser.put("username", name);
                                 parseUser.put("facebookId", facebookId);
-                                parseUser.save();
-                                User user = new User(facebookId);
-                                user.set_name(name);
-                                user.save();
+                                parseUser.saveInBackground();
+                                User user = Utils.get_current_user();
                                 Intent intent = new Intent(LoginActivity.this, CreateProfileActivity.class);
                                 intent.putExtra("user", user);
                                 startActivity(intent);
                             }
                             catch (JSONException e) {
                                 Log.d("", "Error parsing returned user data. " + e);
-                            } catch (ParseException e) {
-                                e.printStackTrace();
                             }
                         }
                     }
