@@ -26,10 +26,14 @@ import bolts.Task;
  */
 
 public class Group implements Serializable {
+    private enum Type {
+        HACKER_GROUP,
+        ATHLETE_GROUP
+    }
     private String m_objectId;
     private String m_name;
     private String m_description;
-    private String m_type; // group type
+    private Type m_type;
     private User m_owner;
     private int m_capacity;
     private ArrayList<User> m_members = new ArrayList<User>();
@@ -47,6 +51,15 @@ public class Group implements Serializable {
         m_capacity = capacity;
         m_description = "";
         m_members.add(owner);
+    }
+
+    public Group(ParseObject parseGroup) {
+        m_objectId = parseGroup.getObjectId();
+        m_name = parseGroup.getString("name");
+        m_description = parseGroup.getString("description");
+        m_owner = new User();
+        m_owner.setFieldsWithParseUser(parseGroup.getParseUser("owner"));
+        m_capacity = parseGroup.getInt("capacity");
     }
 
     private void updateAllFields(ParseObject parseGroup) {

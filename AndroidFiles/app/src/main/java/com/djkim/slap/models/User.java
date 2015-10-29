@@ -26,9 +26,8 @@ public class User implements Serializable {
     private String m_objectId;
     private String m_username;
     private Long m_facebookId;
-    private ArrayList<Group> m_groups; // all groups the user is a part of
-    private ArrayList<Group> m_groupsWhereUserIsOwner; // all groups the user is an owner of
-
+//    private ArrayList<Group> m_groups; // all groups the user is a part of
+//    private ArrayList<Group> m_groupsWhereUserIsOwner; // all groups the user is an owner of
 
     // Constructors
     public User(){}
@@ -37,27 +36,35 @@ public class User implements Serializable {
         m_objectId = objectId;
         m_username = username;
         m_facebookId = facebookId;
+//        m_groups = new ArrayList<Group>();
+//        m_groupsWhereUserIsOwner = new ArrayList<Group>();
     }
 
-    public void addGroup (Group group) {
-        m_groups.add(group);
-    }
-
-    public void syncUsername(ParseUser parseUser) {
+    public User(ParseUser parseUser) {
+        m_objectId = parseUser.getObjectId();
         m_username = parseUser.getUsername();
-    }
-
-    public void syncFacebookId(ParseUser parseUser) {
         m_facebookId = parseUser.getLong("facebookId");
     }
 
-    public void syncGroups(ParseUser parseUser) {
-        // get groups from relation
-        // clear m_groupsWhereUserIsMember
-        // fill m_groupsWhereUserIsMember
-        ParseRelation<ParseUser> relation = parseUser.getRelation("groups");
-        ParseQuery query = relation.getQuery();
-    }
+//    public void addGroup (Group group) {
+//        m_groups.add(group);
+//    }
+
+//    public void syncUsername(ParseUser parseUser) {
+//        m_username = parseUser.getUsername();
+//    }
+//
+//    public void syncFacebookId(ParseUser parseUser) {
+//        m_facebookId = parseUser.getLong("facebookId");
+//    }
+//
+//    public void syncGroups(ParseUser parseUser) {
+//        // get groups from relation
+//        // clear m_groupsWhereUserIsMember
+//        // fill m_groupsWhereUserIsMember
+//        ParseRelation<ParseUser> relation = parseUser.getRelation("groups");
+//        ParseQuery query = relation.getQuery();
+//    }
 
     // based on current m_object ID,
     // update the Java User's data with
@@ -68,7 +75,7 @@ public class User implements Serializable {
         ParseQuery<ParseUser> query = ParseUser.getQuery();
         try {
             ParseUser parseUser = query.get(m_objectId);
-            syncGroups(parseUser);
+//            syncGroups(parseUser);
 
         } catch (ParseException e) {
             return; // didn't find anything
@@ -111,11 +118,28 @@ public class User implements Serializable {
         // TODO: set Arrays too!
     }
 
-    public void saveGroupsToParse(ParseUser parseUser) {
-        ParseRelation<ParseObject> relation = parseUser.getRelation("groups");
-        for (Group group: m_groups) {
-            ParseObject parseGroup = ParseObject.createWithoutData("Group", group.get_id());
-            relation.add(parseGroup);
+//    public void saveGroupsToParse(ParseUser parseUser) {
+//        ParseRelation<ParseObject> relation = parseUser.getRelation("groups");
+//        for (Group group: m_groups) {
+//            ParseObject parseGroup = ParseObject.createWithoutData("Group", group.get_id());
+//            relation.add(parseGroup);
+//        }
+//    }
+
+    public List<Group> getGroups() {
+        try {
+            ParseUser parseUser = ParseUser.getQuery().get(m_objectId);
+            ParseQuery<ParseObject> query = ParseQuery.getQuery("Group");
+            query.whereEqualTo("members", parseUser);
+            List<ParseObject> parseGroups = query.find();
+            List<Group> groups = new ArrayList<Group>();
+            for (ParseObject parseGroup : parseGroups) {
+                groups.add(new Group(parseGroup));
+            }
+            return groups;
+        } catch (ParseException e) {
+            Log.e("", "Cannot get list of groups");
+            return null;
         }
     }
 
@@ -134,23 +158,29 @@ public class User implements Serializable {
     private void saveAllFieldsToParse(ParseUser parseUser) {
         parseUser.put("username", m_username);
         parseUser.put("facebookId", m_facebookId);
-        saveGroupsToParse(parseUser);
+//        saveGroupsToParse(parseUser);
     }
 
-
-    public void save(){
-        ParseUser parseUser = new ParseUser();
-        ParseQuery<ParseUser> query = ParseUser.getQuery();
-        query.whereEqualTo("facebook_id", m_facebookId);
+    public void save() {
         try {
-            parseUser = query.getFirst();
+            ParseUser parseUser = ParseUser.getQuery().get(m_objectId);
             saveAllFieldsToParse(parseUser);
             parseUser.saveInBackground();
         } catch (ParseException e) {
-            saveAllFieldsToParse(parseUser);
-            parseUser.saveInBackground();
-            m_objectId = parseUser.getObjectId(); // do I need to do this?
+            Log.e("", "Could not save ParseUser");
         }
+//        ParseUser parseUser = new ParseUser();
+//        ParseQuery<ParseUser> query = ParseUser.getQuery();
+//        query.whereEqualTo("facebook_id", m_facebookId);
+//        try {
+//            parseUser = query.getFirst();
+//            saveAllFieldsToParse(parseUser);
+//            parseUser.saveInBackground();
+//        } catch (ParseException e) {
+//            saveAllFieldsToParse(parseUser);
+//            parseUser.saveInBackground();
+//            m_objectId = parseUser.getObjectId(); // do I need to do this?
+//        }
     }
 
 }

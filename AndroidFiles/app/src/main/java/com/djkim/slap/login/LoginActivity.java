@@ -116,10 +116,7 @@ public class LoginActivity extends FragmentActivity {
                             try {
                                 facebookId = new Long(jsonObject.getLong("id"));
                                 name = jsonObject.getString("name");
-                                parseUser.put("username", name);
-                                parseUser.put("facebookId", facebookId);
-                                parseUser.saveInBackground();
-                                User user = Utils.get_current_user();
+                                User user = new User(parseUser.getObjectId(), name, facebookId);
                                 Intent intent = new Intent(LoginActivity.this, CreateProfileActivity.class);
                                 intent.putExtra("user", user);
                                 startActivity(intent);
