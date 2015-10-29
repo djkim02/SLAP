@@ -5,6 +5,7 @@ import android.widget.Toast;
 
 import com.parse.FindCallback;
 import com.parse.GetCallback;
+import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseRelation;
 import com.parse.ParseUser;
@@ -75,7 +76,7 @@ public class User implements Serializable {
     }
 
     // Getters and Setters
-    private String get_id() {
+    public String get_id() {
         return m_objectId;
     }
 
@@ -111,9 +112,10 @@ public class User implements Serializable {
     }
 
     public void saveGroupsToParse(ParseUser parseUser) {
-        ParseRelation relation = parseUser.getRelation("groups");
+        ParseRelation<ParseObject> relation = parseUser.getRelation("groups");
         for (Group group: m_groups) {
-            relation.add(group.toParseObject());
+            ParseObject parseGroup = ParseObject.createWithoutData("Group", group.get_id());
+            relation.add(parseGroup);
         }
     }
 
@@ -134,6 +136,7 @@ public class User implements Serializable {
         parseUser.put("facebookId", m_facebookId);
         saveGroupsToParse(parseUser);
     }
+
 
     public void save(){
         ParseUser parseUser = new ParseUser();

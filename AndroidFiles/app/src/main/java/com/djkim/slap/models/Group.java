@@ -152,9 +152,11 @@ public class Group implements Serializable {
     }
 
     public void addMembersToParseGroup(ParseObject parseGroup) {
-        ParseRelation relation = parseGroup.getRelation("members");
+        ParseRelation<ParseUser> relation = parseGroup.getRelation("members");
         for (User member : m_members) {
-            relation.add(member.toParseUser());
+             relation.add(member.toParseUser());
+//            ParseObject parseMember = ParseObject.createWithoutData("_User", member.get_id());
+//            parseGroup.put("members", parseMember);
         }
     }
 
@@ -174,18 +176,17 @@ public class Group implements Serializable {
         parseGroup.put("name", m_name);
         parseGroup.put("description", m_description);
 
-        ParseUser parseOwner = m_owner.toParseUser();
+        ParseObject parseOwner = ParseObject.createWithoutData("_User", m_owner.get_id());
         parseGroup.put("owner", parseOwner);
 
-        ParseRelation relation = parseOwner.getRelation("groups");
-        relation.add(parseGroup);
+//        ParseRelation<ParseObject> relation = parseOwner.getRelation("groups");
+//        relation.add(parseGroup);
 
         parseGroup.put("capacity", m_capacity);
 
         // iterate through and add all members that are not already in the array
         addMembersToParseGroup(parseGroup);
-
-        parseOwner.saveInBackground();
+        // parseOwner.saveInBackground();
     }
 
     public void save(){

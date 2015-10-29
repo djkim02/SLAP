@@ -93,6 +93,11 @@ public class CreateProfileActivity extends FragmentActivity {
             if (position == 0) {
                 return welcomeFragment;
             } else if (position == 1) {
+                User user = Utils.get_current_user();
+                Group group = new Group("group2", user, 1001);
+                group.save();
+                // user.addGroup(group);
+                // user.save();
                 return hackerFragment;
             } else if (position == 2) {
                 return athleteFragment;
