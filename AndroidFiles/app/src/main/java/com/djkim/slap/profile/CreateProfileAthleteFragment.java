@@ -19,14 +19,13 @@ import java.util.ArrayList;
 /**
  * Created by dongjoonkim on 10/25/15.
  */
-public class CreateProfileAthleteFragment extends Fragment {
+public class CreateProfileAthleteFragment extends CreateProfileAbstractFragment {
     private ArrayList<Skill> athleteSkills = null;
     SkillsListAdapter skillsListAdapter = null;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         View view = inflater.inflate(R.layout.create_profile_athlete_fragment_layout, container, false);
         if (athleteSkills == null) {
             athleteSkills = Skill.returnAthleteSkillsList();
@@ -37,7 +36,16 @@ public class CreateProfileAthleteFragment extends Fragment {
         return view;
     }
 
-    public ArrayList<Skill> updateAthleteSkills() {
-        return athleteSkills;
+    public void onPrevButtonClick() {
+        CreateProfileActivity createProfileActivity = (CreateProfileActivity) this.getActivity();
+        createProfileActivity.updateAthleteSkills(athleteSkills);
+        createProfileActivity.setTitleText("Programming Skills");
+    }
+
+    public void onNextButtonClick() {
+        CreateProfileActivity createProfileActivity = (CreateProfileActivity) this.getActivity();
+        createProfileActivity.updateAthleteSkills(athleteSkills);
+        createProfileActivity.setTitleText("Congratulations!");
+        createProfileActivity.setNextButtonText("Done");
     }
 }
