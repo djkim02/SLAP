@@ -13,26 +13,45 @@ import android.widget.TextView;
 
 import com.djkim.slap.R;
 import com.djkim.slap.models.NonSwipeableViewPager;
+import com.djkim.slap.models.Skill;
 import com.djkim.slap.models.User;
 import com.djkim.slap.models.ZoomOutPageTransformer;
+
+import java.util.ArrayList;
 
 /**
  * Created by dongjoonkim on 10/25/15.
  */
 
 public class CreateProfileActivity extends FragmentActivity {
-
     private NonSwipeableViewPager mPager;
     private PagerAdapter mPagerAdapter;
     private FragmentManager fragmentManager;
     private User user;
-    private CreateProfileWelcomeFragment welcomeFragment;
-    private CreateProfileHackerFragment hackerFragment;
-    private CreateProfileAthleteFragment athleteFragment;
-    private CreateProfileDoneFragment doneFragment;
+    private ArrayList<CreateProfileAbstractFragment> fragments;
     private Button prevButton;
     private Button nextButton;
     private TextView createProfileTitle;
+
+    public void updateHackerSkills(ArrayList<Skill> skills) {
+        user.set_hacker_skills(skills);
+    }
+
+    public void updateAthleteSkills(ArrayList<Skill> skills) {
+        user.set_athlete_skills(skills);
+    }
+
+    public void setTitleText(String text) {
+        createProfileTitle.setText(text);
+    }
+
+    public void setPrevButtonText(String text) {
+        prevButton.setText(text);
+    }
+
+    public void setNextButtonText(String text) {
+        nextButton.setText(text);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,10 +67,11 @@ public class CreateProfileActivity extends FragmentActivity {
         mPager.setAdapter(mPagerAdapter);
         mPager.setPageTransformer(true, new ZoomOutPageTransformer());
 
-        welcomeFragment = new CreateProfileWelcomeFragment();
-        hackerFragment = new CreateProfileHackerFragment();
-        athleteFragment = new CreateProfileAthleteFragment();
-        doneFragment = new CreateProfileDoneFragment();
+        fragments = new ArrayList<CreateProfileAbstractFragment>();
+        fragments.add(new CreateProfileWelcomeFragment());
+        fragments.add(new CreateProfileHackerFragment());
+        fragments.add(new CreateProfileAthleteFragment());
+        fragments.add(new CreateProfileDoneFragment());
 
         prevButton = (Button) findViewById(R.id.prev_button);
         nextButton = (Button) findViewById(R.id.next_button);
@@ -61,17 +81,7 @@ public class CreateProfileActivity extends FragmentActivity {
             @Override
             public void onClick(View v) {
                 int currentItem = mPager.getCurrentItem();
-                if (currentItem == 1) {
-                    prevButton.setText("");
-                    user.set_hacker_skills(hackerFragment.updateHackerSkills());
-                    createProfileTitle.setText("Tell us about yourself");
-                } else if (currentItem == 2) {
-                    user.set_athlete_skills(athleteFragment.updateAthleteSkills());
-                    createProfileTitle.setText("Programming Skills");
-                } else if (currentItem == 3) {
-                    nextButton.setText("Next");
-                    createProfileTitle.setText("Athlete Skills");
-                }
+                fragments.get(currentItem).onPrevButtonClick();
                 mPager.setCurrentItem(currentItem - 1, true);
             }
         });
@@ -80,17 +90,7 @@ public class CreateProfileActivity extends FragmentActivity {
             @Override
             public void onClick(View v) {
                 int currentItem = mPager.getCurrentItem();
-                if (currentItem == 0) {
-                    prevButton.setText("Back");
-                    createProfileTitle.setText("Programming Skills");
-                } else if (currentItem == 1) {
-                    user.set_hacker_skills(hackerFragment.updateHackerSkills());
-                    createProfileTitle.setText("Athlete Skills");
-                } else if (currentItem == 2) {
-                    user.set_athlete_skills(athleteFragment.updateAthleteSkills());
-                    createProfileTitle.setText("Congratulations!");
-                    nextButton.setText("Done");
-                }
+                fragments.get(currentItem).onNextButtonClick();
                 mPager.setCurrentItem(currentItem + 1, true);
             }
         });
@@ -108,16 +108,11 @@ public class CreateProfileActivity extends FragmentActivity {
         @Override
         public Fragment getItem(int position)
         {
-            if (position == 0) {
-                return welcomeFragment;
-            } else if (position == 1) {
-                return hackerFragment;
-            } else if (position == 2) {
-                return athleteFragment;
-            } else if (position == 3) {
-                return doneFragment;
+            if (position < fragments.size()) {
+                return fragments.get(position);
+            } else {
+                return null;
             }
-            return welcomeFragment;
         }
     }
 }
