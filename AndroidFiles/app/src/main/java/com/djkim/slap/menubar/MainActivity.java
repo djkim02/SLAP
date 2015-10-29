@@ -32,6 +32,8 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import com.djkim.slap.R;
+import com.djkim.slap.dispatch.DispatchActivity;
+import com.parse.ParseUser;
 
 public class MainActivity extends ActionBarActivity {
 
@@ -89,6 +91,11 @@ public class MainActivity extends ActionBarActivity {
                         break;
                     case 2:
                         Toast.makeText(MainActivity.this, osArray[2], Toast.LENGTH_SHORT).show();
+                        break;
+                    case 5:
+                        // TODO: replace this with Utils method
+                        ParseUser.getCurrentUser().logOut();    // preferably use logOutInBackground...
+                        startActivity(new Intent(MainActivity.this, DispatchActivity.class));
                         break;
                 }
                 //Highlight the selected item, update the title, and close the drawer

@@ -21,8 +21,6 @@ public class DispatchActivity extends Activity{
         // TODO: use Utils static method instead
         if (ParseUser.getCurrentUser() != null) {
             // User is logged in.
-            // TODO: start MyGroupsActivity
-            Log.d("DispatchActivity", "User is logged in");
             startActivity(new Intent(this, MainActivity.class));
         } else {
             // User has not logged in to our app.
