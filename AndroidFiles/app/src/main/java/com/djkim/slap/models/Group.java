@@ -2,6 +2,7 @@ package com.djkim.slap.models;
 
 import android.util.Log;
 
+import com.parse.FindCallback;
 import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -12,6 +13,7 @@ import com.parse.ParseUser;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 
 import bolts.Task;
 
@@ -38,6 +40,7 @@ public class Group implements Serializable {
     private Integer False = new Integer(0);
 
     public Group(){}
+
     public Group(String name, User owner, int capacity) {
         m_name = name;
         m_owner = owner;
@@ -123,9 +126,22 @@ public class Group implements Serializable {
         ParseUser parseOwner = parseGroup.getParseUser("owner");
         m_owner.setFieldsWithParseUser(parseOwner);
         m_capacity = parseGroup.getInt("capacity");
-
-        // TODO: update member arrays
-}
+        
+        m_members = new ArrayList<>();
+        ParseRelation<ParseUser> membersRelation = parseGroup.getRelation("members");
+        membersRelation.getQuery().findInBackground(new FindCallback<ParseUser>() {
+            @Override
+            public void done(List<ParseUser> parseUsers, ParseException e) {
+                if (e == null) {
+                    for (ParseUser parseUser : parseUsers) {
+                        User user = new User();
+                        user.setFieldsWithParseUser(parseUser);
+                        m_members.add(user);
+                    }
+                }
+            }
+        });
+    }
 
     // this will fetch the Group object from Parse
     // and update all fields in the Java Group object
@@ -190,7 +206,7 @@ public class Group implements Serializable {
 
     public void addMember(User member){
         m_members.add(member);
-        // m_membership.put(member.get_facebook_id(), True);
+//         m_membership.put(member.get_facebook_id(), True);
     }
 
     public void addMembers(ArrayList<User> users){
@@ -224,7 +240,7 @@ public class Group implements Serializable {
 
     public void addMembersToParseGroup(ParseObject parseGroup) {
         ParseRelation relation = parseGroup.getRelation("members");
-        for (User member: m_members) {
+        for (User member : m_members) {
             relation.add(member.toParseUser());
         }
     }
