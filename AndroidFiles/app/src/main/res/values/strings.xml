@@ -8,4 +8,16 @@
     <string name="back">Back</string>
     <string name="next">Next</string>
     <string name="create_profile">Tell us about yourself</string>
+
+    <string-array name="Menu">
+        <item >Home</item>
+        <item >My Groups</item>
+        <item >Notifications</item>
+        <item >Help</item>
+        <item >Settings</item>
+        <item >Log out</item>
+    </string-array>
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+    <string name="menuProfile">menuProfile</string>
 </resources>

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.djkim.slap.login.LoginActivity;
+import com.djkim.slap.menubar.MainActivity;
 import com.djkim.slap.profile.CreateProfileActivity;
 import com.parse.ParseUser;
 
@@ -22,6 +23,7 @@ public class DispatchActivity extends Activity{
             // User is logged in.
             // TODO: start MyGroupsActivity
             Log.d("DispatchActivity", "User is logged in");
+            startActivity(new Intent(this, MainActivity.class));
         } else {
             // User has not logged in to our app.
             startActivity(new Intent(this, LoginActivity.class));
