@@ -22,10 +22,6 @@ public class GroupDetailsActivity extends FragmentActivity {
         Fragment fragment = fragmentManager.findFragmentById(R.id.fragment_container);
 
         if (fragment == null) {
-            fragment = new GroupDetailsFragment();
-            fragmentManager.beginTransaction()
-                    .add(R.id.fragment_container, fragment)
-                    .commit();
         }
     }
 

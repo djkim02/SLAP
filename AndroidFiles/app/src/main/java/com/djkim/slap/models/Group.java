@@ -40,9 +40,6 @@ public class Group implements Serializable {
     private ArrayList<User> m_membersToAdd = new ArrayList<User>();
     private Hashtable<Long, Integer> m_membership = new Hashtable<Long, Integer>();
 
-    private Integer True = new Integer(1);
-    private Integer False = new Integer(0);
-
     public Group() {}
 
     public Group(String name, User owner, int capacity) {

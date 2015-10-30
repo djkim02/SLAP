@@ -33,6 +33,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import com.djkim.slap.R;
 import com.djkim.slap.dispatch.DispatchActivity;
+import com.djkim.slap.home.GroupListActivity;
+import com.djkim.slap.home.GroupListFragment;
 import com.parse.ParseUser;
 
 public class MainActivity extends ActionBarActivity {
@@ -86,8 +88,10 @@ public class MainActivity extends ActionBarActivity {
                         fragmentManager.beginTransaction().replace(R.id.main_layout, fragment).commit();
                         break;
                     case 1:
-                        fragment = new menuGroups();
-                        fragmentManager.beginTransaction().replace(R.id.main_layout, fragment).commit();
+                        fragment = new GroupListFragment();
+                        fragmentManager.beginTransaction()
+                                .replace(R.id.main_layout, fragment)
+                                .commit();
                         break;
                     case 2:
                         Toast.makeText(MainActivity.this, osArray[2], Toast.LENGTH_SHORT).show();

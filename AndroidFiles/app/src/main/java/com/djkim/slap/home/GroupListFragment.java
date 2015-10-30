@@ -1,9 +1,10 @@
 package com.djkim.slap.home;
 
+import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -15,6 +16,9 @@ import android.widget.TextView;
 
 import com.djkim.slap.R;
 import com.djkim.slap.group.GroupDetailsActivity;
+import com.djkim.slap.models.Group;
+import com.djkim.slap.models.User;
+import com.djkim.slap.models.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,14 +35,13 @@ public class GroupListFragment extends Fragment {
         mGroupRecyclerView = (RecyclerView) view.findViewById(R.id.group_recycler_view);
         mGroupRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        // TODO(victorkwan): Provide the groups.
-        List<Group> groups = new ArrayList<>();
+        // TODO(victorkwan): Update this to take the current user instead.
+        User joanna = Utils.get_user_by_facebook_id(10205507903037488L);
+        List<Group> groups = joanna.getGroups();
         mGroupAdapter = new GroupAdapter(groups);
         mGroupRecyclerView.setAdapter(mGroupAdapter);
         return view;
     }
-
-    private interface Group {}
 
     private class GroupHolder extends RecyclerView.ViewHolder {
         private Group mGroup;
@@ -86,9 +89,14 @@ public class GroupListFragment extends Fragment {
             mRemainingSlotsButton.setText("5 slots remaining");
         }
 
-        // TODO(victorkwan): Configure the view for the given Group.
         public void bindGroup(Group group) {
             mGroup = group;
+            mTitleTextView.setText(group.get_name());
+            mSubheadTextView.setText("Created by " + group.get_owner().get_name());
+            mSupportingTextView.setText(group.get_description());
+
+            int remainingSlots = group.get_capacity() - group.get_size();
+            mRemainingSlotsButton.setText(remainingSlots + " slots remaining");
         }
     }
 
@@ -108,13 +116,13 @@ public class GroupListFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(GroupHolder holder, int position) {
-//            Group group = mGroups.get(position);
-//            holder.bindGroup(group);
+            Group group = mGroups.get(position);
+            holder.bindGroup(group);
         }
 
         @Override
         public int getItemCount() {
-            return 1;
+            return mGroups.size();
         }
     }
 }
