@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.View;
 
 import com.djkim.slap.R;
+import com.djkim.slap.menubar.MainActivity;
 import com.djkim.slap.models.ParseButton;
 import com.djkim.slap.models.User;
 import com.djkim.slap.models.Utils;
@@ -98,7 +99,8 @@ public class LoginActivity extends FragmentActivity {
                         } else {
                             //TODO: Implement this section for returning users
                             Log.d("MyApp", "User logged in through Facebook!");
-                            getUserDetailsFromFacebook(user);
+                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                            startActivity(intent);
                         }
                     }
                 });

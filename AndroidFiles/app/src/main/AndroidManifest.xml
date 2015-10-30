@@ -47,11 +47,15 @@
             android:name="com.facebook.FacebookActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
-            android:label="@string/app_name" />
+            android:label="@string/app_name">
+        </activity>
         <activity
             android:name=".menubar.MainActivity"
             android:label="@string/app_name" >
         </activity>
+        <activity
+            android:name=".createGroup.CreateGroupActivity"
+            android:label="Create Group">
+        </activity>
     </application>
-
 </manifest>
