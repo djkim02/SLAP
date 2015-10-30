@@ -9,15 +9,15 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Name"
         android:gravity="center"
         android:id="@+id/textView"
         android:layout_gravity="center_horizontal"
+        style="@style/Base.TextAppearance.AppCompat.Title"
         android:paddingTop="20dp"
         android:paddingBottom="20dp" />
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/imageView1"
         android:layout_width="100dp"
         android:layout_height="100dp"
@@ -34,7 +34,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:paddingTop="5dp"
-            android:paddingBottom="5dp">
+            android:paddingBottom="5dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp">
 
             <TextView
                 android:layout_width="match_parent"
@@ -49,7 +51,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:paddingTop="5dp"
-            android:paddingBottom="5dp">
+            android:paddingBottom="5dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp">
 
             <TextView
                 android:layout_width="match_parent"
@@ -64,7 +68,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:paddingTop="5dp"
-            android:paddingBottom="5dp">
+            android:paddingBottom="5dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp">
 
             <TextView
                 android:layout_width="match_parent"

@@ -26,4 +26,5 @@ dependencies {
     compile 'com.facebook.android:facebook-android-sdk:4.7.0'
     compile 'com.parse.bolts:bolts-android:1.+'
     compile 'com.parse:parse-android:1.+'
+    compile 'de.hdodenhof:circleimageview:2.0.0'
 }
