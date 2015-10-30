@@ -140,6 +140,7 @@ public class CreateGroupActivity extends ActionBarActivity implements
                                             User user = Utils.get_current_user();
                                             Group group = new Group(name, user, capacity, type);
                                             group.set_description(description);
+                                            group.set_skills(skills);
                                             group.save();
                                             startActivity(new Intent(CreateGroupActivity.this, MainActivity.class));
                                         }

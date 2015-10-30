@@ -26,20 +26,20 @@ import bolts.Task;
  */
 
 public class Group implements Serializable {
-    private enum Type {
-        HACKER_GROUP,
-        ATHLETE_GROUP,
-        GENERAL_GROUP
-    }
+    private final String HACKER_GROUP = "Hacker";
+    private final String ATHLETE_GROUP = "Athlete";
+    private final String GENERAL_GROUP = "General";
     private String m_objectId;
     private String m_name;
     private String m_description;
-    private Type m_type;
+    private String m_type;
     private User m_owner;
     private int m_capacity;
     private ArrayList<User> m_members = new ArrayList<User>();
     private ArrayList<User> m_membersToAdd = new ArrayList<User>();
     private Hashtable<Long, Integer> m_membership = new Hashtable<Long, Integer>();
+
+    private String m_skills;  // comma-separated string of skills
 
     private Integer True = new Integer(1);
     private Integer False = new Integer(0);
@@ -51,7 +51,7 @@ public class Group implements Serializable {
         m_owner = owner;
         m_capacity = capacity;
         m_description = "";
-        m_type = type.equals("Athlete") ? Type.ATHLETE_GROUP : (type.equals("Hacker") ? Type.HACKER_GROUP : Type.GENERAL_GROUP);
+        m_type = type.equals(HACKER_GROUP) || type.equals(ATHLETE_GROUP) ? type : GENERAL_GROUP;
         m_members.add(owner);
     }
 
@@ -83,6 +83,10 @@ public class Group implements Serializable {
         } catch (ParseException e) {
             e.printStackTrace();
         }
+    }
+
+    public void set_skills(String skills) {
+        m_skills = skills;
     }
 
     // this will fetch the Group object from Parse
@@ -194,10 +198,14 @@ public class Group implements Serializable {
         ParseObject parseOwner = ParseObject.createWithoutData("_User", m_owner.get_id());
         parseGroup.put("owner", parseOwner);
 
+        parseGroup.put("type", m_type);
+
 //        ParseRelation<ParseObject> relation = parseOwner.getRelation("groups");
 //        relation.add(parseGroup);
 
         parseGroup.put("capacity", m_capacity);
+
+        parseGroup.put("skills", m_skills);
 
         // iterate through and add all members that are not already in the array
         addMembersToParseGroup(parseGroup);
@@ -211,7 +219,6 @@ public class Group implements Serializable {
             parseGroup = query.get(m_objectId);
             saveAllFieldsToParse(parseGroup);
             parseGroup.saveInBackground();
-
         } catch (ParseException e) {
             saveAllFieldsToParse(parseGroup);
             parseGroup.saveInBackground();
