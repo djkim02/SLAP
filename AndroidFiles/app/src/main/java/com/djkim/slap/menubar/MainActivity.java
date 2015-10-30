@@ -33,6 +33,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import com.djkim.slap.R;
 import com.djkim.slap.dispatch.DispatchActivity;
+import com.minglim.slap.createGroup.CreateGroupActivity;
 import com.parse.ParseUser;
 
 public class MainActivity extends ActionBarActivity {
@@ -90,7 +91,8 @@ public class MainActivity extends ActionBarActivity {
                         fragmentManager.beginTransaction().replace(R.id.main_layout, fragment).commit();
                         break;
                     case 2:
-                        Toast.makeText(MainActivity.this, osArray[2], Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(MainActivity.this, CreateGroupActivity.class);
+                        startActivity(intent);
                         break;
                     case 5:
                         // TODO: replace this with Utils method

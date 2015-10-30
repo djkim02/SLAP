@@ -12,12 +12,25 @@
     <string-array name="Menu">
         <item >Home</item>
         <item >My Groups</item>
-        <item >Notifications</item>
+        <item >Create a Group</item>
         <item >Help</item>
         <item >Settings</item>
         <item >Log out</item>
     </string-array>
+
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
     <string name="menuProfile">menuProfile</string>
+    <string name="setup">Let\'s setup your profile</string>
+
+    <string name="prev">Previous</string>
+    <string name="finish">Submit</string>
+    <string name="review">Review</string>
+
+    <string name="label_group_name">Name</string>
+    <string name="hint_group_name">Enter Text Here</string>
+
+
+    <string name="submit_confirm_message">Are you happy with your choices?</string>
+    <string name="submit_confirm_button">OK</string>
 </resources>
