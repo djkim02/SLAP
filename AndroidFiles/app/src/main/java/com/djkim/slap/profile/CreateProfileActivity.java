@@ -56,6 +56,10 @@ public class CreateProfileActivity extends FragmentActivity {
         nextButton.setText(text);
     }
 
+    public void saveUser() {
+        user.save();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -27,6 +27,8 @@ public class CreateProfileDoneFragment extends CreateProfileAbstractFragment {
     }
 
     public void onNextButtonClick() {
-        startActivity(new Intent(this.getActivity(), MainActivity.class));
+        CreateProfileActivity createProfileActivity = (CreateProfileActivity) this.getActivity();
+        createProfileActivity.saveUser();
+        startActivity(new Intent(createProfileActivity, MainActivity.class));
     }
 }
