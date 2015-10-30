@@ -7,8 +7,22 @@
     <string name="facebook_app_id">769018689893229</string>
     <string name="back">Back</string>
     <string name="next">Next</string>
+
     <string name="setup">Let\'s setup your profile</string>
 
     <string name="group_list_item_details">Details</string>
     <string name="group_details_group_members">Group Members</string>
+    <string name="create_profile">Tell us about yourself</string>
+
+    <string-array name="Menu">
+        <item >Home</item>
+        <item >My Groups</item>
+        <item >Notifications</item>
+        <item >Help</item>
+        <item >Settings</item>
+        <item >Log out</item>
+    </string-array>
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+    <string name="menuProfile">menuProfile</string>
 </resources>

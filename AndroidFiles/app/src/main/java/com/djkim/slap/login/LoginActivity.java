@@ -18,6 +18,7 @@ import android.view.View;
 import com.djkim.slap.R;
 import com.djkim.slap.models.ParseButton;
 import com.djkim.slap.models.User;
+import com.djkim.slap.models.Utils;
 import com.djkim.slap.models.ZoomOutPageTransformer;
 import com.djkim.slap.profile.CreateProfileActivity;
 import com.facebook.AccessToken;
@@ -47,7 +48,7 @@ public class LoginActivity extends FragmentActivity {
     private ParseButton loginButton;
     private ParseUser parseUser;
     private String name = null;
-    private long facebookId;
+    private Long facebookId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,11 +94,11 @@ public class LoginActivity extends FragmentActivity {
                             Log.d("MyApp", "Uh oh. The user cancelled the Facebook login.");
                         } else if (user.isNew()) {
                             Log.d("MyApp", "User signed up and logged in through Facebook!");
-                            getUserDetailsFromFacebook();
+                            getUserDetailsFromFacebook(user);
                         } else {
                             //TODO: Implement this section for returning users
                             Log.d("MyApp", "User logged in through Facebook!");
-                            getUserDetailsFromFacebook();
+                            getUserDetailsFromFacebook(user);
                         }
                     }
                 });
@@ -106,18 +107,16 @@ public class LoginActivity extends FragmentActivity {
     }
 
     // This method fetches user details (name, profile picture) from Facebook
-    private void getUserDetailsFromFacebook() {
+    private void getUserDetailsFromFacebook(final ParseUser parseUser) {
         GraphRequest request = GraphRequest.newMeRequest(AccessToken.getCurrentAccessToken(),
                 new GraphRequest.GraphJSONObjectCallback() {
                     @Override
                     public void onCompleted(JSONObject jsonObject, GraphResponse graphResponse) {
                         if (jsonObject != null) {
                             try {
-                                facebookId = jsonObject.getLong("id");
+                                facebookId = new Long(jsonObject.getLong("id"));
                                 name = jsonObject.getString("name");
-                                User user = new User();
-                                user.set_name(name);
-                                user.set_user_facebook_id(facebookId);
+                                User user = new User(parseUser.getObjectId(), name, facebookId);
                                 Intent intent = new Intent(LoginActivity.this, CreateProfileActivity.class);
                                 intent.putExtra("user", user);
                                 startActivity(intent);
