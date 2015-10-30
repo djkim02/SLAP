@@ -1,6 +1,7 @@
 package com.djkim.slap.home;
 
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -16,6 +17,8 @@ import android.widget.TextView;
 
 import com.djkim.slap.R;
 import com.djkim.slap.group.GroupDetailsActivity;
+import com.djkim.slap.group.GroupDetailsFragment;
+import com.djkim.slap.menubar.MainActivity;
 import com.djkim.slap.models.Group;
 import com.djkim.slap.models.User;
 import com.djkim.slap.models.Utils;
@@ -78,9 +81,16 @@ public class GroupListFragment extends Fragment {
             mDetailsButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // TODO(victorkwan): Pass the current Group's ID to the GroupDetailsActivity.
-                    Intent intent = new Intent(getActivity(), GroupDetailsActivity.class);
-                    startActivity(intent);
+                    FragmentManager fragmentManager = getFragmentManager();
+                    Fragment fragment = new GroupDetailsFragment();
+
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("group_list_group_argument", mGroup);
+                    fragment.setArguments(bundle);
+                    fragmentManager.beginTransaction()
+                            .replace(R.id.main_layout, fragment)
+                            .addToBackStack(MainActivity.sBackStackTag)
+                            .commit();
                 }
             });
 

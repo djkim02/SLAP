@@ -56,6 +56,20 @@ public class Group implements Serializable {
         m_description = parseGroup.getString("description");
         m_owner = new User();
         m_owner.setFieldsWithParseUser(parseGroup.getParseUser("owner"));
+
+        ParseRelation<ParseUser> membersRelation = parseGroup.getRelation("members");
+        try {
+            List<ParseUser> parseUsers = membersRelation.getQuery().find();
+            m_members = new ArrayList<>();
+            for (ParseUser parseUser : parseUsers) {
+                User user = new User();
+                user.setFieldsWithParseUser(parseUser);
+                m_members.add(user);
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
         m_capacity = parseGroup.getInt("capacity");
     }
 

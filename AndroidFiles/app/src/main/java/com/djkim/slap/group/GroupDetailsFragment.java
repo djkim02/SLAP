@@ -14,6 +14,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.djkim.slap.R;
+import com.djkim.slap.models.Group;
+import com.djkim.slap.models.User;
+import com.djkim.slap.models.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +33,7 @@ public class GroupDetailsFragment extends Fragment {
 
     private RecyclerView mGroupDetailsRecyclerView;
     private UserAdapter mGroupDetailsAdapter;
+    private Group mGroup;
 
     @Override
     public View onCreateView(
@@ -39,7 +43,11 @@ public class GroupDetailsFragment extends Fragment {
         mGroupDetailsRecyclerView = (RecyclerView) rootView.findViewById(R.id.group_recycler_view);
         mGroupDetailsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        List<User> groupUsers = new ArrayList<>();
+
+        Bundle bundle = getArguments();
+        mGroup = (Group) bundle.getSerializable("group_list_group_argument");
+
+        ArrayList<com.djkim.slap.models.User> groupUsers = mGroup.get_members();
         mGroupDetailsAdapter = new UserAdapter(groupUsers);
         mGroupDetailsRecyclerView.setAdapter(mGroupDetailsAdapter);
 
@@ -63,7 +71,7 @@ public class GroupDetailsFragment extends Fragment {
     }
 
     private class UserHolder extends RecyclerView.ViewHolder {
-        private User mUser;
+        private com.djkim.slap.models.User mUser;
         private ImageView mThumbnailImageView;
         private TextView mTitleTextView;
         private TextView mSubheadTextView;
@@ -79,13 +87,20 @@ public class GroupDetailsFragment extends Fragment {
                     (TextView) itemView.findViewById(R.id.group_details_item_subhead_text_view);
         }
 
-        public void bindUser(User user) { mUser = user; }
+        public void bindUser(com.djkim.slap.models.User user) {
+            mUser = user;
+
+            mTitleTextView.setText(user.get_name());
+            mSubheadTextView.setText(mGroup.get_owner().equals(mUser) ? "Admin" : "Member");
+        }
     }
 
     private class UserAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-        private List<User> mGroupUsers;
+        private List<com.djkim.slap.models.User> mGroupUsers;
 
-        public UserAdapter(List<User> groupUsers) { mGroupUsers = groupUsers; }
+        public UserAdapter(ArrayList<com.djkim.slap.models.User> groupUsers) {
+            mGroupUsers = groupUsers;
+        }
 
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -122,7 +137,7 @@ public class GroupDetailsFragment extends Fragment {
                 }
                 break;
                 default: {
-                    User user = mGroupUsers.get(position-1);
+                    com.djkim.slap.models.User user = mGroupUsers.get(position - 1);
                     ((UserHolder) holder).bindUser(user);
                 }
             }

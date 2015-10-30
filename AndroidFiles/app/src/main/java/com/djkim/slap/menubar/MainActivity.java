@@ -38,6 +38,7 @@ import com.djkim.slap.home.GroupListFragment;
 import com.parse.ParseUser;
 
 public class MainActivity extends ActionBarActivity {
+    public static final String sBackStackTag = "main_activity_back_stack";
 
     private ListView mDrawerList;
     private ArrayAdapter<String> mAdapter;
@@ -45,6 +46,11 @@ public class MainActivity extends ActionBarActivity {
     private DrawerLayout mDrawerLayout;
     ImageView imageView1;
     RoundImage roundedImage;
+
+    @Override
+    public void onBackPressed() {
+        getFragmentManager().popBackStack();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +97,7 @@ public class MainActivity extends ActionBarActivity {
                         fragment = new GroupListFragment();
                         fragmentManager.beginTransaction()
                                 .replace(R.id.main_layout, fragment)
+                                .addToBackStack(sBackStackTag)
                                 .commit();
                         break;
                     case 2:
