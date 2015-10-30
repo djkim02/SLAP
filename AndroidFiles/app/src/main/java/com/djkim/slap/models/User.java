@@ -11,6 +11,10 @@ import com.parse.ParseRelation;
 import com.parse.ParseUser;
 import com.parse.ParseException;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -67,6 +71,18 @@ public class User implements Serializable {
 //        ParseQuery query = relation.getQuery();
 //    }
 
+    public void syncAthleteSkills(ParseUser parseUser)	//retrieve data from Parse and update user's athlete skills
+    {
+        JSONArray fetched_array = parseUser.getJSONArray("athlete_skills");
+        convertJSONtoArrayList_Athlete(fetched_array);
+    }
+
+    public void syncHackerSkills(ParseUser parseUser)	//retrieve data from Parse and update user's hacker skills
+    {
+        JSONArray fetched_array = parseUser.getJSONArray("hacker_skills");
+        convertJSONtoArrayList_Hacker(fetched_array);
+    }
+
     // based on current m_object ID,
     // update the Java User's data with
     // the ParseUser's data from the database
@@ -116,6 +132,8 @@ public class User implements Serializable {
         m_objectId = parseOwner.getObjectId();
         m_username = parseOwner.getUsername();
         m_facebookId = parseOwner.getLong("facebookId");
+        syncHackerSkills(parseOwner);
+        syncAthleteSkills(parseOwner);
         // TODO: set Arrays too!
     }
 
@@ -159,6 +177,8 @@ public class User implements Serializable {
     private void saveAllFieldsToParse(ParseUser parseUser) {
         parseUser.put("username", m_username);
         parseUser.put("facebookId", m_facebookId);
+        uploadAthleteSkills(parseUser);
+        uploadHackerSkills(parseUser);
 //        saveGroupsToParse(parseUser);
     }
 
@@ -182,6 +202,76 @@ public class User implements Serializable {
 //            parseUser.saveInBackground();
 //            m_objectId = parseUser.getObjectId(); // do I need to do this?
 //        }
+    }
+
+    //helper functions for uploading to and retrieving from Parse
+    public void uploadAthleteSkills(ParseUser parseUser)	//send data to Parse
+    {
+        JSONArray new_array = this.convertToJSON(this.athlete_skills);
+        parseUser.put("athlete_skills", new_array);
+    }
+
+    public void uploadHackerSkills(ParseUser parseUser)	//send data to Parse
+    {
+        JSONArray new_array = this.convertToJSON(this.hacker_skills);
+        parseUser.put("hacker_skills", new_array);
+    }
+
+    private JSONArray convertToJSON(ArrayList<Skill> list)
+    {
+        JSONArray json_arr_skills = new JSONArray();
+        for(int i = 0; i < list.size(); i++)
+        {
+            JSONObject obj = new JSONObject();
+            try {
+                obj.accumulate("skill_name", list.get(i).getName());
+            } catch (JSONException e) {
+                System.out.println("Could not construct JSON Object for Skill Name.");
+            }
+            try {
+                obj.accumulate("isSelected", list.get(i).isSelected());
+            } catch (JSONException e) {
+                System.out.println("Could not construct JSON Object for isSelected.");
+            }
+            json_arr_skills.put(obj);
+        }
+        return json_arr_skills;
+    }
+
+    private void convertJSONtoArrayList_Hacker(JSONArray arr)	//convert JSONArray from server and update Hacker Skills list
+    {
+        //revert back to ArrayList
+        for(int i = 0; i < arr.length(); i++)
+        {
+            try {
+                JSONObject j = arr.getJSONObject(i);
+                JSONArray hasSkill = j.getJSONArray("isSelected");
+                Boolean hasSkill1 = hasSkill.getBoolean(0);
+
+                hacker_skills.get(i).setSelected(hasSkill1);
+
+            } catch (JSONException e) {
+                System.out.println("Cannot get keys/values from JSONArray.\n");
+            }
+        }
+    }
+
+    private void convertJSONtoArrayList_Athlete(JSONArray arr)	//convert JSONArray from server and update the user's Athlete Skills list
+    {
+        //revert back to ArrayList
+        for(int i = 0; i < arr.length(); i++)
+        {
+            try {
+                JSONObject j = arr.getJSONObject(i);
+                JSONArray hasSkill = j.getJSONArray("isSelected");
+                Boolean hasSkill1 = hasSkill.getBoolean(0);
+
+                athlete_skills.get(i).setSelected(hasSkill1);
+
+            } catch (JSONException e) {
+                System.out.println("Cannot get keys/values from JSONArray.\n");
+            }
+        }
     }
 
     public ArrayList<Skill> get_hacker_skills() {
