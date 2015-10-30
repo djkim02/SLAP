@@ -85,7 +85,7 @@ public class GroupListFragment extends Fragment {
                     Fragment fragment = new GroupDetailsFragment();
 
                     Bundle bundle = new Bundle();
-                    bundle.putSerializable("group_list_group_argument", mGroup);
+                    bundle.putSerializable(GroupDetailsFragment.sGroupArgumentKey, mGroup);
                     fragment.setArguments(bundle);
                     fragmentManager.beginTransaction()
                             .replace(R.id.main_layout, fragment)

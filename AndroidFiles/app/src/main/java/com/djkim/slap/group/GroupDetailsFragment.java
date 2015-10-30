@@ -31,6 +31,8 @@ public class GroupDetailsFragment extends Fragment {
     private static int VIEW_TYPE_ACTION = 1;
     private static int VIEW_TYPE_CONTENT = 2;
 
+    public final static String sGroupArgumentKey = "group_details_group_argument";
+
     private RecyclerView mGroupDetailsRecyclerView;
     private UserAdapter mGroupDetailsAdapter;
     private Group mGroup;
@@ -45,7 +47,7 @@ public class GroupDetailsFragment extends Fragment {
 
 
         Bundle bundle = getArguments();
-        mGroup = (Group) bundle.getSerializable("group_list_group_argument");
+        mGroup = (Group) bundle.getSerializable(sGroupArgumentKey);
 
         ArrayList<com.djkim.slap.models.User> groupUsers = mGroup.get_members();
         mGroupDetailsAdapter = new UserAdapter(groupUsers);
