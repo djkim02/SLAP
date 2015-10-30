@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.minglim.slap.createGroup.ui;
+package com.djkim.slap.selectionModel;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -28,10 +28,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.djkim.slap.R;
-import com.minglim.slap.createGroup.model.AbstractWizardModel;
-import com.minglim.slap.createGroup.model.ModelCallbacks;
-import com.minglim.slap.createGroup.model.Page;
-import com.minglim.slap.createGroup.model.ReviewItem;
+import com.djkim.slap.selectionModel.AbstractWizardModel;
+import com.djkim.slap.selectionModel.ModelCallbacks;
+import com.djkim.slap.selectionModel.Page;
+import com.djkim.slap.selectionModel.ReviewItem;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.minglim.slap.createGroup;
+package com.djkim.slap.createGroup;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -32,12 +32,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.djkim.slap.R;
-import com.minglim.slap.createGroup.model.ModelCallbacks;
-import com.minglim.slap.createGroup.model.Page;
-import com.minglim.slap.createGroup.ui.PageFragmentCallbacks;
-import com.minglim.slap.createGroup.ui.ReviewFragment;
-import com.minglim.slap.createGroup.ui.StepPagerStrip;
-import com.minglim.slap.createGroup.model.AbstractWizardModel;
+import com.djkim.slap.selectionModel.ModelCallbacks;
+import com.djkim.slap.selectionModel.Page;
+import com.djkim.slap.selectionModel.PageFragmentCallbacks;
+import com.djkim.slap.selectionModel.ReviewFragment;
+import com.djkim.slap.selectionModel.StepPagerStrip;
+import com.djkim.slap.selectionModel.AbstractWizardModel;
 
 import java.util.List;
 

@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package com.minglim.slap.createGroup;
+package com.djkim.slap.createGroup;
 
 import android.content.Context;
 
-import com.minglim.slap.createGroup.model.AbstractWizardModel;
-import com.minglim.slap.createGroup.model.BranchPage;
-import com.minglim.slap.createGroup.model.EnterTextPage;
-import com.minglim.slap.createGroup.model.MultipleFixedChoicePage;
-import com.minglim.slap.createGroup.model.PageList;
-import com.minglim.slap.createGroup.model.SingleFixedChoicePage;
+import com.djkim.slap.selectionModel.AbstractWizardModel;
+import com.djkim.slap.selectionModel.BranchPage;
+import com.djkim.slap.selectionModel.EnterTextPage;
+import com.djkim.slap.selectionModel.MultipleFixedChoicePage;
+import com.djkim.slap.selectionModel.PageList;
+import com.djkim.slap.selectionModel.SingleFixedChoicePage;
 
 public class SandwichWizardModel extends AbstractWizardModel {
     public SandwichWizardModel(Context context) {
