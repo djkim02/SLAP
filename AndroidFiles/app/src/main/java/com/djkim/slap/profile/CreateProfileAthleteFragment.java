@@ -48,8 +48,4 @@ public class CreateProfileAthleteFragment extends CreateProfileAbstractFragment 
         createProfileActivity.setTitleText("Congratulations!");
         createProfileActivity.setNextButtonText("Done");
     }
-
-//    public ArrayList<Skill> updateAthleteSkills() {
-//        return athleteSkills;
-//    }
 }
