@@ -74,6 +74,11 @@ public class MainActivity extends ActionBarActivity {
         Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.image);
         roundedImage = new RoundImage(bm);
         //imageView1.setImageDrawable(roundedImage);
+
+        Fragment fragment = new GroupListFragment();
+        getFragmentManager().beginTransaction()
+                .replace(R.id.main_layout, fragment)
+                .commit();
     }
 
     private void addDrawerItems() {
@@ -91,7 +96,10 @@ public class MainActivity extends ActionBarActivity {
                 switch (position) {
                     case 0:
                         fragment = new menuProfile();
-                        fragmentManager.beginTransaction().replace(R.id.main_layout, fragment).commit();
+                        fragmentManager.beginTransaction()
+                                .replace(R.id.main_layout, fragment)
+                                .addToBackStack(sBackStackTag)
+                                .commit();
                         break;
                     case 1:
                         fragment = new GroupListFragment();
