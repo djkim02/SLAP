@@ -14,10 +14,13 @@
  * limitations under the License.
  */
 
-package com.minglim.slap.createGroup.ui;
+package com.djkim.slap.selectionModel;
 
-import com.minglim.slap.createGroup.model.Page;
-
-public interface PageFragmentCallbacks {
-    Page onGetPage(String key);
+/**
+ * Callback interface connecting {@link Page}, {@link AbstractWizardModel}, and model container
+ * objects (e.g. {@link com.example.android.wizardpager.MainActivity}.
+ */
+public interface ModelCallbacks {
+    void onPageDataChanged(Page page);
+    void onPageTreeChanged();
 }

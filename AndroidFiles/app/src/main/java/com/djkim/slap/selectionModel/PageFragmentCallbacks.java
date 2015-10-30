@@ -14,14 +14,10 @@
  * limitations under the License.
  */
 
-package com.minglim.slap.createGroup.model;
+package com.djkim.slap.selectionModel;
 
-import java.util.ArrayList;
+import com.djkim.slap.selectionModel.Page;
 
-/**
- * Represents a node in the page tree. Can either be a single page, or a page container.
- */
-public interface PageTreeNode {
-    public Page findByKey(String key);
-    public void flattenCurrentPageSequence(ArrayList<Page> dest);
+public interface PageFragmentCallbacks {
+    Page onGetPage(String key);
 }

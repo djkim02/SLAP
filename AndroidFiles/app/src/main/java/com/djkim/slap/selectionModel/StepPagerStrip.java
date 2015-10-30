@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.minglim.slap.createGroup.ui;
+package com.djkim.slap.selectionModel;
 
 import android.content.Context;
 import android.content.res.Resources;

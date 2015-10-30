@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.minglim.slap.createGroup.model;
+package com.djkim.slap.selectionModel;
 
 /**
  * Represents a single line item on the final review page.

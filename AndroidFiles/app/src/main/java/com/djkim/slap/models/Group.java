@@ -28,7 +28,8 @@ import bolts.Task;
 public class Group implements Serializable {
     private enum Type {
         HACKER_GROUP,
-        ATHLETE_GROUP
+        ATHLETE_GROUP,
+        GENERAL_GROUP
     }
     private String m_objectId;
     private String m_name;
@@ -45,11 +46,12 @@ public class Group implements Serializable {
 
     public Group() {}
 
-    public Group(String name, User owner, int capacity) {
+    public Group(String name, User owner, int capacity, String type) {
         m_name = name;
         m_owner = owner;
         m_capacity = capacity;
         m_description = "";
+        m_type = type.equals("Athlete") ? Type.ATHLETE_GROUP : (type.equals("Hacker") ? Type.HACKER_GROUP : Type.GENERAL_GROUP);
         m_members.add(owner);
     }
 

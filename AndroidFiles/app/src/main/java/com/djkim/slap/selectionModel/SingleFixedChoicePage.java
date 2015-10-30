@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-package com.minglim.slap.createGroup.model;
+package com.djkim.slap.selectionModel;
 
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
-
-import com.minglim.slap.createGroup.ui.SingleChoiceFragment;
 
 import java.util.ArrayList;
 import java.util.Arrays;

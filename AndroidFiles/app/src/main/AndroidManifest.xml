@@ -39,7 +39,7 @@
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name="com.minglim.slap.createGroup.CreateGroupActivity"
+            android:name=".createGroup.CreateGroupActivity"
             android:label="Create Group">
         </activity>
     </application>

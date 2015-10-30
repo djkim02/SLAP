@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package com.minglim.slap.createGroup;
+package com.djkim.slap.createGroup;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -33,16 +34,20 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.djkim.slap.R;
+import com.djkim.slap.menubar.MainActivity;
 import com.djkim.slap.models.Group;
 import com.djkim.slap.models.User;
 import com.djkim.slap.models.Utils;
-import com.minglim.slap.createGroup.model.ModelCallbacks;
-import com.minglim.slap.createGroup.model.Page;
-import com.minglim.slap.createGroup.ui.PageFragmentCallbacks;
-import com.minglim.slap.createGroup.ui.ReviewFragment;
-import com.minglim.slap.createGroup.ui.StepPagerStrip;
-import com.minglim.slap.createGroup.model.AbstractWizardModel;
 
+import com.djkim.slap.selectionModel.ModelCallbacks;
+import com.djkim.slap.selectionModel.Page;
+import com.djkim.slap.selectionModel.PageFragmentCallbacks;
+import com.djkim.slap.selectionModel.ReviewFragment;
+import com.djkim.slap.selectionModel.ReviewItem;
+import com.djkim.slap.selectionModel.StepPagerStrip;
+import com.djkim.slap.selectionModel.AbstractWizardModel;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class CreateGroupActivity extends ActionBarActivity implements
@@ -73,8 +78,6 @@ public class CreateGroupActivity extends ActionBarActivity implements
         if (savedInstanceState != null) {
             mWizardModel.load(savedInstanceState.getBundle("model"));
         }
-
-
 
         mWizardModel.registerListener(this);
 
@@ -122,7 +125,23 @@ public class CreateGroupActivity extends ActionBarActivity implements
                                     .setPositiveButton(R.string.submit_confirm_button, new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
-                                            Group new_group = new Group("SLAP", Utils.get_current_user(), 1000);
+                                            ArrayList<ReviewItem> reviewItems = new ArrayList<ReviewItem>();
+                                            for (Page page : mWizardModel.getCurrentPageSequence()) {
+                                                page.getReviewItems(reviewItems);
+                                            }
+                                            // reviewItems:
+                                            // 0: Type, 1: Name, 2: Description, 3: Capacity, 4: Skills, 5: Custom Tags
+                                            // TODO: support custom tags
+                                            String type = reviewItems.get(0).getDisplayValue();
+                                            String name = reviewItems.get(1).getDisplayValue();
+                                            String description = reviewItems.get(2).getDisplayValue();
+                                            int capacity = Integer.parseInt(reviewItems.get(3).getDisplayValue());
+                                            String skills = reviewItems.get(4).getDisplayValue();
+                                            User user = Utils.get_current_user();
+                                            Group group = new Group(name, user, capacity, type);
+                                            group.set_description(description);
+                                            group.save();
+                                            startActivity(new Intent(CreateGroupActivity.this, MainActivity.class));
                                         }
                                     })
                                     .setNegativeButton(android.R.string.cancel, null)
