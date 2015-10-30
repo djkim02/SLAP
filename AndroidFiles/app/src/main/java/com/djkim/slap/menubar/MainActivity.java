@@ -20,10 +20,12 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import com.djkim.slap.R;
 import com.djkim.slap.dispatch.DispatchActivity;
+import com.djkim.slap.home.GroupListFragment;
 import com.djkim.slap.createGroup.CreateGroupActivity;
 import com.parse.ParseUser;
 
 public class MainActivity extends ActionBarActivity {
+    public static final String sBackStackTag = "main_activity_back_stack";
 
     private ListView mDrawerList;
     private ArrayAdapter<String> mAdapter;
@@ -31,6 +33,15 @@ public class MainActivity extends ActionBarActivity {
     private DrawerLayout mDrawerLayout;
     ImageView imageView1;
     RoundImage roundedImage;
+
+    @Override
+    public void onBackPressed() {
+        if (getFragmentManager().getBackStackEntryCount() > 0) {
+            getFragmentManager().popBackStack();
+        } else {
+            super.onBackPressed();
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +65,11 @@ public class MainActivity extends ActionBarActivity {
         Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.image);
         roundedImage = new RoundImage(bm);
         //imageView1.setImageDrawable(roundedImage);
+
+        Fragment fragment = new GroupListFragment();
+        getFragmentManager().beginTransaction()
+                .replace(R.id.main_layout, fragment)
+                .commit();
     }
 
     private void addDrawerItems() {
@@ -71,11 +87,17 @@ public class MainActivity extends ActionBarActivity {
                 switch (position) {
                     case 0:
                         fragment = new menuProfile();
-                        fragmentManager.beginTransaction().replace(R.id.main_layout, fragment).commit();
+                        fragmentManager.beginTransaction()
+                                .replace(R.id.main_layout, fragment)
+                                .addToBackStack(sBackStackTag)
+                                .commit();
                         break;
                     case 1:
-                        fragment = new menuGroups();
-                        fragmentManager.beginTransaction().replace(R.id.main_layout, fragment).commit();
+                        fragment = new GroupListFragment();
+                        fragmentManager.beginTransaction()
+                                .replace(R.id.main_layout, fragment)
+                                .addToBackStack(sBackStackTag)
+                                .commit();
                         break;
                     case 2:
                         Intent intent = new Intent(MainActivity.this, CreateGroupActivity.class);

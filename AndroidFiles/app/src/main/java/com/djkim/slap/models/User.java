@@ -153,7 +153,8 @@ public class User implements Serializable {
             List<ParseObject> parseGroups = query.find();
             List<Group> groups = new ArrayList<Group>();
             for (ParseObject parseGroup : parseGroups) {
-                groups.add(new Group(parseGroup));
+                Group group = new Group(parseGroup);
+                groups.add(group);
             }
             return groups;
         } catch (ParseException e) {

@@ -40,9 +40,6 @@ public class Group implements Serializable {
     private ArrayList<User> m_membersToAdd = new ArrayList<User>();
     private Hashtable<Long, Integer> m_membership = new Hashtable<Long, Integer>();
 
-    private Integer True = new Integer(1);
-    private Integer False = new Integer(0);
-
     public Group() {}
 
     public Group(String name, User owner, int capacity) {
@@ -59,6 +56,20 @@ public class Group implements Serializable {
         m_description = parseGroup.getString("description");
         m_owner = new User();
         m_owner.setFieldsWithParseUser(parseGroup.getParseUser("owner"));
+
+        ParseRelation<ParseUser> membersRelation = parseGroup.getRelation("members");
+        try {
+            List<ParseUser> parseUsers = membersRelation.getQuery().find();
+            m_members = new ArrayList<>();
+            for (ParseUser parseUser : parseUsers) {
+                User user = new User();
+                user.setFieldsWithParseUser(parseUser);
+                m_members.add(user);
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
         m_capacity = parseGroup.getInt("capacity");
     }
 
