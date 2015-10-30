@@ -18,6 +18,7 @@ package com.minglim.slap.createGroup;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -32,6 +33,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.djkim.slap.R;
+import com.djkim.slap.models.Group;
+import com.djkim.slap.models.User;
+import com.djkim.slap.models.Utils;
 import com.minglim.slap.createGroup.model.ModelCallbacks;
 import com.minglim.slap.createGroup.model.Page;
 import com.minglim.slap.createGroup.ui.PageFragmentCallbacks;
@@ -115,7 +119,12 @@ public class CreateGroupActivity extends ActionBarActivity implements
                         public Dialog onCreateDialog(Bundle savedInstanceState) {
                             return new AlertDialog.Builder(getActivity())
                                     .setMessage(R.string.submit_confirm_message)
-                                    .setPositiveButton(R.string.submit_confirm_button, null)
+                                    .setPositiveButton(R.string.submit_confirm_button, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            Group new_group = new Group("SLAP", Utils.get_current_user(), 1000);
+                                        }
+                                    })
                                     .setNegativeButton(android.R.string.cancel, null)
                                     .create();
                         }
