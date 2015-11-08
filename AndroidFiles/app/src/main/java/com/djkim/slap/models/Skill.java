@@ -182,4 +182,12 @@ public class Skill {
 
         return athleteSkillsList;
     }
+
+    public static ArrayList<String> returnHackerSkillsList(ArrayList<Skill> hackerSkills) {
+        ArrayList<String> hackerSkillsStringList;
+        for(int i = 0; i < hackerSkills.size(); i++) {
+            hackerSkillsStringList.add(hackerSkills.get(i).getName());
+        }
+        return hackerSkillsStringList;
+    }
 }

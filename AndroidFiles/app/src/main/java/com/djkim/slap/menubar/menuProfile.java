@@ -13,6 +13,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.djkim.slap.R;
@@ -33,20 +35,33 @@ public class menuProfile extends Fragment {
     private CircleImageView m_imageView;
     private Bitmap bitmap;
     private URL urlImage;
+    private ArrayAdapter<String> listAdapter;
+    User user;
 
     public menuProfile() {
-
+        bitmap = null;
+        urlImage = null;
+        user = Utils.get_current_user();
     }
 
     public menuProfile(View rootview) {
         this.rootview = rootview;
+        //listAdapter = new ArrayAdapter<String>(this, R.layout.menu_profile, user.get_hacker_skills());
+        //Note: If you want to add something do listAdapter.add("String");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootview = inflater.inflate(R.layout.menu_profile, container, false);
         m_imageView = (CircleImageView) rootview.findViewById(R.id.imageView1);
-        User user = Utils.get_current_user();
+        TextView name = (TextView) rootview.findViewById(R.id.Name);
+        //TextView age = (TextView) rootview.findViewById(R.id.Age);
+        //TextView location = (TextView) rootview.findViewById(R.id.Location);
+        name.setText(user.get_name());
+        //location.setText(user.get_location());
+        //age.setText(user.get_age());
+
+
         try {
             urlImage = new URL("https://graph.facebook.com/"+ user.get_facebook_id().toString() +"/picture?type=large");
             Log.d("Error:", "Value:" + urlImage.toString());

@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:text="Name"
         android:gravity="center"
-        android:id="@+id/textView"
+        android:id="@+id/Name"
         android:layout_gravity="center_horizontal"
         style="@style/Base.TextAppearance.AppCompat.Title"
         android:paddingTop="20dp"
@@ -43,7 +43,7 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Age:"
-                android:id="@+id/textView2" />
+                android:id="@+id/Age" />
         </TableRow>
 
         <TableRow
@@ -60,7 +60,7 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Location:"
-                android:id="@+id/textView1" />
+                android:id="@+id/Location" />
         </TableRow>
 
         <TableRow
