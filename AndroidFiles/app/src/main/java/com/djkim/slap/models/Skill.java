@@ -184,7 +184,7 @@ public class Skill {
     }
 
     public static ArrayList<String> returnHackerSkillsList(ArrayList<Skill> hackerSkills) {
-        ArrayList<String> hackerSkillsStringList;
+        ArrayList<String> hackerSkillsStringList = null;
         for(int i = 0; i < hackerSkills.size(); i++) {
             hackerSkillsStringList.add(hackerSkills.get(i).getName());
         }
