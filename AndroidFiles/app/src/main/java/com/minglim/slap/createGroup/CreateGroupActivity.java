@@ -28,6 +28,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +36,16 @@ import android.widget.Button;
 
 import com.djkim.slap.R;
 import com.djkim.slap.menubar.MainActivity;
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.HttpMethod;
+import com.facebook.share.model.AppGroupCreationContent;
+import com.facebook.share.widget.CreateAppGroupDialog;
 import com.minglim.slap.createGroup.model.ModelCallbacks;
 import com.minglim.slap.createGroup.model.Page;
 import com.minglim.slap.createGroup.ui.PageFragmentCallbacks;
@@ -42,6 +53,7 @@ import com.minglim.slap.createGroup.ui.ReviewFragment;
 import com.minglim.slap.createGroup.ui.StepPagerStrip;
 import com.minglim.slap.createGroup.model.AbstractWizardModel;
 
+import java.io.IOException;
 import java.util.List;
 
 public class CreateGroupActivity extends ActionBarActivity implements
@@ -64,17 +76,32 @@ public class CreateGroupActivity extends ActionBarActivity implements
     private StepPagerStrip mStepPagerStrip;
 
     public Toolbar toolbar;
+    CreateAppGroupDialog createAppGroupDialog;
+    CallbackManager callbackManager;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create_group_layout);
 
+        FacebookSdk.sdkInitialize(this.getApplicationContext());
+        callbackManager = CallbackManager.Factory.create();
+        createAppGroupDialog = new CreateAppGroupDialog(this);
+        createAppGroupDialog.registerCallback(callbackManager, new FacebookCallback<CreateAppGroupDialog.Result>() {
+            public void onSuccess(CreateAppGroupDialog.Result result) {
+                String id = result.getId();
+
+            }
+
+            public void onCancel() {
+            }
+
+            public void onError(FacebookException error) {
+            }
+        });
+
         if (savedInstanceState != null) {
             mWizardModel.load(savedInstanceState.getBundle("model"));
         }
-
-
-
         mWizardModel.registerListener(this);
 
         mPagerAdapter = new MyPagerAdapter(getSupportFragmentManager());
@@ -90,10 +117,8 @@ public class CreateGroupActivity extends ActionBarActivity implements
                 }
             }
         });
-
         mNextButton = (Button) findViewById(R.id.next_button);
         mPrevButton = (Button) findViewById(R.id.prev_button);
-
         mPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
@@ -122,6 +147,7 @@ public class CreateGroupActivity extends ActionBarActivity implements
                                     switch (which) {
                                         case DialogInterface.BUTTON_POSITIVE:
                                             //Yes button clicked
+                                            onClickCreateButton();
                                             Intent intent = new Intent(CreateGroupActivity.this, MainActivity.class);
                                             startActivity(intent);
                                             break;
@@ -305,5 +331,19 @@ public class CreateGroupActivity extends ActionBarActivity implements
         public int getCutOffPage() {
             return mCutOffPage;
         }
+    }
+
+    private void onClickCreateButton() {
+        AppGroupCreationContent content = new AppGroupCreationContent.Builder()
+                .setName("Name of Group")
+                .setDescription("A description for the group")
+                .setAppGroupPrivacy(AppGroupCreationContent.AppGroupPrivacy.Closed)
+                .build();
+        createAppGroupDialog.show(content);
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 }
