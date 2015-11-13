@@ -73,7 +73,7 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void addDrawerItems() {
-        final String[] osArray = {"Profile", "My Groups", "Notifications", "Help", "Settings", "Log Out"};
+        final String[] osArray = {"Profile", "My Groups", "Create a Group", "Help", "Settings", "Log Out"};
         mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, osArray);
         mDrawerList.setAdapter(mAdapter);
 

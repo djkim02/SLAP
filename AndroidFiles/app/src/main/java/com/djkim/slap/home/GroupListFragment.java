@@ -38,9 +38,9 @@ public class GroupListFragment extends Fragment {
         mGroupRecyclerView = (RecyclerView) view.findViewById(R.id.group_recycler_view);
         mGroupRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        // TODO(victorkwan): Update this to take the current user instead.
-        User joanna = Utils.get_user_by_facebook_id(10205507903037488L);
-        List<Group> groups = joanna.getGroups();
+        // TODO: get list of groups, sorted by creation date
+        User user = Utils.get_current_user();
+        List<Group> groups = user.getGroups();
         mGroupAdapter = new GroupAdapter(groups);
         mGroupRecyclerView.setAdapter(mGroupAdapter);
         return view;
