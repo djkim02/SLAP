@@ -150,6 +150,7 @@ public class User implements Serializable {
             ParseUser parseUser = ParseUser.getQuery().get(m_objectId);
             ParseQuery<ParseObject> query = ParseQuery.getQuery("Group");
             query.whereEqualTo("members", parseUser);
+            query.orderByDescending("createdAt");
             List<ParseObject> parseGroups = query.find();
             List<Group> groups = new ArrayList<Group>();
             for (ParseObject parseGroup : parseGroups) {
