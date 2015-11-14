@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-package com.minglim.slap.createGroup;
+package com.djkim.slap.createGroup;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -37,25 +39,23 @@ import android.widget.Button;
 import com.djkim.slap.R;
 import com.djkim.slap.menubar.MainActivity;
 import com.djkim.slap.models.Group;
+import com.djkim.slap.models.User;
 import com.djkim.slap.models.Utils;
-import com.facebook.AccessToken;
+import com.djkim.slap.selectionModel.ModelCallbacks;
+import com.djkim.slap.selectionModel.Page;
+import com.djkim.slap.selectionModel.PageFragmentCallbacks;
+import com.djkim.slap.selectionModel.ReviewFragment;
+import com.djkim.slap.selectionModel.ReviewItem;
+import com.djkim.slap.selectionModel.StepPagerStrip;
+import com.djkim.slap.selectionModel.AbstractWizardModel;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
-import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
-import com.facebook.HttpMethod;
 import com.facebook.share.model.AppGroupCreationContent;
 import com.facebook.share.widget.CreateAppGroupDialog;
-import com.minglim.slap.createGroup.model.ModelCallbacks;
-import com.minglim.slap.createGroup.model.Page;
-import com.minglim.slap.createGroup.ui.PageFragmentCallbacks;
-import com.minglim.slap.createGroup.ui.ReviewFragment;
-import com.minglim.slap.createGroup.ui.StepPagerStrip;
-import com.minglim.slap.createGroup.model.AbstractWizardModel;
 
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class CreateGroupActivity extends ActionBarActivity implements
@@ -80,7 +80,7 @@ public class CreateGroupActivity extends ActionBarActivity implements
     public Toolbar toolbar;
     CreateAppGroupDialog createAppGroupDialog;
     CallbackManager callbackManager;
-    private Group groupObject;
+    private Group group;
 
 
     public void onCreate(Bundle savedInstanceState) {
@@ -93,7 +93,8 @@ public class CreateGroupActivity extends ActionBarActivity implements
         createAppGroupDialog.registerCallback(callbackManager, new FacebookCallback<CreateAppGroupDialog.Result>() {
             public void onSuccess(CreateAppGroupDialog.Result result) {
                 String id = result.getId();
-
+                group.set_facebookGroupId(id);
+                group.save();
             }
 
             public void onCancel() {
@@ -106,6 +107,7 @@ public class CreateGroupActivity extends ActionBarActivity implements
         if (savedInstanceState != null) {
             mWizardModel.load(savedInstanceState.getBundle("model"));
         }
+
         mWizardModel.registerListener(this);
 
         mPagerAdapter = new MyPagerAdapter(getSupportFragmentManager());
@@ -151,9 +153,24 @@ public class CreateGroupActivity extends ActionBarActivity implements
                                     switch (which) {
                                         case DialogInterface.BUTTON_POSITIVE:
                                             //Yes button clicked
+                                            ArrayList<ReviewItem> reviewItems = new ArrayList<ReviewItem>();
+                                            for (Page page : mWizardModel.getCurrentPageSequence()) {
+                                                page.getReviewItems(reviewItems);
+                                            }
+                                            // reviewItems:
+                                            // 0: Type, 1: Name, 2: Description, 3: Capacity, 4: Skills, 5: Custom Tags
+                                            // TODO: support custom tags
+                                            String type = reviewItems.get(0).getDisplayValue();
+                                            String name = reviewItems.get(1).getDisplayValue();
+                                            String description = reviewItems.get(2).getDisplayValue();
+                                            int capacity = Integer.parseInt(reviewItems.get(3).getDisplayValue());
+                                            String skills = reviewItems.get(4).getDisplayValue();
+                                            User user = Utils.get_current_user();
+                                            group = new Group(name, user, capacity, type);
+                                            group.set_description(description);
+                                            group.set_skills(skills);
                                             onClickCreateButton();
-                                            Intent intent = new Intent(CreateGroupActivity.this, MainActivity.class);
-                                            startActivity(intent);
+                                            //startActivity(new Intent(CreateGroupActivity.this, MainActivity.class));
                                             break;
                                         case DialogInterface.BUTTON_NEGATIVE:
                                             //No button clicked
@@ -182,7 +199,11 @@ public class CreateGroupActivity extends ActionBarActivity implements
         mPrevButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mPager.setCurrentItem(mPager.getCurrentItem() - 1);
+                if (mPager.getCurrentItem() == 0) {
+                    startActivity(new Intent(CreateGroupActivity.this, MainActivity.class));
+                } else {
+                    mPager.setCurrentItem(mPager.getCurrentItem() - 1);
+                }
             }
         });
 
@@ -201,6 +222,12 @@ public class CreateGroupActivity extends ActionBarActivity implements
 
     private void updateBottomBar() {
         int position = mPager.getCurrentItem();
+        if (position == 0) {
+            mPrevButton.setText("Cancel");
+        } else {
+            mPrevButton.setText("Previous");
+        }
+
         if (position == mCurrentPageSequence.size()) {
             mNextButton.setText(R.string.finish);
             mNextButton.setBackgroundResource(R.drawable.finish_background);
@@ -216,7 +243,7 @@ public class CreateGroupActivity extends ActionBarActivity implements
             mNextButton.setEnabled(position != mPagerAdapter.getCutOffPage());
         }
 
-        mPrevButton.setVisibility(position <= 0 ? View.INVISIBLE : View.VISIBLE);
+        mPrevButton.setVisibility(position < 0 ? View.INVISIBLE : View.VISIBLE);
     }
 
     @Override

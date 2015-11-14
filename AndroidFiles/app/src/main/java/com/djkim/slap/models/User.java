@@ -156,15 +156,17 @@ public class User implements Serializable {
             ParseUser parseUser = ParseUser.getQuery().get(m_objectId);
             ParseQuery<ParseObject> query = ParseQuery.getQuery("Group");
             query.whereEqualTo("members", parseUser);
+            query.orderByDescending("createdAt");
             List<ParseObject> parseGroups = query.find();
             List<Group> groups = new ArrayList<Group>();
             for (ParseObject parseGroup : parseGroups) {
-                groups.add(new Group(parseGroup));
+                Group group = new Group(parseGroup);
+                groups.add(group);
             }
             return groups;
         } catch (ParseException e) {
-            Log.e("", "Cannot get list of groups");
-            return null;
+            // No group is found. Return an empty list.
+            return new ArrayList<Group>();
         }
     }
 

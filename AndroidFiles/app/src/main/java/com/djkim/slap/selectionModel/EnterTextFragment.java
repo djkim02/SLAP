@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.minglim.slap.createGroup.ui;
+package com.djkim.slap.selectionModel;
 
 import android.app.Activity;
 import android.content.Context;
@@ -29,7 +29,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
 import com.djkim.slap.R;
-import com.minglim.slap.createGroup.model.EnterTextPage;
 
 public class EnterTextFragment extends Fragment {
     private static final String ARG_KEY = "key";

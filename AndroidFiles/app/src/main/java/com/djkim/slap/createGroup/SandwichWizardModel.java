@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package com.minglim.slap.createGroup;
+package com.djkim.slap.createGroup;
 
 import android.content.Context;
 
-import com.minglim.slap.createGroup.model.AbstractWizardModel;
-import com.minglim.slap.createGroup.model.BranchPage;
-import com.minglim.slap.createGroup.model.EnterTextPage;
-import com.minglim.slap.createGroup.model.MultipleFixedChoicePage;
-import com.minglim.slap.createGroup.model.PageList;
-import com.minglim.slap.createGroup.model.SingleFixedChoicePage;
+import com.djkim.slap.selectionModel.AbstractWizardModel;
+import com.djkim.slap.selectionModel.BranchPage;
+import com.djkim.slap.selectionModel.EnterTextPage;
+import com.djkim.slap.selectionModel.MultipleFixedChoicePage;
+import com.djkim.slap.selectionModel.PageList;
+import com.djkim.slap.selectionModel.SingleFixedChoicePage;
 
 public class SandwichWizardModel extends AbstractWizardModel {
     public SandwichWizardModel(Context context) {
@@ -41,11 +41,12 @@ public class SandwichWizardModel extends AbstractWizardModel {
                                 new EnterTextPage(this, "What is the group name?"),
                                 new EnterTextPage(this, "Please give the group a short description"),
                                 new SingleFixedChoicePage(this, "What is the size of the group?")
-                                        .setChoices("2", "3", "4", "5", "6", "7", "8", "9", "10")
+                                        .setChoices("2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15")
                                         .setRequired(true),
                                 new MultipleFixedChoicePage(this, "What sports are desired?")
-                                        .setChoices("Baseball", "Basketball", "Football", "Golf", "Hockey",
-                                                "Running", "Soccer", "Swimming", "Tennis", "Weightlifting"),
+                                        .setChoices("Running", "Soccer", "Basketball", "Baseball", "Football",
+                                                "Weight Training", "Frisbee", "Biking", "Bowling", "Badminton",
+                                                "Ping Pong", "Cricket", "Golf", "Handball", "Yoga", "Boxing"),
                                 new EnterTextPage(this, "Please specify any tags to be associated with the group")
                         )
 
@@ -54,11 +55,15 @@ public class SandwichWizardModel extends AbstractWizardModel {
                                 new EnterTextPage(this, "What is the group name?"),
                                 new EnterTextPage(this, "Please give the group a short description"),
                                 new SingleFixedChoicePage(this, "What is the size of the group?")
-                                        .setChoices("2", "3", "4", "5", "6", "7", "8", "9", "10")
+                                        .setChoices("2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15")
                                         .setRequired(true),
                                 new MultipleFixedChoicePage(this, "What skills are desired?")
-                                        .setChoices("C", "C++", "C#", "Java", "JavaScript", "MATLAB",
-                                                "PHP", "Python", "Ruby", "SQL"),
+                                        .setChoices("Android Development", "iOS Development", "Web Development",
+                                                "Front-end Development", "Back-end Development", "Java",
+                                                "C++", "C", "C#", "Python", "PHP", "HTML", "CSS", "JavaScript",
+                                                "Node.js", "AngularJS", "Ruby", "Rails", "Coffeescript",
+                                                "MongoDB", "MySQL", "PostgreSQL", ".NET", "Git", "Linux",
+                                                "Photoshop", "Illustrator"),
                                 new EnterTextPage(this, "Please specify any tags to be associated with the group")
                         )
 

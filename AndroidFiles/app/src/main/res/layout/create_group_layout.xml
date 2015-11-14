@@ -26,7 +26,7 @@
         android:background="@drawable/shadow"/>
 
 
-    <com.minglim.slap.createGroup.ui.StepPagerStrip
+    <com.djkim.slap.selectionModel.StepPagerStrip
         android:id="@+id/strip"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
