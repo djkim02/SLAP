@@ -36,6 +36,8 @@ import android.widget.Button;
 
 import com.djkim.slap.R;
 import com.djkim.slap.menubar.MainActivity;
+import com.djkim.slap.models.Group;
+import com.djkim.slap.models.Utils;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -78,6 +80,8 @@ public class CreateGroupActivity extends ActionBarActivity implements
     public Toolbar toolbar;
     CreateAppGroupDialog createAppGroupDialog;
     CallbackManager callbackManager;
+    private Group groupObject;
+
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

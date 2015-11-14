@@ -33,6 +33,7 @@ public class Group implements Serializable {
     private String m_objectId;
     private String m_name;
     private String m_description;
+    private String m_facebookGroupId;
     private Type m_type;
     private User m_owner;
     private int m_capacity;
@@ -134,6 +135,14 @@ public class Group implements Serializable {
     }
     public void set_capacity(int capacity){
         m_capacity = capacity;
+    }
+
+    public String get_facebookGroupId() {
+        return m_facebookGroupId;
+    }
+
+    public void set_facebookGroupId(String facebookGroupId) {
+        m_facebookGroupId = facebookGroupId;
     }
 
     public boolean isOwner(User user){
