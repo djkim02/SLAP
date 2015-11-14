@@ -162,7 +162,11 @@ public class CreateGroupActivity extends ActionBarActivity implements
         mPrevButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mPager.setCurrentItem(mPager.getCurrentItem() - 1);
+                if (mPager.getCurrentItem() == 0) {
+                    startActivity(new Intent(CreateGroupActivity.this, MainActivity.class));
+                } else {
+                    mPager.setCurrentItem(mPager.getCurrentItem() - 1);
+                }
             }
         });
 
@@ -181,6 +185,12 @@ public class CreateGroupActivity extends ActionBarActivity implements
 
     private void updateBottomBar() {
         int position = mPager.getCurrentItem();
+        if (position == 0) {
+            mPrevButton.setText("Cancel");
+        } else {
+            mPrevButton.setText("Previous");
+        }
+
         if (position == mCurrentPageSequence.size()) {
             mNextButton.setText(R.string.finish);
             mNextButton.setBackgroundResource(R.drawable.finish_background);
@@ -196,7 +206,7 @@ public class CreateGroupActivity extends ActionBarActivity implements
             mNextButton.setEnabled(position != mPagerAdapter.getCutOffPage());
         }
 
-        mPrevButton.setVisibility(position <= 0 ? View.INVISIBLE : View.VISIBLE);
+        mPrevButton.setVisibility(position < 0 ? View.INVISIBLE : View.VISIBLE);
     }
 
     @Override

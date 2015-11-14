@@ -158,8 +158,8 @@ public class User implements Serializable {
             }
             return groups;
         } catch (ParseException e) {
-            Log.e("", "Cannot get list of groups");
-            return null;
+            // No group is found. Return an empty list.
+            return new ArrayList<Group>();
         }
     }
 
