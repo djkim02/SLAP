@@ -224,8 +224,8 @@ public class Group implements Serializable {
 //        relation.add(parseGroup);
 
         parseGroup.put("capacity", m_capacity);
-
         parseGroup.put("skills", m_skills);
+        parseGroup.put("facebookGroupId", get_facebookGroupId());
 
         // iterate through and add all members that are not already in the array
         addMembersToParseGroup(parseGroup);

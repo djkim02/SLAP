@@ -95,6 +95,7 @@ public class CreateGroupActivity extends ActionBarActivity implements
                 String id = result.getId();
                 group.set_facebookGroupId(id);
                 group.save();
+                startActivity(new Intent(CreateGroupActivity.this, MainActivity.class));
             }
 
             public void onCancel() {

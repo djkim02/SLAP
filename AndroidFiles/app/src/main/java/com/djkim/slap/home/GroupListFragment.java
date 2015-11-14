@@ -106,7 +106,12 @@ public class GroupListFragment extends Fragment {
             mSupportingTextView.setText(group.get_description());
 
             int remainingSlots = group.get_capacity() - group.get_size();
-            mRemainingSlotsButton.setText(remainingSlots + " slots remaining");
+            if(remainingSlots >= 1)
+                mRemainingSlotsButton.setText(remainingSlots + " slots remaining");
+            else if (remainingSlots == 1)
+                mRemainingSlotsButton.setText(remainingSlots + " slot remaining");
+            else
+                mRemainingSlotsButton.setText("Full");
         }
     }
 
