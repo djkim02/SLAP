@@ -31,9 +31,6 @@ public class MainActivity extends ActionBarActivity {
     private ArrayAdapter<String> mAdapter;
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
-    ImageView imageView1;
-    RoundImage roundedImage;
-
     @Override
     public void onBackPressed() {
         if (getFragmentManager().getBackStackEntryCount() > 0) {
@@ -61,11 +58,6 @@ public class MainActivity extends ActionBarActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeButtonEnabled(true);
 
-        imageView1 = (ImageView) findViewById(R.id.imageView1);
-        Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.image);
-        roundedImage = new RoundImage(bm);
-        //imageView1.setImageDrawable(roundedImage);
-
         Fragment fragment = new GroupListFragment();
         getFragmentManager().beginTransaction()
                 .replace(R.id.main_layout, fragment)
@@ -73,7 +65,7 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void addDrawerItems() {
-        final String[] osArray = {"Profile", "My Groups", "Create a Group", "Help", "Settings", "Log Out"};
+        final String[] osArray = {"My Profile", "My Groups", "Create a Group", "Help", "Settings", "Log Out"};
         mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, osArray);
         mDrawerList.setAdapter(mAdapter);
 
