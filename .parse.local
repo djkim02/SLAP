@@ -1,0 +1,10 @@
+{
+  "applications": {
+    "SLAP": {
+      "applicationId": "6EZmymlOoCjIFnPPnJ13XcpeyyoXNIVoXTq2RwMo"
+    },
+    "_default": {
+      "link": "SLAP"
+    }
+  }
+}
