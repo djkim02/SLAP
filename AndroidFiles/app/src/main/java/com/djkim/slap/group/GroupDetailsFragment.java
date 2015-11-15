@@ -11,12 +11,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.djkim.slap.R;
 import com.djkim.slap.models.Group;
 import com.djkim.slap.models.User;
 import com.djkim.slap.models.Utils;
+import com.facebook.share.widget.JoinAppGroupDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -97,6 +99,38 @@ public class GroupDetailsFragment extends Fragment {
         }
     }
 
+    private class DetailsActivityHolder extends RecyclerView.ViewHolder {
+        // TODO(victorkwan): Let's update this to be nicer.
+        private LinearLayout mLinearLayout;
+        private TextView mTitleTextView;
+        private TextView mSubheadTextView;
+
+        public DetailsActivityHolder(View itemView) {
+            super(itemView);
+
+            mLinearLayout = (LinearLayout) itemView.findViewById(R.id.group_details_action_tile);
+
+            // We only set the onClickListener if there is such a Facebook Group.
+            final String fbGroupId = mGroup.get_facebookGroupId();
+            if (fbGroupId != null) {
+                mLinearLayout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        JoinAppGroupDialog.show(getActivity(), fbGroupId);
+                    }
+                });
+            }
+
+            mTitleTextView =
+                    (TextView) itemView.findViewById(R.id.group_details_action_title_text_view);
+            mTitleTextView.setText(mGroup.get_name());
+            mSubheadTextView =
+                    (TextView) itemView.findViewById(R.id.group_details_action_subhead_text_view);
+            mSubheadTextView.setText(
+                    "You're in! This groups has " + mGroup.get_size() + " member(s).");
+        }
+    }
+
     private class UserAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         private List<com.djkim.slap.models.User> mGroupUsers;
 
@@ -111,8 +145,9 @@ public class GroupDetailsFragment extends Fragment {
                 View view = layoutInflater.inflate(R.layout.group_details_header, parent, false);
                 return new SectionHeaderHolder(view);
             } else if (viewType == VIEW_TYPE_ACTION) {
-                // TODO(victorkwan): Add "Convert to Group" ViewHolder behavior here.
-                return null;
+                LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
+                View view = layoutInflater.inflate(R.layout.group_details_action, parent, false);
+                return new DetailsActivityHolder(view);
             } else {
                 LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
                 View view = layoutInflater.inflate(R.layout.group_details_item, parent, false);
@@ -124,6 +159,8 @@ public class GroupDetailsFragment extends Fragment {
         public int getItemViewType(int position) {
             switch (position) {
                 case 0:
+                    return VIEW_TYPE_ACTION;
+                case 1:
                     return VIEW_TYPE_HEADER;
                 default:
                     return VIEW_TYPE_CONTENT;
@@ -133,19 +170,21 @@ public class GroupDetailsFragment extends Fragment {
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
             switch (position) {
-                case 0: {
+                case 0: {}
+                break;
+                case 1: {
                     ((SectionHeaderHolder) holder).setText(
                             getResources().getString(R.string.group_details_group_members));
                 }
                 break;
                 default: {
-                    com.djkim.slap.models.User user = mGroupUsers.get(position - 1);
+                    com.djkim.slap.models.User user = mGroupUsers.get(position - 2);
                     ((UserHolder) holder).bindUser(user);
                 }
             }
         }
 
         @Override
-        public int getItemCount() { return mGroupUsers.size() + 1; }
+        public int getItemCount() { return mGroupUsers.size() + 2; }
     }
 }

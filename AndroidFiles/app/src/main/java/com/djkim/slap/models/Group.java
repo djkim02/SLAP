@@ -59,6 +59,7 @@ public class Group implements Serializable {
         m_description = parseGroup.getString("description");
         m_owner = new User();
         m_owner.setFieldsWithParseUser(parseGroup.getParseUser("owner"));
+        m_facebookGroupId = parseGroup.getString("facebookGroupId");
 
         ParseRelation<ParseUser> membersRelation = parseGroup.getRelation("members");
         try {
@@ -82,6 +83,7 @@ public class Group implements Serializable {
         ParseUser parseOwner = parseGroup.getParseUser("owner");
         m_owner.setFieldsWithParseUser(parseOwner);
         m_capacity = parseGroup.getInt("capacity");
+        m_facebookGroupId = parseGroup.getString("facebookGroupId");
 
         ParseRelation<ParseUser> membersRelation = parseGroup.getRelation("members");
         try {
@@ -225,7 +227,7 @@ public class Group implements Serializable {
 
         parseGroup.put("capacity", m_capacity);
         parseGroup.put("skills", m_skills);
-        parseGroup.put("facebookGroupId", get_facebookGroupId());
+        parseGroup.put("facebookGroupId", m_facebookGroupId);
 
         // iterate through and add all members that are not already in the array
         addMembersToParseGroup(parseGroup);
