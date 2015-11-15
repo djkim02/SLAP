@@ -2,6 +2,7 @@ package com.djkim.slap.home;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -20,6 +21,7 @@ import com.djkim.slap.group.GroupDetailsActivity;
 import com.djkim.slap.group.GroupDetailsFragment;
 import com.djkim.slap.menubar.MainActivity;
 import com.djkim.slap.models.Group;
+import com.djkim.slap.models.GroupsCallback;
 import com.djkim.slap.models.User;
 import com.djkim.slap.models.Utils;
 
@@ -40,9 +42,13 @@ public class GroupListFragment extends Fragment {
 
         // TODO: get list of groups, sorted by creation date
         User user = Utils.get_current_user();
-        List<Group> groups = user.getGroups();
-        mGroupAdapter = new GroupAdapter(groups);
-        mGroupRecyclerView.setAdapter(mGroupAdapter);
+        user.getGroupsInBackground(new GroupsCallback() {
+            @Override
+            public void done(List<Group> groups) {
+                mGroupAdapter = new GroupAdapter(groups);
+                mGroupRecyclerView.setAdapter(mGroupAdapter);
+            }
+        });
         return view;
     }
 

@@ -170,6 +170,33 @@ public class User implements Serializable {
         }
     }
 
+    public void getGroupsInBackground(final GroupsCallback callback)
+    {
+        ParseUser.getQuery().getInBackground(m_objectId, new GetCallback<ParseUser>() {
+            @Override
+            public void done(ParseUser parseUser, ParseException e) {
+                if (e == null) {
+                    ParseQuery<ParseObject> query = ParseQuery.getQuery("Group");
+                    query.whereEqualTo("members", parseUser);
+                    query.orderByDescending("createdAt");
+                    query.findInBackground(new FindCallback<ParseObject>() {
+                        @Override
+                        public void done(List<ParseObject> parseGroups, ParseException e) {
+                            if (e == null) {
+                                List<Group> groups = new ArrayList<Group>();
+                                for (ParseObject parseGroup : parseGroups) {
+                                    Group group = new Group(parseGroup);
+                                    groups.add(group);
+                                }
+                                callback.done(groups);
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    }
+
     public ParseUser toParseUser()
     {
         ParseUser parseUser = new ParseUser();
