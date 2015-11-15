@@ -242,14 +242,14 @@ public class User implements Serializable {
 
     private void convertJSONtoArrayList_Hacker(JSONArray arr)	//convert JSONArray from server and update Hacker Skills list
     {
+        if (hacker_skills == null) {
+            hacker_skills = Skill.returnHackerSkillsList();
+        }
+        
         //revert back to ArrayList
         for(int i = 0; i < arr.length(); i++)
         {
             try {
-                if (hacker_skills == null) {
-                    hacker_skills = Skill.returnHackerSkillsList();
-                }
-
                 JSONObject j = arr.getJSONObject(i);
                 Boolean hasSkill = j.getBoolean("isSelected");
 
@@ -263,13 +263,14 @@ public class User implements Serializable {
 
     private void convertJSONtoArrayList_Athlete(JSONArray arr)	//convert JSONArray from server and update the user's Athlete Skills list
     {
+        if (athlete_skills == null) {
+            athlete_skills = Skill.returnAthleteSkillsList();
+        }
+
         //revert back to ArrayList
         for(int i = 0; i < arr.length(); i++)
         {
             try {
-                if (athlete_skills == null) {
-                    athlete_skills = Skill.returnAthleteSkillsList();
-                }
                 JSONObject j = arr.getJSONObject(i);
                 Boolean hasSkill = j.getBoolean("isSelected");
 

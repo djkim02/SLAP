@@ -29,6 +29,12 @@ public class MyHackerSkillsFragment extends Fragment {
         ArrayList<Skill> myHackerList = user.get_hacker_skills();
         ArrayList<SkillWithoutCheckbox> returnHackerList = new ArrayList<>();
 
+        for (Skill skill : myHackerList) {
+            if (skill.isSelected()) {
+                returnHackerList.add(new SkillWithoutCheckbox(skill.getImageId(), skill.getName()));
+            }
+        }
+        
         return rootview;
     }
 }
