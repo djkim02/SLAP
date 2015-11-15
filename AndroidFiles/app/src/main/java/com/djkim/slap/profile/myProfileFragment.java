@@ -1,16 +1,13 @@
 package com.djkim.slap.profile;
 
-import android.app.Activity;
 import android.app.Fragment;
+import android.app.FragmentManager;
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -24,10 +21,8 @@ import com.facebook.login.widget.ProfilePictureView;
 
 import java.util.ArrayList;
 
-import de.hdodenhof.circleimageview.CircleImageView;
-
 /**
- * Created by DJ on 11/14/15.
+ * Created by dongjoonkim on 11/14/15.
  */
 public class MyProfileFragment extends Fragment {
 
@@ -47,6 +42,20 @@ public class MyProfileFragment extends Fragment {
         SkillsWithoutCheckboxListAdapter adapter = new SkillsWithoutCheckboxListAdapter(this.getActivity(), R.layout.skills_without_checkbox, optionsList);
         ListView listView = (ListView) rootview.findViewById(R.id.profile_skills);
         listView.setAdapter(adapter);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent;
+                if (position == 0) {
+                    intent = new Intent(getActivity(), MyHackerSkillsActivity.class);
+                    startActivity(intent);
+                } else if (position == 1) {
+                    intent = new Intent(getActivity(), MyAthleteSkillsActivity.class);
+                    startActivity(intent);
+                }
+            }
+        });
         return rootview;
     }
 }

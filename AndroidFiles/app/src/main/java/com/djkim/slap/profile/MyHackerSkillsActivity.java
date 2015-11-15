@@ -1,10 +1,12 @@
 package com.djkim.slap.profile;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
 import com.djkim.slap.R;
 import com.djkim.slap.models.Skill;
@@ -18,13 +20,11 @@ import java.util.ArrayList;
 /**
  * Created by dongjoonkim on 11/15/15.
  */
-public class MyHackerSkillsFragment extends Fragment {
-
-    private View rootview;
-
+public class MyHackerSkillsActivity extends Activity {
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        rootview = inflater.inflate(R.layout.my_skills, container, false);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.my_skills);
         User user = Utils.get_current_user();
         ArrayList<Skill> myHackerList = user.get_hacker_skills();
         ArrayList<SkillWithoutCheckbox> returnHackerList = new ArrayList<>();
@@ -34,7 +34,8 @@ public class MyHackerSkillsFragment extends Fragment {
                 returnHackerList.add(new SkillWithoutCheckbox(skill.getImageId(), skill.getName()));
             }
         }
-        
-        return rootview;
+        SkillsWithoutCheckboxListAdapter adapter = new SkillsWithoutCheckboxListAdapter(this, R.layout.skills_without_checkbox, returnHackerList);
+        ListView listView = (ListView) findViewById(R.id.my_skills_list);
+        listView.setAdapter(adapter);
     }
 }

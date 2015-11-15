@@ -92,6 +92,8 @@ public class User implements Serializable {
         ParseQuery<ParseUser> query = ParseUser.getQuery();
         try {
             ParseUser parseUser = query.get(m_objectId);
+            syncAthleteSkills(parseUser);
+            syncHackerSkills(parseUser);
 //            syncGroups(parseUser);
 
         } catch (ParseException e) {
@@ -245,7 +247,7 @@ public class User implements Serializable {
         if (hacker_skills == null) {
             hacker_skills = Skill.returnHackerSkillsList();
         }
-        
+
         //revert back to ArrayList
         for(int i = 0; i < arr.length(); i++)
         {
