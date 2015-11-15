@@ -3,14 +3,11 @@ package com.djkim.slap.menubar;
 import android.app.Fragment;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.ImageView;
 import android.app.FragmentManager;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
@@ -22,6 +19,7 @@ import com.djkim.slap.R;
 import com.djkim.slap.dispatch.DispatchActivity;
 import com.djkim.slap.home.GroupListFragment;
 import com.djkim.slap.createGroup.CreateGroupActivity;
+import com.djkim.slap.profile.MyProfileFragment;
 import com.parse.ParseUser;
 
 public class MainActivity extends ActionBarActivity {
@@ -78,7 +76,7 @@ public class MainActivity extends ActionBarActivity {
 
                 switch (position) {
                     case 0:
-                        fragment = new menuProfile();
+                        fragment = new MyProfileFragment();
                         fragmentManager.beginTransaction()
                                 .replace(R.id.main_layout, fragment)
                                 .addToBackStack(sBackStackTag)
