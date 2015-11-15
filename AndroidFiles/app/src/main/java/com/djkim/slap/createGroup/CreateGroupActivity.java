@@ -90,7 +90,8 @@ public class CreateGroupActivity extends ActionBarActivity implements
         FacebookSdk.sdkInitialize(this.getApplicationContext());
         callbackManager = CallbackManager.Factory.create();
         createAppGroupDialog = new CreateAppGroupDialog(this);
-        createAppGroupDialog.registerCallback(callbackManager, new FacebookCallback<CreateAppGroupDialog.Result>() {
+        createAppGroupDialog.registerCallback(
+                callbackManager, new FacebookCallback<CreateAppGroupDialog.Result>() {
             public void onSuccess(CreateAppGroupDialog.Result result) {
                 String id = result.getId();
                 group.set_facebookGroupId(id);
@@ -367,8 +368,8 @@ public class CreateGroupActivity extends ActionBarActivity implements
 
     private void onClickCreateButton() {
         AppGroupCreationContent content = new AppGroupCreationContent.Builder()
-                .setName("Name of Group")
-                .setDescription("A description for the group")
+                .setName(group.get_name())
+                .setDescription(group.get_description())
                 .setAppGroupPrivacy(AppGroupCreationContent.AppGroupPrivacy.Closed)
                 .build();
         createAppGroupDialog.show(content);
