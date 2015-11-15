@@ -38,7 +38,6 @@ public class GroupListFragment extends Fragment {
         mGroupRecyclerView = (RecyclerView) view.findViewById(R.id.group_recycler_view);
         mGroupRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        // TODO: get list of groups, sorted by creation date
         User user = Utils.get_current_user();
         List<Group> groups = user.getGroups();
         mGroupAdapter = new GroupAdapter(groups);
