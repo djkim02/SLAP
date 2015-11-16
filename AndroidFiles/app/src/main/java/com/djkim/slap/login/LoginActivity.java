@@ -118,6 +118,10 @@ public class LoginActivity extends FragmentActivity {
                             try {
                                 facebookId = new Long(jsonObject.getLong("id"));
                                 name = jsonObject.getString("name");
+                                //final JSONObject mPicture = jsonObject.getJSONObject("picture");
+                                //final JSONObject mPictureData = jsonObject.getJSONObject("data");
+                                //final String mImageUrl = mPictureData.getString("url");
+
                                 User user = new User(parseUser.getObjectId(), name, facebookId);
                                 Intent intent = new Intent(LoginActivity.this, CreateProfileActivity.class);
                                 intent.putExtra("user", user);
@@ -130,7 +134,7 @@ public class LoginActivity extends FragmentActivity {
                     }
                 });
         Bundle parameters = new Bundle();
-        parameters.putString("fields", "id,name");
+        parameters.putString("fields", "id,name,picture");
         request.setParameters(parameters);
         request.executeAsync();
     }

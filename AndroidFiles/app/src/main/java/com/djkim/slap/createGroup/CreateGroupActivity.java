@@ -18,6 +18,8 @@ package com.djkim.slap.createGroup;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -28,6 +30,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,6 +49,12 @@ import com.djkim.slap.selectionModel.ReviewFragment;
 import com.djkim.slap.selectionModel.ReviewItem;
 import com.djkim.slap.selectionModel.StepPagerStrip;
 import com.djkim.slap.selectionModel.AbstractWizardModel;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
+import com.facebook.share.model.AppGroupCreationContent;
+import com.facebook.share.widget.CreateAppGroupDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,10 +79,33 @@ public class CreateGroupActivity extends ActionBarActivity implements
     private StepPagerStrip mStepPagerStrip;
 
     public Toolbar toolbar;
+    CreateAppGroupDialog createAppGroupDialog;
+    CallbackManager callbackManager;
+    private Group group;
+
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create_group_layout);
+
+        FacebookSdk.sdkInitialize(this.getApplicationContext());
+        callbackManager = CallbackManager.Factory.create();
+        createAppGroupDialog = new CreateAppGroupDialog(this);
+        createAppGroupDialog.registerCallback(
+                callbackManager, new FacebookCallback<CreateAppGroupDialog.Result>() {
+            public void onSuccess(CreateAppGroupDialog.Result result) {
+                String id = result.getId();
+                group.set_facebookGroupId(id);
+                group.save();
+                startActivity(new Intent(CreateGroupActivity.this, MainActivity.class));
+            }
+
+            public void onCancel() {
+            }
+
+            public void onError(FacebookException error) {
+            }
+        });
 
         if (savedInstanceState != null) {
             mWizardModel.load(savedInstanceState.getBundle("model"));
@@ -94,10 +126,8 @@ public class CreateGroupActivity extends ActionBarActivity implements
                 }
             }
         });
-
         mNextButton = (Button) findViewById(R.id.next_button);
         mPrevButton = (Button) findViewById(R.id.prev_button);
-
         mPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
@@ -332,5 +362,20 @@ public class CreateGroupActivity extends ActionBarActivity implements
         public int getCutOffPage() {
             return mCutOffPage;
         }
+    }
+
+    private void onClickCreateButton() {
+        AppGroupCreationContent content = new AppGroupCreationContent.Builder()
+                .setName(group.get_name() == null ? "Enter a group name" : group.get_name())
+                .setDescription(group.get_description() == null
+                        ? "Enter a description" : group.get_description())
+                .setAppGroupPrivacy(AppGroupCreationContent.AppGroupPrivacy.Closed)
+                .build();
+        createAppGroupDialog.show(content);
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 }

@@ -11,6 +11,7 @@ import com.parse.ParseRelation;
 import com.parse.ParseUser;
 
 import java.io.Serializable;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -32,6 +33,7 @@ public class Group implements Serializable {
     private String m_objectId;
     private String m_name;
     private String m_description;
+    private String m_facebookGroupId;
     private String m_type;
     private User m_owner;
     private int m_capacity;
@@ -57,6 +59,9 @@ public class Group implements Serializable {
         m_description = parseGroup.getString("description");
         m_owner = new User();
         m_owner.setFieldsWithParseUser(parseGroup.getParseUser("owner"));
+        m_facebookGroupId = parseGroup.getString("facebookGroupId");
+        m_type = parseGroup.getString("type");
+        m_skills = parseGroup.getString("skills");
 
         ParseRelation<ParseUser> membersRelation = parseGroup.getRelation("members");
         try {
@@ -80,6 +85,7 @@ public class Group implements Serializable {
         ParseUser parseOwner = parseGroup.getParseUser("owner");
         m_owner.setFieldsWithParseUser(parseOwner);
         m_capacity = parseGroup.getInt("capacity");
+        m_facebookGroupId = parseGroup.getString("facebookGroupId");
 
         ParseRelation<ParseUser> membersRelation = parseGroup.getRelation("members");
         try {
@@ -152,6 +158,14 @@ public class Group implements Serializable {
         m_capacity = capacity;
     }
 
+    public String get_facebookGroupId() {
+        return m_facebookGroupId;
+    }
+
+    public void set_facebookGroupId(String facebookGroupId) {
+        m_facebookGroupId = facebookGroupId;
+    }
+
     public boolean isOwner(User user){
         return m_owner.equals(user);
     }
@@ -214,8 +228,8 @@ public class Group implements Serializable {
 //        relation.add(parseGroup);
 
         parseGroup.put("capacity", m_capacity);
-
         parseGroup.put("skills", m_skills);
+        parseGroup.put("facebookGroupId", m_facebookGroupId);
 
         // iterate through and add all members that are not already in the array
         addMembersToParseGroup(parseGroup);

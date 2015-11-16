@@ -31,6 +31,7 @@ public class User implements Serializable {
     private String m_objectId;
     private String m_username;
     private Long m_facebookId;
+    private String m_url;
 //    private ArrayList<Group> m_groups; // all groups the user is a part of
 //    private ArrayList<Group> m_groupsWhereUserIsOwner; // all groups the user is an owner of
 
@@ -41,6 +42,7 @@ public class User implements Serializable {
         m_objectId = objectId;
         m_username = username;
         m_facebookId = facebookId;
+        //m_url = url;
 //        m_groups = new ArrayList<Group>();
 //        m_groupsWhereUserIsOwner = new ArrayList<Group>();
     }
@@ -126,6 +128,10 @@ public class User implements Serializable {
         m_facebookId = facebook_id;
     }
 
+//    public String get_image_url() {
+//        return m_url;
+//    }
+
     public boolean equals(User anotherUser){
         return (anotherUser.get_facebook_id().equals(this.m_facebookId));
     }
@@ -166,6 +172,33 @@ public class User implements Serializable {
         }
     }
 
+    public void getGroupsInBackground(final GroupsCallback callback)
+    {
+        ParseUser.getQuery().getInBackground(m_objectId, new GetCallback<ParseUser>() {
+            @Override
+            public void done(ParseUser parseUser, ParseException e) {
+                if (e == null) {
+                    ParseQuery<ParseObject> query = ParseQuery.getQuery("Group");
+                    query.whereEqualTo("members", parseUser);
+                    query.orderByDescending("createdAt");
+                    query.findInBackground(new FindCallback<ParseObject>() {
+                        @Override
+                        public void done(List<ParseObject> parseGroups, ParseException e) {
+                            if (e == null) {
+                                List<Group> groups = new ArrayList<Group>();
+                                for (ParseObject parseGroup : parseGroups) {
+                                    Group group = new Group(parseGroup);
+                                    groups.add(group);
+                                }
+                                callback.done(groups);
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    }
+
     public ParseUser toParseUser()
     {
         ParseUser parseUser = new ParseUser();
@@ -181,6 +214,7 @@ public class User implements Serializable {
     private void saveAllFieldsToParse(ParseUser parseUser) {
         parseUser.put("username", m_username);
         parseUser.put("facebookId", m_facebookId);
+        //parseUser.put("imageUrl", m_url);
         uploadAthleteSkills(parseUser);
         uploadHackerSkills(parseUser);
 //        saveGroupsToParse(parseUser);

@@ -6,13 +6,14 @@ import android.widget.ImageView;
 import com.djkim.slap.R;
 import com.djkim.slap.profile.CreateProfileActivity;
 
+import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
  * Created by dongjoonkim on 10/26/15.
  */
-public class Skill {
+public class Skill implements Serializable {
     private int icon;
     private String skillName;
     private boolean selected;
@@ -181,5 +182,13 @@ public class Skill {
         athleteSkillsList.add(athleteSkill);
 
         return athleteSkillsList;
+    }
+
+    public static ArrayList<String> returnHackerSkillsList(ArrayList<Skill> hackerSkills) {
+        ArrayList<String> hackerSkillsStringList = null;
+        for(int i = 0; i < hackerSkills.size(); i++) {
+            hackerSkillsStringList.add(hackerSkills.get(i).getName());
+        }
+        return hackerSkillsStringList;
     }
 }

@@ -2,6 +2,7 @@ package com.djkim.slap.home;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -20,6 +21,7 @@ import com.djkim.slap.group.GroupDetailsActivity;
 import com.djkim.slap.group.GroupDetailsFragment;
 import com.djkim.slap.menubar.MainActivity;
 import com.djkim.slap.models.Group;
+import com.djkim.slap.models.GroupsCallback;
 import com.djkim.slap.models.User;
 import com.djkim.slap.models.Utils;
 
@@ -38,11 +40,19 @@ public class GroupListFragment extends Fragment {
         mGroupRecyclerView = (RecyclerView) view.findViewById(R.id.group_recycler_view);
         mGroupRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        mGroupAdapter = new GroupAdapter(getGroupList());
-        mGroupRecyclerView.setAdapter(mGroupAdapter);
+        User user = Utils.get_current_user();
+        user.getGroupsInBackground(new GroupsCallback() {
+            @Override
+            public void done(List<Group> groups) {
+                mGroupAdapter = new GroupAdapter(groups);
+                mGroupRecyclerView.setAdapter(mGroupAdapter);
+            }
+        });
         return view;
     }
 
+    // TODO(victorkwan): Refactor onCreateView to allow the fetch function to be overridden, and
+    // rewrite MatchGroupListFragment's getGroupList to be asynchronous.
     protected List<Group> getGroupList() {
         User user = Utils.get_current_user();
         List<Group> groups = user.getGroups();
@@ -100,6 +110,26 @@ public class GroupListFragment extends Fragment {
             mRemainingSlotsButton =
                     (Button) itemView.findViewById(R.id.group_list_item_remaining_slots_button);
             mRemainingSlotsButton.setText("5 slots remaining");
+            mRemainingSlotsButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (!mGroup.isMember(Utils.get_current_user())) {
+                        mGroup.addMember(Utils.get_current_user());
+                        mGroup.save();
+
+                        FragmentManager fragmentManager = getFragmentManager();
+                        Fragment fragment = new GroupDetailsFragment();
+
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable(GroupDetailsFragment.sGroupArgumentKey, mGroup);
+                        fragment.setArguments(bundle);
+                        fragmentManager.beginTransaction()
+                                .replace(R.id.main_layout, fragment)
+                                .addToBackStack(MainActivity.sBackStackTag)
+                                .commit();
+                    }
+                }
+            });
         }
 
         public void bindGroup(Group group) {
@@ -109,7 +139,12 @@ public class GroupListFragment extends Fragment {
             mSupportingTextView.setText(group.get_description());
 
             int remainingSlots = group.get_capacity() - group.get_size();
-            mRemainingSlotsButton.setText(remainingSlots + " slots remaining");
+            if(remainingSlots > 1)
+                mRemainingSlotsButton.setText(remainingSlots + " slots remaining");
+            else if (remainingSlots == 1)
+                mRemainingSlotsButton.setText(remainingSlots + " slot remaining");
+            else
+                mRemainingSlotsButton.setText("Full");
         }
     }
 

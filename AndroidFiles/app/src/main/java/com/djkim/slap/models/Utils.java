@@ -37,9 +37,10 @@ public class Utils{
         ParseUser parseUser = null;
         try {
             parseUser = query.getFirst();
-            User user = new User(   parseUser.getObjectId(),
+            User user = new User(parseUser.getObjectId(),
                     parseUser.getUsername(),
                     parseUser.getLong("facebookId"));
+                    //parseUser.getString("imageUrl"));
             return user;
         } catch (ParseException e) {
             return null; // couldn't find a user?? is this okay?
