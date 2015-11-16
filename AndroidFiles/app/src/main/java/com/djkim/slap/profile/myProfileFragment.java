@@ -53,6 +53,9 @@ public class MyProfileFragment extends Fragment {
                 } else if (position == 1) {
                     intent = new Intent(getActivity(), MyAthleteSkillsActivity.class);
                     startActivity(intent);
+                } else if (position == 2) {
+                    intent = new Intent(getActivity(), EditMyProfileActivity.class);
+                    startActivity(intent);
                 }
             }
         });

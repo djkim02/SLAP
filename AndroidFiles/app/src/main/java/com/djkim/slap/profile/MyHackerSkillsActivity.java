@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.djkim.slap.R;
 import com.djkim.slap.models.Skill;
@@ -26,6 +27,9 @@ public class MyHackerSkillsActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.my_skills);
         User user = Utils.get_current_user();
+        TextView textView = (TextView) findViewById(R.id.my_skills_text);
+        textView.setText("My Hacker Skills");
+
         ArrayList<Skill> myHackerList = user.get_hacker_skills();
         ArrayList<SkillWithoutCheckbox> returnHackerList = new ArrayList<>();
 
@@ -37,5 +41,9 @@ public class MyHackerSkillsActivity extends Activity {
         SkillsWithoutCheckboxListAdapter adapter = new SkillsWithoutCheckboxListAdapter(this, R.layout.skills_without_checkbox, returnHackerList);
         ListView listView = (ListView) findViewById(R.id.my_skills_list);
         listView.setAdapter(adapter);
+    }
+
+    public void onBackClicked(View view) {
+        this.finish();
     }
 }

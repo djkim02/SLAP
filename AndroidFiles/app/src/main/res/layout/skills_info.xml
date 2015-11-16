@@ -24,6 +24,7 @@
         android:layout_marginLeft="15dp"
         android:textSize="20sp"
         android:gravity="center"
+        android:fontFamily="sans-serif-light"
         />
 
     <CheckBox
