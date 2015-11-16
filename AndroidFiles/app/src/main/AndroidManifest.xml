@@ -37,11 +37,6 @@
         <activity
             android:name=".profile.CreateProfileActivity"
             android:label="@string/app_name">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name="com.facebook.FacebookActivity"
@@ -56,6 +51,26 @@
         <activity
             android:name=".createGroup.CreateGroupActivity"
             android:label="Create Group">
+        </activity>
+        <activity
+            android:name=".profile.MyHackerSkillsActivity"
+            android:label="My Hacker Skills">
+        </activity>
+        <activity
+            android:name=".profile.MyAthleteSkillsActivity"
+            android:label="My Athlete Skills">
+        </activity>
+        <activity
+            android:name=".profile.EditMyProfileActivity"
+            android:label="Edit My Profile">
+        </activity>
+        <activity
+            android:name=".match.MatchGroupActivity"
+            android:label="@string/app_name">
+        </activity>
+        <activity
+            android:name=".match.MatchGroupListActivity"
+            android:label="@string/app_name">
         </activity>
     </application>
 </manifest>

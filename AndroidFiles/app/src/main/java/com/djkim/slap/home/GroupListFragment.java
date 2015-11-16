@@ -40,7 +40,6 @@ public class GroupListFragment extends Fragment {
         mGroupRecyclerView = (RecyclerView) view.findViewById(R.id.group_recycler_view);
         mGroupRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        // TODO: get list of groups, sorted by creation date
         User user = Utils.get_current_user();
         user.getGroupsInBackground(new GroupsCallback() {
             @Override
@@ -50,6 +49,14 @@ public class GroupListFragment extends Fragment {
             }
         });
         return view;
+    }
+
+    // TODO(victorkwan): Refactor onCreateView to allow the fetch function to be overridden, and
+    // rewrite MatchGroupListFragment's getGroupList to be asynchronous.
+    protected List<Group> getGroupList() {
+        User user = Utils.get_current_user();
+        List<Group> groups = user.getGroups();
+        return groups;
     }
 
     private class GroupHolder extends RecyclerView.ViewHolder {

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+    <include layout="@layout/profile_toolbar"/>
+    <ImageView
+        android:id="@+id/my_skills_back_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="12dp"
+        android:background="@drawable/back"
+        android:onClick="onBackClicked"
+        />
+    <TextView
+        android:id="@+id/my_skills_text"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textSize="24sp"
+        android:layout_marginTop="72dp"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center_horizontal"
+        android:fontFamily="sans-serif-light"
+        android:textStyle="bold"
+        />
+    <ListView
+        android:id="@+id/my_skills_list"
+        android:layout_height="fill_parent"
+        android:layout_width="fill_parent"
+        android:layout_below="@+id/my_skills_text"
+        android:layout_marginTop="16dp"
+        />
+</RelativeLayout>

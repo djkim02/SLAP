@@ -6,13 +6,14 @@ import android.widget.ImageView;
 import com.djkim.slap.R;
 import com.djkim.slap.profile.CreateProfileActivity;
 
+import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
  * Created by dongjoonkim on 10/26/15.
  */
-public class Skill {
+public class Skill implements Serializable {
     private int icon;
     private String skillName;
     private boolean selected;

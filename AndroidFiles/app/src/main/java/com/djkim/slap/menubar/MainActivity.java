@@ -3,14 +3,11 @@ package com.djkim.slap.menubar;
 import android.app.Fragment;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.ImageView;
 import android.app.FragmentManager;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
@@ -22,6 +19,9 @@ import com.djkim.slap.R;
 import com.djkim.slap.dispatch.DispatchActivity;
 import com.djkim.slap.home.GroupListFragment;
 import com.djkim.slap.createGroup.CreateGroupActivity;
+import com.djkim.slap.profile.MyProfileFragment;
+import com.djkim.slap.match.MatchGroupActivity;
+import com.djkim.slap.match.MatchGroupListFragment;
 import com.parse.ParseUser;
 
 public class MainActivity extends ActionBarActivity {
@@ -31,9 +31,6 @@ public class MainActivity extends ActionBarActivity {
     private ArrayAdapter<String> mAdapter;
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
-    ImageView imageView1;
-    RoundImage roundedImage;
-
     @Override
     public void onBackPressed() {
         if (getFragmentManager().getBackStackEntryCount() > 0) {
@@ -61,11 +58,6 @@ public class MainActivity extends ActionBarActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeButtonEnabled(true);
 
-        imageView1 = (ImageView) findViewById(R.id.imageView1);
-        Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.image);
-        roundedImage = new RoundImage(bm);
-        //imageView1.setImageDrawable(roundedImage);
-
         Fragment fragment = new GroupListFragment();
         getFragmentManager().beginTransaction()
                 .replace(R.id.main_layout, fragment)
@@ -73,8 +65,7 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void addDrawerItems() {
-        final String[] osArray = {"Profile", "My Groups", "Create a Group", "Help", "Settings", "Log Out"};
-
+        final String[] osArray = {"My Profile", "My Groups", "Create a Group", "Find Matches", "Settings", "Log Out"};
         mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, osArray);
         mDrawerList.setAdapter(mAdapter);
 
@@ -86,25 +77,34 @@ public class MainActivity extends ActionBarActivity {
                 Fragment fragment = null;
 
                 switch (position) {
-                    case 0:
-                        fragment = new menuProfile();
+                    case 0:     // Profile
+                        fragment = new MyProfileFragment();
                         fragmentManager.beginTransaction()
                                 .replace(R.id.main_layout, fragment)
                                 .addToBackStack(sBackStackTag)
                                 .commit();
                         break;
-                    case 1:
+                    case 1:     // My Groups
                         fragment = new GroupListFragment();
                         fragmentManager.beginTransaction()
                                 .replace(R.id.main_layout, fragment)
                                 .addToBackStack(sBackStackTag)
                                 .commit();
                         break;
-                    case 2:
-                        Intent intent = new Intent(MainActivity.this, CreateGroupActivity.class);
-                        startActivity(intent);
+                    case 2:     // Create a Group
+                        Intent createGroupIntent = new Intent(MainActivity.this, CreateGroupActivity.class);
+                        startActivity(createGroupIntent);
                         break;
-                    case 5:
+                    case 3:     // Find Matches
+                        Intent matchGroupIntent = new Intent(MainActivity.this, MatchGroupActivity.class);
+                        startActivity(matchGroupIntent);
+//                        fragment = new MatchGroupListFragment();
+//                        fragmentManager.beginTransaction()
+//                                .replace(R.id.main_layout, fragment)
+//                                .addToBackStack(sBackStackTag)
+//                                .commit();
+                        break;
+                    case 5:     // Logout
                         // TODO: replace this with Utils method
                         ParseUser.getCurrentUser().logOut();    // preferably use logOutInBackground...
                         startActivity(new Intent(MainActivity.this, DispatchActivity.class));
