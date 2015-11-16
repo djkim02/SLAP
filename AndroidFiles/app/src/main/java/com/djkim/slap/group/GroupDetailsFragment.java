@@ -6,6 +6,7 @@ import android.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,10 @@ import com.djkim.slap.R;
 import com.djkim.slap.models.Group;
 import com.djkim.slap.models.User;
 import com.djkim.slap.models.Utils;
+import com.facebook.AccessToken;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.HttpMethod;
 import com.facebook.share.widget.JoinAppGroupDialog;
 
 import java.util.ArrayList;
@@ -111,16 +116,31 @@ public class GroupDetailsFragment extends Fragment {
             mLinearLayout = (LinearLayout) itemView.findViewById(R.id.group_details_action_tile);
 
             // We only set the onClickListener if there is such a Facebook Group.
+//            // We only show the onClickListener if that person is in the SLAP group, but not in the facebook group
+//            //TODO: Need to remove the slap card if the person left the group on Facebook
+//            new GraphRequest(
+//                    AccessToken.getCurrentAccessToken(),
+//                    "/6EZmymlOoCjIFnPPnJ13XcpeyyoXNIVoXTq2RwMo/groups",
+//                    null,
+//                    HttpMethod.GET,
+//                    new GraphRequest.Callback() {
+//                        public void onCompleted(GraphResponse response) {
+//                            Log.w("ALERT", response);
+//                            response.getJSONObject().get("")
+//                        }
+//                    }
+//            ).executeAsync();
             final String fbGroupId = mGroup.get_facebookGroupId();
             if (fbGroupId != null) {
                 mLinearLayout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         JoinAppGroupDialog.show(getActivity(), fbGroupId);
+                        mGroup.addMember(Utils.get_current_user());
+                        mGroup.save();
                     }
                 });
             }
-
             mTitleTextView =
                     (TextView) itemView.findViewById(R.id.group_details_action_title_text_view);
             mTitleTextView.setText(mGroup.get_name());
