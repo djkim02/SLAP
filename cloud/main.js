@@ -75,10 +75,20 @@ Parse.Cloud.beforeSave("Group", function(request, response) {
  
     var toLowerCase = function(w) { return w.toLowerCase(); };
  
-    var keywords = group.get("name").split(/b/);
+	var keywords = group.get("name").split(' ');
     keywords = _.map(keywords, toLowerCase);
-    var stopWords = ["the", "in", "and"]
-    words = _.filter(keywords, function(w) { return w.match(/^w+$/) && ! _.contains(stopWords, w); });
+    var stopWords = ["the", "in", "and", "to", "but", "for", "or", "yet", "so"];
+	
+	Array.prototype.contains = function ( needle ) {
+	for (i in this) {
+       if (this[i] == needle) return true;
+	}
+	return false;
+	}
+	
+	keywords = keywords.filter(function (w) {
+    return w.match(/[a-zA-Z0-9]+/) && !stopWords.contains(w);
+	});
  
     var hashtags = group.get("name").match(/#.+?b/g);
     hashtags = _.map(hashtags, toLowerCase);
