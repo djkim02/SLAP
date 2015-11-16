@@ -84,7 +84,8 @@ public class CreateProfileActivity extends FragmentActivity {
 
         prevButton = (Button) findViewById(R.id.prev_button);
         nextButton = (Button) findViewById(R.id.next_button);
-        createProfileTitle = (TextView) findViewById(R.id.create_profile_title);
+        createProfileTitle = (TextView) findViewById(R.id.edit_profile_text);
+        setTitleText("Tell us about yourself");
 
         prevButton.setOnClickListener(new View.OnClickListener() {
             @Override

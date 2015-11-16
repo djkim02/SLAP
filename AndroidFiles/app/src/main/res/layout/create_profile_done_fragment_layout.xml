@@ -10,9 +10,10 @@
         android:layout_marginRight="24dp"
         android:layout_centerHorizontal="true"
         android:gravity="center_horizontal"
-        android:textSize="50sp"
+        android:textSize="40sp"
         android:textStyle="bold"
-        android:text="Almost there!"
+        android:text="Congratulations!"
+        android:fontFamily="sans-serif-light"
         />
 
     <TextView
@@ -27,5 +28,6 @@
         android:gravity="center_horizontal"
         android:textSize="24sp"
         android:text="Please press Done to finish creating your profile."
+        android:fontFamily="sans-serif-light"
         />
 </RelativeLayout>
