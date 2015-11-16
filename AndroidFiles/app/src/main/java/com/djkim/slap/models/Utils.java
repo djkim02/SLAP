@@ -45,10 +45,10 @@ public class Utils{
         }
     }
 
-    public static List<Group> getGroupsFromCloud() {
+    public static List<Group> getGroupsFromCloud(String type) {
         try {
             Map<String, String> map = new HashMap<String, String>();
-            map.put("type", "Hacker");
+            map.put("type", type);
             List<ParseObject> parseGroups = ParseCloud.callFunction("match", map);
             List<Group> groups = new ArrayList<Group>();
             for (ParseObject parseGroup : parseGroups) {

@@ -22,6 +22,8 @@ import com.djkim.slap.R;
 import com.djkim.slap.dispatch.DispatchActivity;
 import com.djkim.slap.home.GroupListFragment;
 import com.djkim.slap.createGroup.CreateGroupActivity;
+import com.djkim.slap.match.MatchGroupActivity;
+import com.djkim.slap.match.MatchGroupListFragment;
 import com.parse.ParseUser;
 
 public class MainActivity extends ActionBarActivity {
@@ -85,25 +87,34 @@ public class MainActivity extends ActionBarActivity {
                 Fragment fragment = null;
 
                 switch (position) {
-                    case 0:
+                    case 0:     // Profile
                         fragment = new menuProfile();
                         fragmentManager.beginTransaction()
                                 .replace(R.id.main_layout, fragment)
                                 .addToBackStack(sBackStackTag)
                                 .commit();
                         break;
-                    case 1:
+                    case 1:     // My Groups
                         fragment = new GroupListFragment();
                         fragmentManager.beginTransaction()
                                 .replace(R.id.main_layout, fragment)
                                 .addToBackStack(sBackStackTag)
                                 .commit();
                         break;
-                    case 2:
-                        Intent intent = new Intent(MainActivity.this, CreateGroupActivity.class);
-                        startActivity(intent);
+                    case 2:     // Create a Group
+                        Intent createGroupIntent = new Intent(MainActivity.this, CreateGroupActivity.class);
+                        startActivity(createGroupIntent);
                         break;
-                    case 5:
+                    case 3:     // Find Matches
+                        Intent matchGroupIntent = new Intent(MainActivity.this, MatchGroupActivity.class);
+                        startActivity(matchGroupIntent);
+//                        fragment = new MatchGroupListFragment();
+//                        fragmentManager.beginTransaction()
+//                                .replace(R.id.main_layout, fragment)
+//                                .addToBackStack(sBackStackTag)
+//                                .commit();
+                        break;
+                    case 5:     // Logout
                         // TODO: replace this with Utils method
                         ParseUser.getCurrentUser().logOut();    // preferably use logOutInBackground...
                         startActivity(new Intent(MainActivity.this, DispatchActivity.class));
