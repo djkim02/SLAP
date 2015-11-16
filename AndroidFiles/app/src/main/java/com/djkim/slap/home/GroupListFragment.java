@@ -103,6 +103,26 @@ public class GroupListFragment extends Fragment {
             mRemainingSlotsButton =
                     (Button) itemView.findViewById(R.id.group_list_item_remaining_slots_button);
             mRemainingSlotsButton.setText("5 slots remaining");
+            mRemainingSlotsButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (!mGroup.isMember(Utils.get_current_user())) {
+                        mGroup.addMember(Utils.get_current_user());
+                        mGroup.save();
+
+                        FragmentManager fragmentManager = getFragmentManager();
+                        Fragment fragment = new GroupDetailsFragment();
+
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable(GroupDetailsFragment.sGroupArgumentKey, mGroup);
+                        fragment.setArguments(bundle);
+                        fragmentManager.beginTransaction()
+                                .replace(R.id.main_layout, fragment)
+                                .addToBackStack(MainActivity.sBackStackTag)
+                                .commit();
+                    }
+                }
+            });
         }
 
         public void bindGroup(Group group) {

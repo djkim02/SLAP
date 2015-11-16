@@ -136,11 +136,15 @@ public class GroupDetailsFragment extends Fragment {
                     @Override
                     public void onClick(View v) {
                         JoinAppGroupDialog.show(getActivity(), fbGroupId);
-                        mGroup.addMember(Utils.get_current_user());
-                        mGroup.save();
+
+                        if (!mGroup.isMember(Utils.get_current_user())) {
+                            mGroup.addMember(Utils.get_current_user());
+                            mGroup.save();
+                        }
                     }
                 });
             }
+
             mTitleTextView =
                     (TextView) itemView.findViewById(R.id.group_details_action_title_text_view);
             mTitleTextView.setText(mGroup.get_name());

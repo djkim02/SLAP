@@ -60,6 +60,8 @@ public class Group implements Serializable {
         m_owner = new User();
         m_owner.setFieldsWithParseUser(parseGroup.getParseUser("owner"));
         m_facebookGroupId = parseGroup.getString("facebookGroupId");
+        m_type = parseGroup.getString("type");
+        m_skills = parseGroup.getString("skills");
 
         ParseRelation<ParseUser> membersRelation = parseGroup.getRelation("members");
         try {

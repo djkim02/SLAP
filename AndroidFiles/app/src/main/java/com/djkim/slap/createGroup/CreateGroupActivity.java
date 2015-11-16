@@ -368,8 +368,9 @@ public class CreateGroupActivity extends ActionBarActivity implements
 
     private void onClickCreateButton() {
         AppGroupCreationContent content = new AppGroupCreationContent.Builder()
-                .setName(group.get_name())
-                .setDescription(group.get_description())
+                .setName(group.get_name() == null ? "Enter a group name" : group.get_name())
+                .setDescription(group.get_description() == null
+                        ? "Enter a description" : group.get_description())
                 .setAppGroupPrivacy(AppGroupCreationContent.AppGroupPrivacy.Closed)
                 .build();
         createAppGroupDialog.show(content);
