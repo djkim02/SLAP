@@ -150,8 +150,10 @@ public class GroupDetailsFragment extends Fragment {
             mTitleTextView.setText(mGroup.get_name());
             mSubheadTextView =
                     (TextView) itemView.findViewById(R.id.group_details_action_subhead_text_view);
+
+            String memberString = mGroup.get_size() == 1 ? " member." : " members.";
             mSubheadTextView.setText(
-                    "You're in! This groups has " + mGroup.get_size() + " member(s).");
+                    "You're in! This groups has " + mGroup.get_size() + memberString);
         }
     }
 
