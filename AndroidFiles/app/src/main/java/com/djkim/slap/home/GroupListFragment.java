@@ -38,11 +38,15 @@ public class GroupListFragment extends Fragment {
         mGroupRecyclerView = (RecyclerView) view.findViewById(R.id.group_recycler_view);
         mGroupRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        User user = Utils.get_current_user();
-        List<Group> groups = user.getGroups();
-        mGroupAdapter = new GroupAdapter(groups);
+        mGroupAdapter = new GroupAdapter(getGroupList());
         mGroupRecyclerView.setAdapter(mGroupAdapter);
         return view;
+    }
+
+    protected List<Group> getGroupList() {
+        User user = Utils.get_current_user();
+        List<Group> groups = user.getGroups();
+        return groups;
     }
 
     private class GroupHolder extends RecyclerView.ViewHolder {
