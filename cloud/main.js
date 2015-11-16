@@ -67,32 +67,33 @@ Parse.Cloud.define("matchGroupName", function(request, response) {
         }
     });
 });
- 
- 
+  
+  
 var _ = require("underscore");
 Parse.Cloud.beforeSave("Group", function(request, response) {
     var group = request.object;
- 
+  
     var toLowerCase = function(w) { return w.toLowerCase(); };
- 
-	var keywords = group.get("name").split(' ');
+  
+    var keywords = group.get("name").split(' ');
     keywords = _.map(keywords, toLowerCase);
     var stopWords = ["the", "in", "and", "to", "but", "for", "or", "yet", "so"];
-	
-	Array.prototype.contains = function ( needle ) {
-	for (i in this) {
+     
+    Array.prototype.contains = function ( needle ) {
+    for (i in this) {
        if (this[i] == needle) return true;
-	}
-	return false;
-	}
-	
-	keywords = keywords.filter(function (w) {
+    }
+    return false;
+    }
+     
+    keywords = keywords.filter(function (w) {
     return w.match(/[a-zA-Z0-9]+/) && !stopWords.contains(w);
-	});
- 
-    var hashtags = group.get("name").match(/#.+?b/g);
+    });
+  
+    //var hashtags = group.get("name").match(/#.+?b/g);
+    var hashtags = group.get("name").match(/[#][a-zA-Z0-9]+/);
     hashtags = _.map(hashtags, toLowerCase);
- 
+  
     group.set("keywords", keywords);
     group.set("hashtags", hashtags);
     response.success();
