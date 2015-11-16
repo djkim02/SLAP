@@ -97,6 +97,8 @@ public class CreateGroupActivity extends ActionBarActivity implements
                 String id = result.getId();
                 group.set_facebookGroupId(id);
                 group.save();
+                Toast.makeText(CreateGroupActivity.this, "Successfully created the group!",
+                        Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(CreateGroupActivity.this, MainActivity.class));
             }
 
@@ -156,6 +158,7 @@ public class CreateGroupActivity extends ActionBarActivity implements
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
                                             createGroup();
+                                            onClickCreateButton();
                                         }
                                     })
                                     .setNegativeButton(android.R.string.cancel, null)
@@ -212,12 +215,9 @@ public class CreateGroupActivity extends ActionBarActivity implements
         String skills = reviewItems.get(4).getDisplayValue();
         String tags = reviewItems.get(5).getDisplayValue();
         User user = Utils.get_current_user();
-        Group group = new Group(name, user, capacity, type);
+        group = new Group(name, user, capacity, type);
         group.set_description(description);
         group.set_skills(skills);
-        group.save();
-        Toast.makeText(this, "Successfully created the group!!", Toast.LENGTH_SHORT).show();
-        startActivity(new Intent(this, MainActivity.class));
     }
 
     private void updateBottomBar() {
