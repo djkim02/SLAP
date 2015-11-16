@@ -247,16 +247,13 @@ public class User implements Serializable {
         if (hacker_skills == null) {
             hacker_skills = Skill.returnHackerSkillsList();
         }
-
         //revert back to ArrayList
         for(int i = 0; i < arr.length(); i++)
         {
             try {
                 JSONObject j = arr.getJSONObject(i);
                 Boolean hasSkill = j.getBoolean("isSelected");
-
                 hacker_skills.get(i).setSelected(hasSkill);
-
             } catch (JSONException e) {
                 System.out.println("Cannot get hacker skills from JSONArray.\n");
             }
@@ -268,16 +265,13 @@ public class User implements Serializable {
         if (athlete_skills == null) {
             athlete_skills = Skill.returnAthleteSkillsList();
         }
-
         //revert back to ArrayList
         for(int i = 0; i < arr.length(); i++)
         {
             try {
                 JSONObject j = arr.getJSONObject(i);
                 Boolean hasSkill = j.getBoolean("isSelected");
-
                 athlete_skills.get(i).setSelected(hasSkill);
-
             } catch (JSONException e) {
                 System.out.println("Cannot get athlete skills from JSONArray.\n");
             }
