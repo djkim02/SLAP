@@ -22,6 +22,7 @@ public class Utils{
                 parseUser.getObjectId(),
                 parseUser.getUsername(),
                 parseUser.getLong("facebookId"));
+        user.sync();
         return user;
     }
 

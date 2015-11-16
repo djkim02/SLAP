@@ -2,12 +2,14 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <include layout="@layout/toolbar" />
+    <include layout="@layout/profile_toolbar" />
 
-    <View
+    <TextView
         android:layout_width="match_parent"
-        android:layout_height="4dp"
-        android:background="@drawable/shadow"/>
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center_horizontal"
+        />
 
     <com.djkim.slap.models.NonSwipeableViewPager
         android:id="@+id/profile_pager"

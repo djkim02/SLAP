@@ -57,5 +57,17 @@
             android:name=".createGroup.CreateGroupActivity"
             android:label="Create Group">
         </activity>
+        <activity
+            android:name=".profile.MyHackerSkillsActivity"
+            android:label="My Hacker Skills">
+        </activity>
+        <activity
+            android:name=".profile.MyAthleteSkillsActivity"
+            android:label="My Athlete Skills">
+        </activity>
+        <activity
+            android:name=".profile.EditMyProfileActivity"
+            android:label="Edit My Profile">
+        </activity>
     </application>
 </manifest>

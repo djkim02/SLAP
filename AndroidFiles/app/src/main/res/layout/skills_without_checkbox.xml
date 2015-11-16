@@ -6,7 +6,7 @@
     android:padding="6dip" >
 
     <ImageView
-        android:id="@+id/skill_icon"
+        android:id="@+id/skill_without_checkbox_icon"
         android:layout_width="36dp"
         android:layout_height="36dp"
         android:layout_alignParentLeft="true"
@@ -14,26 +14,17 @@
         />
 
     <TextView
-        android:id="@+id/skill_name"
+        android:id="@+id/skill_without_checkbox_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/skill_icon"
-        android:layout_alignBottom="@+id/skill_icon"
-        android:layout_toRightOf="@+id/skill_icon"
-        android:layout_marginLeft="15dp"
+        android:layout_alignBaseline="@+id/skill_without_checkbox_icon"
+        android:layout_alignBottom="@+id/skill_without_checkbox_icon"
+        android:layout_toRightOf="@+id/skill_without_checkbox_icon"
+        android:layout_marginLeft="50dp"
         android:layout_marginBottom="8dp"
         android:textSize="16sp"
-        android:gravity="center_vertical"
+        android:gravity="center"
+        android:layout_gravity="center_vertical"
         android:fontFamily="sans-serif-light"
-        />
-
-    <CheckBox
-        android:id="@+id/check_box"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-        android:gravity="center_vertical"
         />
 </RelativeLayout>
