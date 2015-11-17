@@ -188,4 +188,16 @@ public class SkillWithoutCheckbox {
 
         return myProfileList;
     }
+
+    public static ArrayList<SkillWithoutCheckbox> returnOthersProfileList() {
+        ArrayList<SkillWithoutCheckbox> othersProfileList = new ArrayList<>();
+
+        SkillWithoutCheckbox profileSkill = new SkillWithoutCheckbox(R.mipmap.programming, "Hacker Skills");
+        othersProfileList.add(profileSkill);
+
+        profileSkill = new SkillWithoutCheckbox(R.mipmap.athlete, "Athlete Skills");
+        othersProfileList.add(profileSkill);
+
+        return othersProfileList;
+    }
 }
