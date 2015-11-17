@@ -126,18 +126,17 @@ public class GroupListFragment extends Fragment {
                     if (!mGroup.isMember(Utils.get_current_user())) {
                         mGroup.addMember(Utils.get_current_user());
                         mGroup.save();
-
-                        FragmentManager fragmentManager = getFragmentManager();
-                        Fragment fragment = new GroupDetailsFragment();
-
-                        Bundle bundle = new Bundle();
-                        bundle.putSerializable(GroupDetailsFragment.sGroupArgumentKey, mGroup);
-                        fragment.setArguments(bundle);
-                        fragmentManager.beginTransaction()
-                                .replace(R.id.main_layout, fragment)
-                                .addToBackStack(MainActivity.sBackStackTag)
-                                .commit();
                     }
+                    FragmentManager fragmentManager = getFragmentManager();
+                    Fragment fragment = new GroupDetailsFragment();
+
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable(GroupDetailsFragment.sGroupArgumentKey, mGroup);
+                    fragment.setArguments(bundle);
+                    fragmentManager.beginTransaction()
+                            .replace(R.id.main_layout, fragment)
+                            .addToBackStack(MainActivity.sBackStackTag)
+                            .commit();
                 }
             });
         }
