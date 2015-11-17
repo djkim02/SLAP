@@ -107,13 +107,13 @@ public class MatchGroupActivity extends AppCompatActivity
                                             }
                                             String type = reviewItems.get(0).getDisplayValue();
                                             String tags = reviewItems.get(1).getDisplayValue();
-                                            Intent intent = new Intent(MatchGroupActivity.this, MatchGroupListActivity.class);
+                                            Intent intent = new Intent();
                                             Bundle b = new Bundle();
                                             b.putString("type", type);
                                             b.putString("tags", tags);
                                             intent.putExtras(b);
-                                            startActivity(intent);
-                                            MatchGroupActivity.this.finish();
+                                            setResult(RESULT_OK, intent);
+                                            finish();
                                         }
                                     })
                                     .setNegativeButton(android.R.string.cancel, null)
