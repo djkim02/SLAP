@@ -91,7 +91,7 @@ Parse.Cloud.beforeSave("Group", function(request, response) {
     return w.match(/[a-zA-Z0-9]+/) && !stopWords.contains(w);
 	});
  
-    var hashtags = group.get("name").match(/#.+?b/g);
+    var hashtags = group.get("name").match(/[#][a-zA-Z0-9]+/);
     hashtags = _.map(hashtags, toLowerCase);
  
     group.set("keywords", keywords);
