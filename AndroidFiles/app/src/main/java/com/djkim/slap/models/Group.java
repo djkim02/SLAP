@@ -13,8 +13,10 @@ import com.parse.ParseUser;
 import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Set;
 
 import bolts.Task;
 
@@ -38,7 +40,7 @@ public class Group implements Serializable {
     private User m_owner;
     private int m_capacity;
     private ArrayList<User> m_members = new ArrayList<User>();
-    private Hashtable<Long, Integer> m_membership = new Hashtable<Long, Integer>();
+    private Set<String> m_membership = new HashSet<>();
     private String m_skills;    // comma-separated string of skills
 
     public Group() {}
@@ -56,8 +58,14 @@ public class Group implements Serializable {
         m_objectId = parseGroup.getObjectId();
         m_name = parseGroup.getString("name");
         m_description = parseGroup.getString("description");
-        m_owner = new User();
-        m_owner.setFieldsWithParseUser(parseGroup.getParseUser("owner"));
+
+        try {
+            m_owner = new User();
+            m_owner.setFieldsWithParseUser(parseGroup.getParseUser("owner").fetchIfNeeded());
+        } catch (ParseException e) {
+            Log.d("Debug", "Fetch failed!");
+        }
+
         m_facebookGroupId = parseGroup.getString("facebookGroupId");
         m_type = parseGroup.getString("type");
         m_skills = parseGroup.getString("skills");
@@ -70,6 +78,7 @@ public class Group implements Serializable {
                 User user = new User();
                 user.setFieldsWithParseUser(parseUser);
                 m_members.add(user);
+                m_membership.add(user.get_id());
             }
         } catch (ParseException e) {
             e.printStackTrace();
@@ -93,7 +102,11 @@ public class Group implements Serializable {
             for (ParseUser parseUser : parseUsers) {
                 User user = new User();
                 user.setFieldsWithParseUser(parseUser);
-                m_members.add(user);
+
+                if (!m_membership.contains(user.get_id())) {
+                    m_members.add(user);
+                    m_membership.add(user.get_id());
+                }
             }
         } catch (ParseException e) {
             e.printStackTrace();
@@ -170,12 +183,14 @@ public class Group implements Serializable {
     }
 
     public boolean isMember(User user){
-        return m_membership.containsKey(user.get_facebook_id());
+        return m_membership.contains(user.get_id());
     }
 
-    public void addMember(User member){
-        m_members.add(member);
-//         m_membership.put(member.get_facebook_id(), True);
+    public void addMember(User member) {
+        if (!m_membership.contains(member.get_id())) {
+            m_members.add(member);
+            m_membership.add(member.get_id());
+        }
     }
 
     public ArrayList<User> getMembers(){
