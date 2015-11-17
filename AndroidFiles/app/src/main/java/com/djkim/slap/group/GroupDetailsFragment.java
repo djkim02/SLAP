@@ -3,6 +3,7 @@ package com.djkim.slap.group;
 
 import android.app.ActionBar;
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,12 +14,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.djkim.slap.R;
 import com.djkim.slap.models.Group;
 import com.djkim.slap.models.User;
 import com.djkim.slap.models.Utils;
+import com.djkim.slap.profile.OthersProfileActivity;
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
@@ -85,10 +88,11 @@ public class GroupDetailsFragment extends Fragment {
         private ProfilePictureView mThumbnailImageView;
         private TextView mTitleTextView;
         private TextView mSubheadTextView;
+        private RelativeLayout mRelativeLayout;
 
         public UserHolder(View itemView) {
             super(itemView);
-
+            mRelativeLayout = (RelativeLayout) itemView.findViewById(R.id.group_details_layout);
             mThumbnailImageView =
                     (ProfilePictureView) itemView.findViewById(R.id.group_details_item_thumbnail_image_view);
             mTitleTextView =
@@ -102,6 +106,17 @@ public class GroupDetailsFragment extends Fragment {
             mThumbnailImageView.setProfileId(user.get_facebook_profile_id());
             mTitleTextView.setText(user.get_name());
             mSubheadTextView.setText(mGroup.get_owner().equals(mUser) ? "Admin" : "Member");
+
+            if (mUser.get_facebook_profile_id() != null) {
+                mRelativeLayout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(getActivity(), OthersProfileActivity.class);
+                        intent.putExtra("user", mUser);
+                        startActivity(intent);
+                    }
+                });
+            }
         }
     }
 
