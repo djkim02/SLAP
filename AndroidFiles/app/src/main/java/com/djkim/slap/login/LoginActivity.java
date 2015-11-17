@@ -17,6 +17,7 @@ import android.view.View;
 
 import com.djkim.slap.R;
 import com.djkim.slap.menubar.MainActivity;
+import com.djkim.slap.messenger.MessageService;
 import com.djkim.slap.models.ParseButton;
 import com.djkim.slap.models.User;
 import com.djkim.slap.models.Utils;
@@ -106,6 +107,13 @@ public class LoginActivity extends FragmentActivity {
                 });
             }
         });
+
+    }
+
+    @Override
+    public void onDestroy() {
+        stopService(new Intent(this, MessageService.class));
+        super.onDestroy();
     }
 
     // This method fetches user details (name, profile picture) from Facebook
