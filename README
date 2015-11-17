@@ -1,0 +1,73 @@
+README File
+
+Welcome to our SLAP app
+This README file was designed from a MAC perspective
+Other operating systems might vary
+
+Warning: Android Studio utilizes a large amount of resources.
+For reasonable performance, run android studio on a computer with an SSD and 8GB RAM
+Testing on an actual Android Device will also be easier and more efficient
+
+Download the Android Studio GUI:
+https://developer.android.com/sdk/index.html
+--------------------------------------------------------
+Clone our repo to get the latest code:
+https://github.com/djkim02/SLAP.git
+
+Instructions:
+1) Upon succesful installation, the set up window should appear labeled "Android Studio"
+2) Under "Quick Start", choose open an existing Android Studio project
+3) Navigate to the SLAP folder that was cloned from the repository
+4) Navigate one level down to the "AndroidFiles" and open that as the existing project
+5) The code will take a while to load and for the gradle to sync
+6) Pay special attention to any warnings or errors. On the upper right hand corner, a "Configure" or "Sync" dialog box might appear. Sync or configure if necessary.
+
+Real device method:
+1) Connect your device via USB port
+2) On the left hand side of the file heirarchy in android studio after opening the existing project, in the toolbar of the file heirarchy, navigate to the "Android" tab. This will show all the android fiels
+3) Navigate to Gradle Scripts > build.gradle (Module: app) and copy and put debuggable true under buildTypes:
+
+android {
+    buildTypes {
+        debug { <-----------------
+            debuggable true <----- Put this right under buildTypes
+        } <-----------------------
+
+4) Navigate to app > manifests > AndroidManifest.xml right above Gradle Scripts 
+5) Add 
+
+android:debuggable="true"
+
+under the "<application" tag on its own line
+
+6) Enable Debugging on your device under Settings > About phone and tap Build number seven times very quickly
+7) Return to the previous screen and a new option "Developer options" will be enabled. Enable this option by clicking on it
+8) Plug in your device and run the program by pressing the green play button or ^R command
+
+
+Emulation Method:
+1) Open the AVD Manager (The fourth last icon in the toolbar). You can hover over the icons to see what each icon stands for
+2) Create a virtual device on the bottom left
+3) Choose a phone as the category, lets say Nexus 5. Click "Next"
+4) For System Image, choose Lollipop, API Level 22, ABI x86, Target Android 5.1.1, Change your AVD name to be <Your Name>'s Phone and select Finish. Leave the default settings or change it if you wish. 
+5) Your emulator is now set
+6) Go back to the AVD Manager and press the green paly button
+7) Wait a few moments for the emulator to show up. This might slow down your computer
+8) Once your emulator is finished and your able to interact with it, you can run the code and our app will play automatically
+
+--------------------------------------------------------------------
+Layout:
+1) Open the application to check out the UI
+2) Login using your facebook credentials, nothing important is stored
+3) The menu tab is located in the upper left of the action bar
+
+Tutorial:
+
+Joining Groups:
+
+Creating Groups:
+
+Finding Matches:
+
+Editing Profile:
+To edit your profile if your skills have changed go to "My Profile" and press "Edit"
