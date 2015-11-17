@@ -43,6 +43,7 @@ public class User implements Serializable {
         m_objectId = parseUser.getObjectId();
         m_username = parseUser.getUsername();
         m_facebookId = parseUser.getLong("facebookId");
+        m_facebookProfileId = parseUser.getString("facebookProfileId");
         syncHackerSkills(parseUser);
         syncAthleteSkills(parseUser);
     }
