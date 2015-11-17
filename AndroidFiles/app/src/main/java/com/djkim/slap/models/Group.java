@@ -13,8 +13,10 @@ import com.parse.ParseUser;
 import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Set;
 
 import bolts.Task;
 
@@ -172,13 +174,11 @@ public class Group implements Serializable {
     }
 
     public boolean isMember(User user){
-        return m_membership.containsKey(user.get_facebook_id());
+        return m_membership.contains(user.get_id());
     }
 
     public void addMember(User member){
-        m_members.add(member);
         m_membership.put(member.get_facebook_id(), member);
-//         m_membership.put(member.get_facebook_id(), True);
     }
 
     public void addMembersToParseGroup(ParseObject parseGroup) {
