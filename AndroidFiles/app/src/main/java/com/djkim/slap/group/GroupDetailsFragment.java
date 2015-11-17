@@ -25,6 +25,8 @@ import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
 import com.facebook.share.widget.JoinAppGroupDialog;
 
+import org.json.JSONException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -116,8 +118,8 @@ public class GroupDetailsFragment extends Fragment {
             mLinearLayout = (LinearLayout) itemView.findViewById(R.id.group_details_action_tile);
 
             // We only set the onClickListener if there is such a Facebook Group.
-//            // We only show the onClickListener if that person is in the SLAP group, but not in the facebook group
-//            //TODO: Need to remove the slap card if the person left the group on Facebook
+            // We only show the onClickListener if that person is in the SLAP group, but not in the facebook group
+            //TODO: Need to remove the slap card if the person left the group on Facebook
 //            new GraphRequest(
 //                    AccessToken.getCurrentAccessToken(),
 //                    "/6EZmymlOoCjIFnPPnJ13XcpeyyoXNIVoXTq2RwMo/groups",
@@ -125,8 +127,12 @@ public class GroupDetailsFragment extends Fragment {
 //                    HttpMethod.GET,
 //                    new GraphRequest.Callback() {
 //                        public void onCompleted(GraphResponse response) {
-//                            Log.w("ALERT", response);
-//                            response.getJSONObject().get("")
+//                            Log.w("ALERT", response.toString());
+//                            try {
+//                                response.getJSONObject().get("data");
+//                            } catch (JSONException j) {
+//                                Log.w("HERE:", response.toString());
+//                            }
 //                        }
 //                    }
 //            ).executeAsync();
