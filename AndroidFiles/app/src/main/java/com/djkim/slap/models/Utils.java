@@ -64,4 +64,24 @@ public class Utils{
         }
     }
 
+    // simple string match
+    // returns Groups whose name exactly matches groupName
+    public static List<Group> getGroupsByNameFromCloud(String groupName) {
+        try {
+            Map<String, String> map = new HashMap<String, String>();
+            map.put("name", groupName);
+            List<ParseObject> parseGroups = ParseCloud.callFunction("matchGroupName", map);
+            List<Group> groups = new ArrayList<Group>();
+            for (ParseObject parseGroup : parseGroups) {
+                Group group = new Group(parseGroup);
+                groups.add(group);
+                Log.d("myapp", group.get_id());
+            }
+            return groups;
+        } catch (ParseException e) {
+            // No group is found. Return an empty list.
+            return new ArrayList<Group>();
+        }
+    }
+
 }

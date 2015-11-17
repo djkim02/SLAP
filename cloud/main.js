@@ -57,6 +57,7 @@ Parse.Cloud.define("match", function(request, response) {
 Parse.Cloud.define("matchGroupName", function(request, response) {
     var query = new Parse.Query("Group");
     query.equalTo("name", request.params.name);
+    query.include("owner, members");
     query.find({
         success: function(results) {
             // just return the results for now
