@@ -23,6 +23,7 @@ import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
+import com.facebook.login.widget.ProfilePictureView;
 import com.facebook.share.widget.JoinAppGroupDialog;
 
 import java.util.ArrayList;
@@ -81,7 +82,7 @@ public class GroupDetailsFragment extends Fragment {
 
     private class UserHolder extends RecyclerView.ViewHolder {
         private com.djkim.slap.models.User mUser;
-        private ImageView mThumbnailImageView;
+        private ProfilePictureView mThumbnailImageView;
         private TextView mTitleTextView;
         private TextView mSubheadTextView;
 
@@ -89,7 +90,7 @@ public class GroupDetailsFragment extends Fragment {
             super(itemView);
 
             mThumbnailImageView =
-                    (ImageView) itemView.findViewById(R.id.group_details_item_thumbnail_image_view);
+                    (ProfilePictureView) itemView.findViewById(R.id.group_details_item_thumbnail_image_view);
             mTitleTextView =
                     (TextView) itemView.findViewById(R.id.group_details_item_title_text_view);
             mSubheadTextView =
@@ -98,7 +99,7 @@ public class GroupDetailsFragment extends Fragment {
 
         public void bindUser(com.djkim.slap.models.User user) {
             mUser = user;
-
+            mThumbnailImageView.setProfileId(user.get_facebook_profile_id());
             mTitleTextView.setText(user.get_name());
             mSubheadTextView.setText(mGroup.get_owner().equals(mUser) ? "Admin" : "Member");
         }

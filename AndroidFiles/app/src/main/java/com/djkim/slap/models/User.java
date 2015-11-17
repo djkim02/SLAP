@@ -31,7 +31,7 @@ public class User implements Serializable {
     private String m_objectId;
     private String m_username;
     private Long m_facebookId;
-    private String m_url;
+    private String m_facebookProfileId;
 
     // Constructors
     public User(){}
@@ -40,7 +40,6 @@ public class User implements Serializable {
         m_objectId = objectId;
         m_username = username;
         m_facebookId = facebookId;
-        //m_url = url;
     }
 
     public User(ParseUser parseUser) {
@@ -84,6 +83,7 @@ public class User implements Serializable {
             ParseUser parseUser = query.get(m_objectId);
             syncAthleteSkills(parseUser);
             syncHackerSkills(parseUser);
+
 //            syncGroups(parseUser);
 
         } catch (ParseException e) {
@@ -117,7 +117,7 @@ public class User implements Serializable {
     }
 
 //    public String get_image_url() {
-//        return m_url;
+//        return m_facebookProfileId;
 //    }
 
     public boolean equals(User anotherUser){
@@ -128,6 +128,7 @@ public class User implements Serializable {
         m_objectId = parseOwner.getObjectId();
         m_username = parseOwner.getUsername();
         m_facebookId = parseOwner.getLong("facebookId");
+        m_facebookProfileId = parseOwner.getString("facebookProfileId");
         syncHackerSkills(parseOwner);
         syncAthleteSkills(parseOwner);
         // TODO: set Arrays too!
@@ -194,7 +195,7 @@ public class User implements Serializable {
     private void saveAllFieldsToParse(ParseUser parseUser) {
         parseUser.put("username", m_username);
         parseUser.put("facebookId", m_facebookId);
-        //parseUser.put("imageUrl", m_url);
+        //parseUser.put("imageUrl", m_facebookProfileId);
         uploadAthleteSkills(parseUser);
         uploadHackerSkills(parseUser);
     }
@@ -293,6 +294,14 @@ public class User implements Serializable {
 
     public void set_athlete_skills(ArrayList<Skill> athlete_skills) {
         this.athlete_skills = athlete_skills;
+    }
+
+    public void set_facebook_profile_id(String fbpid) {
+        m_facebookProfileId = fbpid;
+    }
+
+    public String get_facebook_profile_id() {
+        return m_facebookProfileId;
     }
 }
 
