@@ -2,6 +2,7 @@ package com.djkim.slap.models;
 
 import android.util.Log;
 
+import com.parse.FunctionCallback;
 import com.parse.GetCallback;
 import com.parse.Parse;
 import com.parse.ParseClassName;
@@ -45,6 +46,23 @@ public class Utils{
         } catch (ParseException e) {
             return null; // couldn't find a user?? is this okay?
         }
+    }
+
+    public static void getGroupsFromCloudInBackground(String type, final GroupsCallback callback) {
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("type", type);
+        ParseCloud.callFunctionInBackground(
+                "match", map, new FunctionCallback<List<ParseObject> >() {
+                    @Override
+                    public void done(List<ParseObject> parseGroups, ParseException e) {
+                        List<Group> groups = new ArrayList<Group>();
+                        for (ParseObject parseGroup : parseGroups) {
+                            Group group = new Group(parseGroup);
+                            groups.add(group);
+                        }
+                        callback.done(groups);
+                    }
+                });
     }
 
     public static List<Group> getGroupsFromCloud(String type) {

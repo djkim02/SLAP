@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 
 import com.djkim.slap.home.GroupListFragment;
 import com.djkim.slap.models.Group;
+import com.djkim.slap.models.GroupsCallback;
 import com.djkim.slap.models.Utils;
 
 import java.util.List;
@@ -25,7 +26,12 @@ public class MatchGroupListFragment extends GroupListFragment {
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
-    protected List<Group> getGroupList() {
-        return Utils.getGroupsFromCloud(mType);
+    protected void getGroupsInBackground() {
+        Utils.getGroupsFromCloudInBackground(mType, new GroupsCallback() {
+            @Override
+            public void done(List<Group> groups) {
+                setAdapterWithGroups(groups);
+            }
+        });
     }
 }

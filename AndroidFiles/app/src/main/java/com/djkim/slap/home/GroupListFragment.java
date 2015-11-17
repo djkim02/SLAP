@@ -39,24 +39,34 @@ public class GroupListFragment extends Fragment {
         View view = inflater.inflate(R.layout.group_list_fragment, container, false);
         mGroupRecyclerView = (RecyclerView) view.findViewById(R.id.group_recycler_view);
         mGroupRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        getGroupsInBackground();
 
+        return view;
+    }
+
+    /**
+     * Takes a List of Group objects and configures the RecyclerView to display these Groups via
+     * the adapter.
+     *
+     * @param groups The List of Group objects.
+     */
+    protected void setAdapterWithGroups(List<Group> groups) {
+        mGroupAdapter = new GroupAdapter(groups);
+        mGroupRecyclerView.setAdapter(mGroupAdapter);
+    }
+
+    /**
+     * Retrieves a List of Group objects asynchronously. If this function is overridden, it should
+     * call setAdapterWithGroups to properly configure the fragment.
+     */
+    protected void getGroupsInBackground() {
         User user = Utils.get_current_user();
         user.getGroupsInBackground(new GroupsCallback() {
             @Override
             public void done(List<Group> groups) {
-                mGroupAdapter = new GroupAdapter(groups);
-                mGroupRecyclerView.setAdapter(mGroupAdapter);
+                setAdapterWithGroups(groups);
             }
         });
-        return view;
-    }
-
-    // TODO(victorkwan): Refactor onCreateView to allow the fetch function to be overridden, and
-    // rewrite MatchGroupListFragment's getGroupList to be asynchronous.
-    protected List<Group> getGroupList() {
-        User user = Utils.get_current_user();
-        List<Group> groups = user.getGroups();
-        return groups;
     }
 
     private class GroupHolder extends RecyclerView.ViewHolder {
