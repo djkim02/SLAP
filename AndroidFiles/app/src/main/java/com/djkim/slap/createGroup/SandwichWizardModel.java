@@ -38,8 +38,8 @@ public class SandwichWizardModel extends AbstractWizardModel {
                 // have their own questions and the choices of the user will be summarised in the review section at the end
                 new BranchPage(this, "Athlete or Hacker?")
                         .addBranch("Athlete",
-                                new EnterTextPage(this, "What is the group name?"),
-                                new EnterTextPage(this, "Please give the group a short description"),
+                                new EnterTextPage(this, "What is the group name?").setRequired(true),
+                                new EnterTextPage(this, "Please give the group a short description").setRequired(true),
                                 new SingleFixedChoicePage(this, "What is the size of the group?")
                                         .setChoices("2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15")
                                         .setRequired(true),
@@ -52,8 +52,8 @@ public class SandwichWizardModel extends AbstractWizardModel {
 
                                 // Second branch of questions
                         .addBranch("Hacker",
-                                new EnterTextPage(this, "What is the group name?"),
-                                new EnterTextPage(this, "Please give the group a short description"),
+                                new EnterTextPage(this, "What is the group name?").setRequired(true),
+                                new EnterTextPage(this, "Please give the group a short description").setRequired(true),
                                 new SingleFixedChoicePage(this, "What is the size of the group?")
                                         .setChoices("2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15")
                                         .setRequired(true),
