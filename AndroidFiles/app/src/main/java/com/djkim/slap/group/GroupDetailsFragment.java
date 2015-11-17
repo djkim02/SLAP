@@ -56,7 +56,7 @@ public class GroupDetailsFragment extends Fragment {
         Bundle bundle = getArguments();
         mGroup = (Group) bundle.getSerializable(sGroupArgumentKey);
 
-        ArrayList<com.djkim.slap.models.User> groupUsers = mGroup.get_members();
+        List<com.djkim.slap.models.User> groupUsers = mGroup.get_members();
         mGroupDetailsAdapter = new UserAdapter(groupUsers);
         mGroupDetailsRecyclerView.setAdapter(mGroupDetailsAdapter);
 
@@ -160,7 +160,7 @@ public class GroupDetailsFragment extends Fragment {
     private class UserAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         private List<com.djkim.slap.models.User> mGroupUsers;
 
-        public UserAdapter(ArrayList<com.djkim.slap.models.User> groupUsers) {
+        public UserAdapter(List<com.djkim.slap.models.User> groupUsers) {
             mGroupUsers = groupUsers;
         }
 

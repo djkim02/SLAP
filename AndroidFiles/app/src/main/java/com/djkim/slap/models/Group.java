@@ -38,10 +38,8 @@ public class Group implements Serializable {
     private User m_owner;
     private int m_capacity;
     private ArrayList<User> m_members = new ArrayList<User>();
-    private Hashtable<Long, Integer> m_membership = new Hashtable<Long, Integer>();
+    private Hashtable<Long, User> m_membership = new Hashtable<>();
     private String m_skills;    // comma-separated string of skills
-
-    public Group() {}
 
     public Group(String name, User owner, int capacity, String type) {
         m_name = name;
@@ -50,14 +48,14 @@ public class Group implements Serializable {
         m_description = "";
         m_type = type.equals(HACKER_GROUP) || type.equals(ATHLETE_GROUP) ? type : GENERAL_GROUP;
         m_members.add(owner);
+        m_membership.put(owner.get_facebook_id(), owner);
     }
 
     public Group(ParseObject parseGroup) {
         m_objectId = parseGroup.getObjectId();
         m_name = parseGroup.getString("name");
         m_description = parseGroup.getString("description");
-        m_owner = new User();
-        m_owner.setFieldsWithParseUser(parseGroup.getParseUser("owner"));
+        m_owner = new User(parseGroup.getParseUser("owner"));
         m_facebookGroupId = parseGroup.getString("facebookGroupId");
         m_type = parseGroup.getString("type");
         m_skills = parseGroup.getString("skills");
@@ -66,10 +64,11 @@ public class Group implements Serializable {
         try {
             List<ParseUser> parseUsers = membersRelation.getQuery().find();
             m_members = new ArrayList<>();
+            m_membership = new Hashtable<>();
             for (ParseUser parseUser : parseUsers) {
-                User user = new User();
-                user.setFieldsWithParseUser(parseUser);
+                User user = new User(parseUser);
                 m_members.add(user);
+                m_membership.put(user.get_facebook_id(), user);
             }
         } catch (ParseException e) {
             e.printStackTrace();
@@ -82,7 +81,7 @@ public class Group implements Serializable {
         m_name = parseGroup.getString("name");
         m_description = parseGroup.getString("description");
         ParseUser parseOwner = parseGroup.getParseUser("owner");
-        m_owner.setFieldsWithParseUser(parseOwner);
+        m_owner = new User(parseOwner);
         m_capacity = parseGroup.getInt("capacity");
         m_facebookGroupId = parseGroup.getString("facebookGroupId");
 
@@ -90,10 +89,11 @@ public class Group implements Serializable {
         try {
             List<ParseUser> parseUsers = membersRelation.getQuery().find();
             m_members = new ArrayList<>();
+            m_membership = new Hashtable<>();
             for (ParseUser parseUser : parseUsers) {
-                User user = new User();
-                user.setFieldsWithParseUser(parseUser);
+                User user = new User(parseUser);
                 m_members.add(user);
+                m_membership.put(user.get_facebook_id(), user);
             }
         } catch (ParseException e) {
             e.printStackTrace();
@@ -119,8 +119,9 @@ public class Group implements Serializable {
         }
     }
 
-    public ArrayList<User> get_members() {
+    public List<User> get_members() {
         return m_members;
+//        return new ArrayList<>(m_membership.values());
     }
 
     public String get_name() {
@@ -148,6 +149,7 @@ public class Group implements Serializable {
 
     public int get_size() {
         return m_members.size();
+//        return m_membership.size();
     }
 
     public int get_capacity() {
@@ -175,15 +177,13 @@ public class Group implements Serializable {
 
     public void addMember(User member){
         m_members.add(member);
+        m_membership.put(member.get_facebook_id(), member);
 //         m_membership.put(member.get_facebook_id(), True);
-    }
-
-    public ArrayList<User> getMembers(){
-        return m_members;
     }
 
     public void addMembersToParseGroup(ParseObject parseGroup) {
         ParseRelation<ParseUser> relation = parseGroup.getRelation("members");
+//        for (User member : m_membership.values()) {
         for (User member : m_members) {
              relation.add(member.toParseUser());
 //            ParseObject parseMember = ParseObject.createWithoutData("_User", member.get_id());
