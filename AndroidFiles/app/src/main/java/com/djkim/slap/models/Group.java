@@ -198,15 +198,6 @@ public class Group implements Serializable {
         return m_members;
     }
 
-    public void addMembersToParseGroup(ParseObject parseGroup) {
-        ParseRelation<ParseUser> relation = parseGroup.getRelation("members");
-        for (User member : m_members) {
-            if (member.get_id().equals(Utils.get_current_user().get_id())) {
-                relation.add(member.toParseUser());
-            }
-        }
-    }
-
     public ParseObject toParseObject()
     {
         ParseObject parseGroup = new ParseObject("Group");
@@ -235,9 +226,9 @@ public class Group implements Serializable {
         parseGroup.put("facebookGroupId", m_facebookGroupId);
 
         // Iterates through and adds all members that are not already in the array.
-        addMembersToParseGroup(parseGroup);
         if (m_membership.contains(Utils.get_current_user().get_id())) {
-            parseGroup.getRelation("members").add(Utils.get_current_user().toParseUser());
+            parseGroup.getRelation("members")
+                    .add(ParseObject.createWithoutData("_User", Utils.get_current_user().get_id()));
         }
     }
 
