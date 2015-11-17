@@ -135,9 +135,8 @@ public class GroupDetailsFragment extends Fragment {
                 mLinearLayout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        JoinAppGroupDialog.show(getActivity(), fbGroupId);
-
                         if (!mGroup.isMember(Utils.get_current_user())) {
+                            JoinAppGroupDialog.show(getActivity(), fbGroupId);
                             mGroup.addMember(Utils.get_current_user());
                             mGroup.save();
                         }

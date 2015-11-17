@@ -9,12 +9,15 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseRelation;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Set;
 
 import bolts.Task;
 
@@ -168,7 +171,7 @@ public class Group implements Serializable {
     }
 
     public boolean isMember(User user){
-        return m_membership.containsKey(user.get_facebook_id());
+        return m_membership.contains(user.get_id());
     }
 
     public void addMember(User member){
@@ -209,17 +212,30 @@ public class Group implements Serializable {
         parseGroup.put("facebookGroupId", m_facebookGroupId);
         // iterate through and add all members that are not already in the array
 //        addMembersToParseGroup(parseGroup);
+
+        if (m_membership.contains(Utils.get_current_user().get_id())) {
+            parseGroup.getRelation("members").add(Utils.get_current_user().toParseUser());
+        }
     }
 
     public void save(){
-        ParseObject parseGroup = new ParseObject("Group");
+        ParseObject parseGroup;
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Group");
         try {
             parseGroup = query.get(m_objectId);
             saveAllFieldsToParse(parseGroup);
-//            parseGroup.saveInBackground();
-            parseGroup.save();
+            parseGroup.saveInBackground(new SaveCallback() {
+                @Override
+                public void done(ParseException e) {
+                    if (e == null) {
+                        Log.d("Debug", "Save completed successfully.");
+                    } else {
+                        e.printStackTrace();
+                    }
+                }
+            });
         } catch (ParseException e) {
+            parseGroup = new ParseObject("Group");
             saveAllFieldsToParse(parseGroup);
             parseGroup.saveInBackground();
             m_objectId = parseGroup.getObjectId();
