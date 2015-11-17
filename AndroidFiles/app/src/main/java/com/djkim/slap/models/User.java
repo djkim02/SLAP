@@ -32,8 +32,6 @@ public class User implements Serializable {
     private String m_username;
     private Long m_facebookId;
     private String m_url;
-//    private ArrayList<Group> m_groups; // all groups the user is a part of
-//    private ArrayList<Group> m_groupsWhereUserIsOwner; // all groups the user is an owner of
 
     // Constructors
     public User(){}
@@ -43,8 +41,6 @@ public class User implements Serializable {
         m_username = username;
         m_facebookId = facebookId;
         //m_url = url;
-//        m_groups = new ArrayList<Group>();
-//        m_groupsWhereUserIsOwner = new ArrayList<Group>();
     }
 
     public User(ParseUser parseUser) {
@@ -63,14 +59,6 @@ public class User implements Serializable {
 //
 //    public void syncFacebookId(ParseUser parseUser) {
 //        m_facebookId = parseUser.getLong("facebookId");
-//    }
-//
-//    public void syncGroups(ParseUser parseUser) {
-//        // get groups from relation
-//        // clear m_groupsWhereUserIsMember
-//        // fill m_groupsWhereUserIsMember
-//        ParseRelation<ParseUser> relation = parseUser.getRelation("groups");
-//        ParseQuery query = relation.getQuery();
 //    }
 
     public void syncAthleteSkills(ParseUser parseUser)	//retrieve data from Parse and update user's athlete skills
@@ -145,14 +133,6 @@ public class User implements Serializable {
         // TODO: set Arrays too!
     }
 
-//    public void saveGroupsToParse(ParseUser parseUser) {
-//        ParseRelation<ParseObject> relation = parseUser.getRelation("groups");
-//        for (Group group: m_groups) {
-//            ParseObject parseGroup = ParseObject.createWithoutData("Group", group.get_id());
-//            relation.add(parseGroup);
-//        }
-//    }
-
     public List<Group> getGroups() {
         try {
             ParseUser parseUser = ParseUser.getQuery().get(m_objectId);
@@ -217,7 +197,6 @@ public class User implements Serializable {
         //parseUser.put("imageUrl", m_url);
         uploadAthleteSkills(parseUser);
         uploadHackerSkills(parseUser);
-//        saveGroupsToParse(parseUser);
     }
 
     public void save() {
@@ -228,18 +207,6 @@ public class User implements Serializable {
         } catch (ParseException e) {
             Log.e("", "Could not save ParseUser");
         }
-//        ParseUser parseUser = new ParseUser();
-//        ParseQuery<ParseUser> query = ParseUser.getQuery();
-//        query.whereEqualTo("facebook_id", m_facebookId);
-//        try {
-//            parseUser = query.getFirst();
-//            saveAllFieldsToParse(parseUser);
-//            parseUser.saveInBackground();
-//        } catch (ParseException e) {
-//            saveAllFieldsToParse(parseUser);
-//            parseUser.saveInBackground();
-//            m_objectId = parseUser.getObjectId(); // do I need to do this?
-//        }
     }
 
     //helper functions for uploading to and retrieving from Parse
