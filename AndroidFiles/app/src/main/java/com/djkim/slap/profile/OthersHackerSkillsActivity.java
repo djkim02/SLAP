@@ -26,7 +26,9 @@ public class OthersHackerSkillsActivity extends Activity {
         Intent intent = getIntent();
         User user = (User) intent.getSerializableExtra("user");
         TextView textView = (TextView) findViewById(R.id.my_skills_text);
-        textView.setText(user.get_name() + "'s Hacker Skills");
+        String name = user.get_name();
+        int endSpace = name.lastIndexOf(" ");
+        textView.setText(name.substring(0, endSpace) + "'s Hacker Skills");
         ArrayList<Skill> myAthleteList = user.get_hacker_skills();
         ArrayList<SkillWithoutCheckbox> returnAthleteList = new ArrayList<>();
 
