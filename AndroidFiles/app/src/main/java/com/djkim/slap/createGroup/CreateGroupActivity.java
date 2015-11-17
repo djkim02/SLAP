@@ -35,6 +35,7 @@ import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.djkim.slap.R;
 import com.djkim.slap.menubar.MainActivity;
@@ -96,6 +97,8 @@ public class CreateGroupActivity extends ActionBarActivity implements
                 String id = result.getId();
                 group.set_facebookGroupId(id);
                 group.save();
+                Toast.makeText(CreateGroupActivity.this, "Successfully created the group!",
+                        Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(CreateGroupActivity.this, MainActivity.class));
             }
 
@@ -149,41 +152,16 @@ public class CreateGroupActivity extends ActionBarActivity implements
                     DialogFragment dg = new DialogFragment() {
                         @Override
                         public Dialog onCreateDialog(Bundle savedInstanceState) {
-                            DialogInterface.OnClickListener buttonListener = new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    switch (which) {
-                                        case DialogInterface.BUTTON_POSITIVE:
-                                            //Yes button clicked
-                                            ArrayList<ReviewItem> reviewItems = new ArrayList<ReviewItem>();
-                                            for (Page page : mWizardModel.getCurrentPageSequence()) {
-                                                page.getReviewItems(reviewItems);
-                                            }
-                                            // reviewItems:
-                                            // 0: Type, 1: Name, 2: Description, 3: Capacity, 4: Skills, 5: Custom Tags
-                                            // TODO: support custom tags
-                                            String type = reviewItems.get(0).getDisplayValue();
-                                            String name = reviewItems.get(1).getDisplayValue();
-                                            String description = reviewItems.get(2).getDisplayValue();
-                                            int capacity = Integer.parseInt(reviewItems.get(3).getDisplayValue());
-                                            String skills = reviewItems.get(4).getDisplayValue();
-                                            User user = Utils.get_current_user();
-                                            group = new Group(name, user, capacity, type);
-                                            group.set_description(description);
-                                            group.set_skills(skills);
-                                            onClickCreateButton();
-                                            //startActivity(new Intent(CreateGroupActivity.this, MainActivity.class));
-                                            break;
-                                        case DialogInterface.BUTTON_NEGATIVE:
-                                            //No button clicked
-                                            break;
-                                    }
-                                }
-                            };
                             return new AlertDialog.Builder(getActivity())
                                     .setMessage(R.string.submit_confirm_message)
-                                    .setPositiveButton(R.string.submit_confirm_button, buttonListener)
-                                    .setNegativeButton(android.R.string.cancel, buttonListener)
+                                    .setPositiveButton(R.string.submit_confirm_button, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            createGroup();
+                                            onClickCreateButton();
+                                        }
+                                    })
+                                    .setNegativeButton(android.R.string.cancel, null)
                                     .create();
                         }
                     };
@@ -220,6 +198,26 @@ public class CreateGroupActivity extends ActionBarActivity implements
         mStepPagerStrip.setPageCount(mCurrentPageSequence.size() + 1); // + 1 = review step
         mPagerAdapter.notifyDataSetChanged();
         updateBottomBar();
+    }
+
+    private void createGroup() {
+        ArrayList<ReviewItem> reviewItems = new ArrayList<ReviewItem>();
+        for (Page page : mWizardModel.getCurrentPageSequence()) {
+            page.getReviewItems(reviewItems);
+        }
+        // reviewItems:
+        // 0: Type, 1: Name, 2: Description, 3: Capacity, 4: Skills, 5: Custom Tags
+        // TODO: support custom tags
+        String type = reviewItems.get(0).getDisplayValue();
+        String name = reviewItems.get(1).getDisplayValue();
+        String description = reviewItems.get(2).getDisplayValue();
+        int capacity = Integer.parseInt(reviewItems.get(3).getDisplayValue());
+        String skills = reviewItems.get(4).getDisplayValue();
+        String tags = reviewItems.get(5).getDisplayValue();
+        User user = Utils.get_current_user();
+        group = new Group(name, user, capacity, type);
+        group.set_description(description);
+        group.set_skills(skills);
     }
 
     private void updateBottomBar() {
@@ -368,8 +366,9 @@ public class CreateGroupActivity extends ActionBarActivity implements
 
     private void onClickCreateButton() {
         AppGroupCreationContent content = new AppGroupCreationContent.Builder()
-                .setName(group.get_name())
-                .setDescription(group.get_description())
+                .setName(group.get_name() == null ? "Enter a group name" : group.get_name())
+                .setDescription(group.get_description() == null
+                        ? "Enter a description" : group.get_description())
                 .setAppGroupPrivacy(AppGroupCreationContent.AppGroupPrivacy.Closed)
                 .build();
         createAppGroupDialog.show(content);

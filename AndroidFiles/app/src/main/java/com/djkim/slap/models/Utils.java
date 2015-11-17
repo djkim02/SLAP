@@ -2,14 +2,20 @@ package com.djkim.slap.models;
 
 import android.util.Log;
 
+import com.parse.FunctionCallback;
 import com.parse.GetCallback;
 import com.parse.Parse;
+import com.parse.ParseClassName;
+import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by joannachen on 10/26/15.
@@ -22,7 +28,7 @@ public class Utils{
                 parseUser.getObjectId(),
                 parseUser.getUsername(),
                 parseUser.getLong("facebookId"));
-                //parseUser.getString("imageUrl"));
+        user.sync();
         return user;
     }
 
@@ -39,6 +45,40 @@ public class Utils{
             return user;
         } catch (ParseException e) {
             return null; // couldn't find a user?? is this okay?
+        }
+    }
+
+    public static void getGroupsFromCloudInBackground(String type, final GroupsCallback callback) {
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("type", type);
+        ParseCloud.callFunctionInBackground(
+                "match", map, new FunctionCallback<List<ParseObject> >() {
+                    @Override
+                    public void done(List<ParseObject> parseGroups, ParseException e) {
+                        List<Group> groups = new ArrayList<Group>();
+                        for (ParseObject parseGroup : parseGroups) {
+                            Group group = new Group(parseGroup);
+                            groups.add(group);
+                        }
+                        callback.done(groups);
+                    }
+                });
+    }
+
+    public static List<Group> getGroupsFromCloud(String type) {
+        try {
+            Map<String, String> map = new HashMap<String, String>();
+            map.put("type", type);
+            List<ParseObject> parseGroups = ParseCloud.callFunction("match", map);
+            List<Group> groups = new ArrayList<Group>();
+            for (ParseObject parseGroup : parseGroups) {
+                Group group = new Group(parseGroup);
+                groups.add(group);
+            }
+            return groups;
+        } catch (ParseException e) {
+            // No group is found. Return an empty list.
+            return new ArrayList<Group>();
         }
     }
 

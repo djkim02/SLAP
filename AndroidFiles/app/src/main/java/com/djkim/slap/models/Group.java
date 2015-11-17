@@ -38,7 +38,6 @@ public class Group implements Serializable {
     private User m_owner;
     private int m_capacity;
     private ArrayList<User> m_members = new ArrayList<User>();
-    private ArrayList<User> m_membersToAdd = new ArrayList<User>();
     private Hashtable<Long, Integer> m_membership = new Hashtable<Long, Integer>();
     private String m_skills;    // comma-separated string of skills
 
@@ -60,6 +59,8 @@ public class Group implements Serializable {
         m_owner = new User();
         m_owner.setFieldsWithParseUser(parseGroup.getParseUser("owner"));
         m_facebookGroupId = parseGroup.getString("facebookGroupId");
+        m_type = parseGroup.getString("type");
+        m_skills = parseGroup.getString("skills");
 
         ParseRelation<ParseUser> membersRelation = parseGroup.getRelation("members");
         try {
@@ -177,17 +178,6 @@ public class Group implements Serializable {
 //         m_membership.put(member.get_facebook_id(), True);
     }
 
-    public void addMembers(ArrayList<User> users){
-        for (User user:users) {
-            m_membersToAdd.add(user);
-//            check for duplicates?
-//            if (!isMember(user)) {
-//                m_members.add(user);
-//                m_membership.put(user.get_facebook_id(), True);
-
-        }
-    }
-
     public ArrayList<User> getMembers(){
         return m_members;
     }
@@ -248,92 +238,3 @@ public class Group implements Serializable {
         }
     }
 }
-
-// OUT WITH THE OLD
-//    public void addParseMember(ParseUser parseMember){
-//        ParseObject parseGroup = null;
-//        parseGroup = getParseGroup();
-//        ParseRelation<ParseUser> relation = parseGroup.getRelation("members");
-//        relation.add(parseMember);
-//    }
-//
-//    public void addParseMembers(ArrayList<User> members){
-//        ParseObject parseGroup = getParseGroup();
-//        ParseRelation<ParseUser> relation = parseGroup.getRelation("members");
-//        for (User member: members) {
-//            relation.add(member.getParseUser());
-//        }
-//    }
-
-
-//    public Group(ParseObject parseGroup) throws ParseException {
-//        m_name = (String) parseGroup.get("name");
-//        m_description = (String) parseGroup.get("description");
-//        m_owner = (User) parseGroup.get("owner");
-//        m_capacity = (int) parseGroup.get("capacity");
-//        ArrayList<ParseUser> members = (ArrayList<ParseUser>) parseGroup.get("members");
-//        for (ParseUser member: members) {
-//            try {
-//                m_members.add(new User((Long) member.get("facebookId")));
-//            } catch (ParseException e) {
-//                throw new ParseException(e);
-//            }
-//        }
-//
-//    }
-
-//    public Group(String name, User owner, int capacity) throws ParseException {
-//        m_parseGroup = new ParseObject("Group");
-//
-//        try {
-//            createParseGroup(m_parseGroup, name, owner, capacity);
-//        } catch (ParseException e) {
-//            throw new ParseException(e);
-//        }
-//        m_description = "";
-//        m_parseGroup.put("description", m_description);
-//
-//        m_parseGroup.saveInBackground();
-//    }
-//
-//    public Group(String name, User owner, int capacity, String description) throws ParseException {
-//        m_parseGroup = new ParseObject("Group");
-//
-//        try {
-//            createParseGroup(m_parseGroup, name, owner, capacity);
-//        } catch (ParseException e) {
-//            throw new ParseException(e);
-//        }
-//        m_description = description;
-//        m_parseGroup.put("description", m_description);
-//
-//        m_parseGroup.saveInBackground();
-//    }
-//
-//    public void createParseGroup(ParseObject parseGroup, String name, User owner, int capacity) throws ParseException {
-//        m_name = name;
-//        m_owner = owner;
-//        m_capacity = capacity;
-//        addMember(owner);
-//
-//        parseGroup.put("name", m_name);
-//        ParseUser parseOwner = owner.getParseUser();
-//        parseGroup.put("owner", parseOwner);
-//        parseGroup.put("capacity", m_capacity);
-//        m_parseGroup = parseGroup;
-//
-//        Log.e("MyApp", "New Group Saved!");
-//
-//    }
-//
-//    // Getter for the corresponding ParseGroup object
-//    public ParseObject getParseGroup(){
-////        try {
-////            ParseQuery<ParseObject> query = ParseQuery.getQuery("Group");
-////            return query.get(m_objectId);
-////        }catch(ParseException e){
-////            throw new ParseException(e);
-////        }
-//        return m_parseGroup;
-//    }
-//

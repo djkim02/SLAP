@@ -31,9 +31,7 @@ public class User implements Serializable {
     private String m_objectId;
     private String m_username;
     private Long m_facebookId;
-    private String m_url;
-//    private ArrayList<Group> m_groups; // all groups the user is a part of
-//    private ArrayList<Group> m_groupsWhereUserIsOwner; // all groups the user is an owner of
+    private String m_facebookProfileId;
 
     // Constructors
     public User(){}
@@ -42,9 +40,6 @@ public class User implements Serializable {
         m_objectId = objectId;
         m_username = username;
         m_facebookId = facebookId;
-        //m_url = url;
-//        m_groups = new ArrayList<Group>();
-//        m_groupsWhereUserIsOwner = new ArrayList<Group>();
     }
 
     public User(ParseUser parseUser) {
@@ -63,14 +58,6 @@ public class User implements Serializable {
 //
 //    public void syncFacebookId(ParseUser parseUser) {
 //        m_facebookId = parseUser.getLong("facebookId");
-//    }
-//
-//    public void syncGroups(ParseUser parseUser) {
-//        // get groups from relation
-//        // clear m_groupsWhereUserIsMember
-//        // fill m_groupsWhereUserIsMember
-//        ParseRelation<ParseUser> relation = parseUser.getRelation("groups");
-//        ParseQuery query = relation.getQuery();
 //    }
 
     public void syncAthleteSkills(ParseUser parseUser)	//retrieve data from Parse and update user's athlete skills
@@ -94,6 +81,9 @@ public class User implements Serializable {
         ParseQuery<ParseUser> query = ParseUser.getQuery();
         try {
             ParseUser parseUser = query.get(m_objectId);
+            syncAthleteSkills(parseUser);
+            syncHackerSkills(parseUser);
+
 //            syncGroups(parseUser);
 
         } catch (ParseException e) {
@@ -127,7 +117,7 @@ public class User implements Serializable {
     }
 
 //    public String get_image_url() {
-//        return m_url;
+//        return m_facebookProfileId;
 //    }
 
     public boolean equals(User anotherUser){
@@ -138,18 +128,11 @@ public class User implements Serializable {
         m_objectId = parseOwner.getObjectId();
         m_username = parseOwner.getUsername();
         m_facebookId = parseOwner.getLong("facebookId");
+        m_facebookProfileId = parseOwner.getString("facebookProfileId");
         syncHackerSkills(parseOwner);
         syncAthleteSkills(parseOwner);
         // TODO: set Arrays too!
     }
-
-//    public void saveGroupsToParse(ParseUser parseUser) {
-//        ParseRelation<ParseObject> relation = parseUser.getRelation("groups");
-//        for (Group group: m_groups) {
-//            ParseObject parseGroup = ParseObject.createWithoutData("Group", group.get_id());
-//            relation.add(parseGroup);
-//        }
-//    }
 
     public List<Group> getGroups() {
         try {
@@ -212,10 +195,9 @@ public class User implements Serializable {
     private void saveAllFieldsToParse(ParseUser parseUser) {
         parseUser.put("username", m_username);
         parseUser.put("facebookId", m_facebookId);
-        //parseUser.put("imageUrl", m_url);
+        //parseUser.put("imageUrl", m_facebookProfileId);
         uploadAthleteSkills(parseUser);
         uploadHackerSkills(parseUser);
-//        saveGroupsToParse(parseUser);
     }
 
     public void save() {
@@ -226,18 +208,6 @@ public class User implements Serializable {
         } catch (ParseException e) {
             Log.e("", "Could not save ParseUser");
         }
-//        ParseUser parseUser = new ParseUser();
-//        ParseQuery<ParseUser> query = ParseUser.getQuery();
-//        query.whereEqualTo("facebook_id", m_facebookId);
-//        try {
-//            parseUser = query.getFirst();
-//            saveAllFieldsToParse(parseUser);
-//            parseUser.saveInBackground();
-//        } catch (ParseException e) {
-//            saveAllFieldsToParse(parseUser);
-//            parseUser.saveInBackground();
-//            m_objectId = parseUser.getObjectId(); // do I need to do this?
-//        }
     }
 
     //helper functions for uploading to and retrieving from Parse
@@ -276,36 +246,36 @@ public class User implements Serializable {
 
     private void convertJSONtoArrayList_Hacker(JSONArray arr)	//convert JSONArray from server and update Hacker Skills list
     {
+        if (hacker_skills == null) {
+            hacker_skills = Skill.returnHackerSkillsList();
+        }
         //revert back to ArrayList
         for(int i = 0; i < arr.length(); i++)
         {
             try {
                 JSONObject j = arr.getJSONObject(i);
-                JSONArray hasSkill = j.getJSONArray("isSelected");
-                Boolean hasSkill1 = hasSkill.getBoolean(0);
-
-                hacker_skills.get(i).setSelected(hasSkill1);
-
+                Boolean hasSkill = j.getBoolean("isSelected");
+                hacker_skills.get(i).setSelected(hasSkill);
             } catch (JSONException e) {
-                System.out.println("Cannot get keys/values from JSONArray.\n");
+                System.out.println("Cannot get hacker skills from JSONArray.\n");
             }
         }
     }
 
     private void convertJSONtoArrayList_Athlete(JSONArray arr)	//convert JSONArray from server and update the user's Athlete Skills list
     {
+        if (athlete_skills == null) {
+            athlete_skills = Skill.returnAthleteSkillsList();
+        }
         //revert back to ArrayList
         for(int i = 0; i < arr.length(); i++)
         {
             try {
                 JSONObject j = arr.getJSONObject(i);
-                JSONArray hasSkill = j.getJSONArray("isSelected");
-                Boolean hasSkill1 = hasSkill.getBoolean(0);
-
-                athlete_skills.get(i).setSelected(hasSkill1);
-
+                Boolean hasSkill = j.getBoolean("isSelected");
+                athlete_skills.get(i).setSelected(hasSkill);
             } catch (JSONException e) {
-                System.out.println("Cannot get keys/values from JSONArray.\n");
+                System.out.println("Cannot get athlete skills from JSONArray.\n");
             }
         }
     }
@@ -324,6 +294,14 @@ public class User implements Serializable {
 
     public void set_athlete_skills(ArrayList<Skill> athlete_skills) {
         this.athlete_skills = athlete_skills;
+    }
+
+    public void set_facebook_profile_id(String fbpid) {
+        m_facebookProfileId = fbpid;
+    }
+
+    public String get_facebook_profile_id() {
+        return m_facebookProfileId;
     }
 }
 
