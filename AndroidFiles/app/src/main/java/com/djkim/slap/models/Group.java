@@ -59,27 +59,41 @@ public class Group implements Serializable {
         m_objectId = parseGroup.getObjectId();
         m_name = parseGroup.getString("name");
         m_description = parseGroup.getString("description");
-
-        try {
-            m_owner = new User();
-            m_owner.setFieldsWithParseUser(parseGroup.getParseUser("owner").fetchIfNeeded());
-        } catch (ParseException e) {
-            Log.d("Debug", "Fetch failed!");
-        }
-
         m_facebookGroupId = parseGroup.getString("facebookGroupId");
         m_type = parseGroup.getString("type");
         m_skills = parseGroup.getString("skills");
 
+        m_members = new ArrayList<>();
+        m_membership = new HashSet<>();
+
         ParseRelation<ParseUser> membersRelation = parseGroup.getRelation("members");
         try {
-            List<ParseUser> parseUsers = membersRelation.getQuery().find();
-            m_members = new ArrayList<>();
-            for (ParseUser parseUser : parseUsers) {
-                User user = new User();
-                user.setFieldsWithParseUser(parseUser);
-                m_members.add(user);
-                m_membership.add(user.get_id());
+            boolean currentUserInGroup;
+            try {
+                currentUserInGroup =
+                        membersRelation.getQuery()
+                                .whereEqualTo("objectId", Utils.get_current_user().get_id())
+                                .count() == 1;
+            } catch (ParseException e) {
+                currentUserInGroup = false;
+            }
+
+            if (currentUserInGroup) {
+                List<ParseUser> parseUsers = membersRelation.getQuery().find();
+                for (ParseUser parseUser : parseUsers) {
+                    User user = new User();
+                    user.setFieldsWithParseUser(parseUser);
+                    m_members.add(user);
+                    m_membership.add(user.get_id());
+                }
+
+                try {
+                    m_owner = new User();
+                    m_owner.setFieldsWithParseUser(
+                            parseGroup.getParseUser("owner").fetchIfNeeded());
+                } catch (ParseException e) {
+                    Log.d("Debug", "Fetch failed!");
+                }
             }
         } catch (ParseException e) {
             e.printStackTrace();
@@ -171,6 +185,8 @@ public class Group implements Serializable {
         m_capacity = capacity;
     }
 
+    public String get_type() { return m_type; }
+
     public String get_facebookGroupId() {
         return m_facebookGroupId;
     }
@@ -214,21 +230,25 @@ public class Group implements Serializable {
         parseGroup.put("name", m_name);
         parseGroup.put("description", m_description);
 
-        if (m_owner.get_id().equals(Utils.get_current_user().get_id())) {
-            ParseObject parseOwner = ParseObject.createWithoutData("_User", m_owner.get_id());
-            parseGroup.put("owner", parseOwner);
+        // If m_owner is null, it means that we are either not in the group, or we just created the
+        // group. So, we check if we're in the m_membership set to determine which case we're under.
+        User currentUser = Utils.get_current_user();
+        ParseObject currentParseUser = ParseObject.createWithoutData("_User", currentUser.get_id());
+
+        if (m_owner != null
+                && m_owner.get_id().equals(currentUser.get_id())
+                && m_membership.contains(currentUser.get_id())) {
+            parseGroup.put("owner", currentParseUser);
         }
 
         parseGroup.put("type", m_type);
-
         parseGroup.put("capacity", m_capacity);
         parseGroup.put("skills", m_skills);
         parseGroup.put("facebookGroupId", m_facebookGroupId);
 
-        // Iterates through and adds all members that are not already in the array.
-        if (m_membership.contains(Utils.get_current_user().get_id())) {
-            parseGroup.getRelation("members")
-                    .add(ParseObject.createWithoutData("_User", Utils.get_current_user().get_id()));
+        // We never have to add any user other than ourselves.
+        if (m_membership.contains(currentUser.get_id())) {
+            parseGroup.getRelation("members").add(currentParseUser);
         }
     }
 

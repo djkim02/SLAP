@@ -127,6 +127,11 @@ public class GroupListFragment extends Fragment {
                         mGroup.addMember(Utils.get_current_user());
                         mGroup.save();
 
+                        // TODO(victorkwan): Right now, this won't work! What we really need to do
+                        // is that after saving in background, we want to have a callback that will
+                        // then force an update on our local Group before we put it into the view.
+                        mGroup.sync();
+
                         FragmentManager fragmentManager = getFragmentManager();
                         Fragment fragment = new GroupDetailsFragment();
 
@@ -145,7 +150,7 @@ public class GroupListFragment extends Fragment {
         public void bindGroup(Group group) {
             mGroup = group;
             mTitleTextView.setText(group.get_name());
-            mSubheadTextView.setText("Created by " + group.get_owner().get_name());
+            mSubheadTextView.setText(group.get_type() + " Group");
             mSupportingTextView.setText(group.get_description());
 
             int remainingSlots = group.get_capacity() - group.get_size();

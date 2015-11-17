@@ -52,7 +52,6 @@ public class GroupDetailsFragment extends Fragment {
         mGroupDetailsRecyclerView = (RecyclerView) rootView.findViewById(R.id.group_recycler_view);
         mGroupDetailsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-
         Bundle bundle = getArguments();
         mGroup = (Group) bundle.getSerializable(sGroupArgumentKey);
 
