@@ -98,3 +98,35 @@ Parse.Cloud.beforeSave("Group", function(request, response) {
     group.set("hashtags", hashtags);
     response.success();
 });
+
+Parse.Cloud.define("partialStringSearch", function(request, response) {
+    var toLowerCase = function(w) { return w.toLowerCase(); };
+ 
+    var keywords = request.params.name.split(' ');
+    keywords = _.map(keywords, toLowerCase);
+    var stopWords = ["the", "in", "and", "to", "but", "for", "or", "yet", "so"];
+    
+    Array.prototype.contains = function ( needle ) {
+    for (i in this) {
+       if (this[i] == needle) return true;
+    }
+    return false;
+    }
+    
+    keywords = keywords.filter(function (w) {
+    return w.match(/[a-zA-Z0-9]+/) && !stopWords.contains(w);
+    });
+    
+    var query = new Parse.Query("Group");
+    query.containsAll("keywords", keywords); // does that look right? lol
+    query.include("owner, members");
+    query.find({
+        success: function(results) {
+            // just return the results for now
+            response.success(results);
+        },
+        error: function() {
+            response.error("group fetch failed");
+        }
+    });
+});

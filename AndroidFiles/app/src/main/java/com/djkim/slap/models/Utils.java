@@ -67,10 +67,12 @@ public class Utils{
     // simple string match
     // returns Groups whose name exactly matches groupName
     public static List<Group> getGroupsByNameFromCloud(String groupName) {
+        Log.d("myapp", "partial string search here");
         try {
             Map<String, String> map = new HashMap<String, String>();
             map.put("name", groupName);
-            List<ParseObject> parseGroups = ParseCloud.callFunction("matchGroupName", map);
+            // List<ParseObject> parseGroups = ParseCloud.callFunction("matchGroupName", map);
+            List<ParseObject> parseGroups = ParseCloud.callFunction("partialStringSearch", map);
             List<Group> groups = new ArrayList<Group>();
             for (ParseObject parseGroup : parseGroups) {
                 Group group = new Group(parseGroup);
