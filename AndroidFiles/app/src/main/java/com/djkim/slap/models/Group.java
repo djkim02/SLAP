@@ -9,6 +9,7 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseRelation;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 import java.io.Serializable;
 import java.lang.reflect.Type;
@@ -185,9 +186,9 @@ public class Group implements Serializable {
         ParseRelation<ParseUser> relation = parseGroup.getRelation("members");
 //        for (User member : m_membership.values()) {
         for (User member : m_members) {
-             relation.add(member.toParseUser());
-//            ParseObject parseMember = ParseObject.createWithoutData("_User", member.get_id());
-//            parseGroup.put("members", parseMember);
+            if (member.get_id().equals(Utils.get_current_user().get_id())) {
+                relation.add(member.toParseUser());
+            }
         }
     }
 
@@ -207,31 +208,42 @@ public class Group implements Serializable {
         parseGroup.put("name", m_name);
         parseGroup.put("description", m_description);
 
-        ParseObject parseOwner = ParseObject.createWithoutData("_User", m_owner.get_id());
-        parseGroup.put("owner", parseOwner);
+        if (m_owner.get_id().equals(Utils.get_current_user().get_id())) {
+            ParseObject parseOwner = ParseObject.createWithoutData("_User", m_owner.get_id());
+            parseGroup.put("owner", parseOwner);
+        }
 
         parseGroup.put("type", m_type);
-
-//        ParseRelation<ParseObject> relation = parseOwner.getRelation("groups");
-//        relation.add(parseGroup);
 
         parseGroup.put("capacity", m_capacity);
         parseGroup.put("skills", m_skills);
         parseGroup.put("facebookGroupId", m_facebookGroupId);
 
-        // iterate through and add all members that are not already in the array
+        // Iterates through and adds all members that are not already in the array.
         addMembersToParseGroup(parseGroup);
-        // parseOwner.saveInBackground();
+        if (m_membership.contains(Utils.get_current_user().get_id())) {
+            parseGroup.getRelation("members").add(Utils.get_current_user().toParseUser());
+        }
     }
 
     public void save(){
-        ParseObject parseGroup = new ParseObject("Group");
+        ParseObject parseGroup;
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Group");
         try {
             parseGroup = query.get(m_objectId);
             saveAllFieldsToParse(parseGroup);
-            parseGroup.saveInBackground();
+            parseGroup.saveInBackground(new SaveCallback() {
+                @Override
+                public void done(ParseException e) {
+                    if (e == null) {
+                        Log.d("Debug", "Save completed successfully.");
+                    } else {
+                        e.printStackTrace();
+                    }
+                }
+            });
         } catch (ParseException e) {
+            parseGroup = new ParseObject("Group");
             saveAllFieldsToParse(parseGroup);
             parseGroup.saveInBackground();
             m_objectId = parseGroup.getObjectId();
