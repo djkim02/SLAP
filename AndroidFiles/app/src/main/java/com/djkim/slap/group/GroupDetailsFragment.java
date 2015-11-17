@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.djkim.slap.R;
+import com.djkim.slap.messenger.MessagingActivity;
 import com.djkim.slap.models.Group;
 import com.djkim.slap.models.User;
 import com.djkim.slap.models.Utils;

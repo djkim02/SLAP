@@ -102,10 +102,6 @@ public class LoginActivity extends FragmentActivity {
                             Log.d("MyApp", "User logged in through Facebook!");
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                             startActivity(intent);
-
-                            //Start sinch message service
-                            final Intent serviceIntent = new Intent(getApplicationContext(), MessageService.class);
-                            startService(serviceIntent);
                         }
                     }
                 });
