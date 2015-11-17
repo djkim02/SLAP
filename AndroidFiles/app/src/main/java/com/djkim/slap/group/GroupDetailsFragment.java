@@ -3,6 +3,8 @@ package com.djkim.slap.group;
 
 import android.app.ActionBar;
 import android.app.Fragment;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,6 +16,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.djkim.slap.R;
 import com.djkim.slap.models.Group;
@@ -24,6 +27,10 @@ import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
 import com.facebook.share.widget.JoinAppGroupDialog;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +51,8 @@ public class GroupDetailsFragment extends Fragment {
     private UserAdapter mGroupDetailsAdapter;
     private Group mGroup;
 
+    private Context globalContext = null;
+
     @Override
     public View onCreateView(
             LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -59,6 +68,8 @@ public class GroupDetailsFragment extends Fragment {
         ArrayList<com.djkim.slap.models.User> groupUsers = mGroup.get_members();
         mGroupDetailsAdapter = new UserAdapter(groupUsers);
         mGroupDetailsRecyclerView.setAdapter(mGroupDetailsAdapter);
+
+        globalContext = this.getActivity();
 
         return rootView;
     }
@@ -84,16 +95,35 @@ public class GroupDetailsFragment extends Fragment {
         private ImageView mThumbnailImageView;
         private TextView mTitleTextView;
         private TextView mSubheadTextView;
+        private LinearLayout mUserItem;
 
         public UserHolder(View itemView) {
             super(itemView);
 
+
+            mUserItem =
+                    (LinearLayout) itemView.findViewById(R.id.group_details_item);
             mThumbnailImageView =
                     (ImageView) itemView.findViewById(R.id.group_details_item_thumbnail_image_view);
             mTitleTextView =
                     (TextView) itemView.findViewById(R.id.group_details_item_title_text_view);
             mSubheadTextView =
                     (TextView) itemView.findViewById(R.id.group_details_item_subhead_text_view);
+
+            //Set on-click listener for messaging with Sinch
+            mUserItem.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    /*JoinAppGroupDialog.show(getActivity(), fbGroupId);
+
+                    if (!mGroup.isMember(Utils.get_current_user())) {
+                        mGroup.addMember(Utils.get_current_user());
+                        mGroup.save();
+                    }*/
+
+                    openConversation(mUser.get_id());
+                }
+            });
         }
 
         public void bindUser(com.djkim.slap.models.User user) {
@@ -212,5 +242,24 @@ public class GroupDetailsFragment extends Fragment {
 
         @Override
         public int getItemCount() { return mGroupUsers.size() + 2; }
+
+
     }
+
+        public void openConversation(String userID) {
+            ParseQuery<ParseUser> query = ParseUser.getQuery();
+            query.whereEqualTo("objectId", userID);
+            query.findInBackground(new FindCallback<ParseUser>() {
+                @Override
+                public void done(List<ParseUser> user, ParseException e) {
+                    if (e == null) {
+                        Intent intent = new Intent(globalContext.getApplicationContext(), MessagingActivity.class);
+                        intent.putExtra("RECIPIENT_ID", user.get(0).getObjectId());
+                        startActivity(intent);
+                    } else {
+                        //show some sort of error
+                    }
+                }
+            });
+        }
 }

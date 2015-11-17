@@ -10,4 +10,8 @@
     <color name="colorPrimary">#008CCC</color>
     <color name="textColorPrimary">#F5F5F5</color>
     <color name="colorPrimaryDark">#00796B</color>
+
+    <color name="sinch_purple">#ff63029d</color>
+    <color name="off_white">#fffafafa</color>
+    <color name="dark_gray">#ffb3b3b3</color>
 </resources>
