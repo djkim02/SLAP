@@ -144,10 +144,8 @@ Parse.Cloud.beforeSave("Group", function(request, response) {
     return w.match(/[a-zA-Z0-9]+/) && !stopWords.contains(w);
     });
   
-    var hashtags = keywords;
-	hashtags = hashtags.filter(function (w) {
-    return w.indexOf('#') > -1;
-    });
+    var hashtags = group.get("name").match(/[#][a-zA-Z0-9]+/);
+    hashtags = _.map(hashtags, toLowerCase);
   
     group.set("keywords", keywords);
     group.set("hashtags", hashtags);
@@ -173,7 +171,7 @@ Parse.Cloud.define("partialStringSearch", function(request, response) {
     });
      
     var query = new Parse.Query("Group");
-    query.containsAll("keywords", keywords);
+    query.containsAll("keywords", keywords); // does that look right? lol
     query.include("owner, members");
     query.find({
         success: function(results) {
