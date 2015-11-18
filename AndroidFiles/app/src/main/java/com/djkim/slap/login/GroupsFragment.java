@@ -23,6 +23,7 @@ public class GroupsFragment extends Fragment {
         TextView loginTextView = (TextView) view.findViewById(R.id.heading);
         loginTextView.setTypeface(tf);
         TextView subheadingTextView = (TextView) view.findViewById(R.id.subheading);
+        tf = Typeface.createFromAsset(getContext().getAssets(), "BebasNeue Regular.otf");
         subheadingTextView.setTypeface(tf);
         return view;
     }
