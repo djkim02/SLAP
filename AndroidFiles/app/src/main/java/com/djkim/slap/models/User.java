@@ -1,13 +1,11 @@
 package com.djkim.slap.models;
 
 import android.util.Log;
-import android.widget.Toast;
 
 import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
-import com.parse.ParseRelation;
 import com.parse.ParseUser;
 import com.parse.ParseException;
 
@@ -31,22 +29,25 @@ public class User implements Serializable {
     private String m_objectId;
     private String m_username;
     private Long m_facebookId;
-    private String m_url;
+    private String m_facebookProfileId;
 
     // Constructors
     public User(){}
+
     public User(String objectId, String username, Long facebookId)
     {
         m_objectId = objectId;
         m_username = username;
         m_facebookId = facebookId;
-        //m_url = url;
     }
 
     public User(ParseUser parseUser) {
         m_objectId = parseUser.getObjectId();
         m_username = parseUser.getUsername();
         m_facebookId = parseUser.getLong("facebookId");
+        m_facebookProfileId = parseUser.getString("facebookProfileId");
+        syncHackerSkills(parseUser);
+        syncAthleteSkills(parseUser);
     }
 
 //    public void addGroup (Group group) {
@@ -84,8 +85,6 @@ public class User implements Serializable {
             ParseUser parseUser = query.get(m_objectId);
             syncAthleteSkills(parseUser);
             syncHackerSkills(parseUser);
-//            syncGroups(parseUser);
-
         } catch (ParseException e) {
             return; // didn't find anything
         }
@@ -117,20 +116,11 @@ public class User implements Serializable {
     }
 
 //    public String get_image_url() {
-//        return m_url;
+//        return m_facebookProfileId;
 //    }
 
     public boolean equals(User anotherUser){
         return (anotherUser.get_facebook_id().equals(this.m_facebookId));
-    }
-
-    public void setFieldsWithParseUser(ParseUser parseOwner) {
-        m_objectId = parseOwner.getObjectId();
-        m_username = parseOwner.getUsername();
-        m_facebookId = parseOwner.getLong("facebookId");
-        syncHackerSkills(parseOwner);
-        syncAthleteSkills(parseOwner);
-        // TODO: set Arrays too!
     }
 
     public List<Group> getGroups() {
@@ -194,7 +184,7 @@ public class User implements Serializable {
     private void saveAllFieldsToParse(ParseUser parseUser) {
         parseUser.put("username", m_username);
         parseUser.put("facebookId", m_facebookId);
-        //parseUser.put("imageUrl", m_url);
+        //parseUser.put("imageUrl", m_facebookProfileId);
         uploadAthleteSkills(parseUser);
         uploadHackerSkills(parseUser);
     }
@@ -293,6 +283,14 @@ public class User implements Serializable {
 
     public void set_athlete_skills(ArrayList<Skill> athlete_skills) {
         this.athlete_skills = athlete_skills;
+    }
+
+    public void set_facebook_profile_id(String fbpid) {
+        m_facebookProfileId = fbpid;
+    }
+
+    public String get_facebook_profile_id() {
+        return m_facebookProfileId;
     }
 }
 

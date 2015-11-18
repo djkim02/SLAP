@@ -44,8 +44,6 @@ public class Group implements Serializable {
     private Set<String> m_membership = new HashSet<>();
     private String m_skills;    // comma-separated string of skills
 
-    public Group() {}
-
     public Group(String name, User owner, int capacity, String type) {
         m_name = name;
         m_owner = owner;
@@ -90,16 +88,13 @@ public class Group implements Serializable {
             if (currentUserInGroup) {
                 List<ParseUser> parseUsers = membersRelation.getQuery().find();
                 for (ParseUser parseUser : parseUsers) {
-                    User user = new User();
-                    user.setFieldsWithParseUser(parseUser);
+                    User user = new User(parseUser);
                     m_members.add(user);
                     m_membership.add(user.get_id());
                 }
 
                 try {
-                    m_owner = new User();
-                    m_owner.setFieldsWithParseUser(
-                            parseGroup.getParseUser("owner").fetchIfNeeded());
+                    m_owner = new User(parseGroup.getParseUser("owner").fetchIfNeeded());
                 } catch (ParseException e) {
                     Log.d("Debug", "Fetch failed!");
                 }
@@ -156,7 +151,7 @@ public class Group implements Serializable {
     }
 
     public int get_size() {
-        return m_members.size();
+        return m_membership.size();
     }
 
     public int get_capacity() {
@@ -191,10 +186,6 @@ public class Group implements Serializable {
         }
     }
 
-    public ArrayList<User> getMembers(){
-        return m_members;
-    }
-
     public ParseObject toParseObject()
     {
         ParseObject parseGroup = new ParseObject("Group");
@@ -222,6 +213,8 @@ public class Group implements Serializable {
             parseGroup.put("owner", currentParseUser);
         }
 
+        parseGroup.put("name", m_name);
+        parseGroup.put("description", m_description);
         parseGroup.put("type", m_type);
         parseGroup.put("capacity", m_capacity);
         parseGroup.put("skills", m_skills);
