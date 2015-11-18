@@ -198,6 +198,10 @@ public class Group implements Serializable {
         }
     }
 
+    public String get_skills() {
+        return m_skills;
+    }
+
     public int get_capacity() {
         return m_capacity;
     }

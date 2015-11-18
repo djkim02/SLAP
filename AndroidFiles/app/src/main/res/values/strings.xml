@@ -12,6 +12,7 @@
 
     <string name="group_list_item_details">Details</string>
     <string name="group_details_group_members">Group Members</string>
+    <string name="group_details_description">Description</string>
     <string name="create_profile">Tell us about yourself</string>
 
     <string-array name="Menu">
