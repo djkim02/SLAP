@@ -1,35 +1,25 @@
 package com.djkim.slap.group;
 
 
-import android.app.ActionBar;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.djkim.slap.R;
 import com.djkim.slap.messenger.MessagingActivity;
 import com.djkim.slap.models.Group;
-import com.djkim.slap.models.GroupCallback;
 import com.djkim.slap.models.User;
 import com.djkim.slap.models.Utils;
 import com.djkim.slap.profile.OthersProfileActivity;
-import com.facebook.AccessToken;
-import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
-import com.facebook.HttpMethod;
 import com.facebook.login.widget.ProfilePictureView;
 import com.facebook.share.widget.JoinAppGroupDialog;
 import com.parse.FindCallback;
@@ -37,7 +27,6 @@ import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -98,17 +87,13 @@ public class GroupDetailsFragment extends Fragment {
         private TextView mTitleTextView;
         private TextView mSubheadTextView;
         private LinearLayout mUserItem;
-
-        public UserHolder(View itemView) {
-            super(itemView);
-
-
-            mUserItem =
-                    (LinearLayout) itemView.findViewById(R.id.group_details_item);
         private RelativeLayout mRelativeLayout;
 
+
         public UserHolder(View itemView) {
             super(itemView);
+                mUserItem =
+                        (LinearLayout) itemView.findViewById(R.id.group_details_item);
             mRelativeLayout = (RelativeLayout) itemView.findViewById(R.id.group_details_layout);
             mThumbnailImageView =
                     (ProfilePictureView) itemView.findViewById(R.id.group_details_item_thumbnail_image_view);
