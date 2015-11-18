@@ -147,7 +147,7 @@ public class GroupDetailsFragment extends Fragment {
                         public void onCompleted(GraphResponse response) {
                             try {
                                 JSONArray json = response.getJSONArray();
-                                //Log.w("ALERT", json.getJSONObject(0).get("data").toString());
+                                Log.w("ALERT", json.toString());
 //                                if(currentUser.get_facebook_id() == json.getJSONObject(0).get("data") ) {
 //                                    //user is in the group
 //                                    hideButton = true;
@@ -160,34 +160,32 @@ public class GroupDetailsFragment extends Fragment {
             ).executeAsync();
 
             if(hideButton) {
-
+                //User is already in the group
             } else {
-                //TODO: Put victor's button code here
-            }
+                final String fbGroupId = mGroup.get_facebookGroupId();
+                if (fbGroupId != null) {
+                    mLinearLayout.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            JoinAppGroupDialog.show(getActivity(), fbGroupId);
 
-            final String fbGroupId = mGroup.get_facebookGroupId();
-            if (fbGroupId != null) {
-                mLinearLayout.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        JoinAppGroupDialog.show(getActivity(), fbGroupId);
-
-                        if (!mGroup.isMember(Utils.get_current_user())) {
-                            mGroup.addMember(Utils.get_current_user());
-                            mGroup.save();
+                            if (!mGroup.isMember(Utils.get_current_user())) {
+                                mGroup.addMember(Utils.get_current_user());
+                                mGroup.save();
+                            }
                         }
-                    }
-                });
-            }
-            mTitleTextView =
-                    (TextView) itemView.findViewById(R.id.group_details_action_title_text_view);
-            mTitleTextView.setText(mGroup.get_name());
-            mSubheadTextView =
-                    (TextView) itemView.findViewById(R.id.group_details_action_subhead_text_view);
+                    });
+                }
+                mTitleTextView =
+                        (TextView) itemView.findViewById(R.id.group_details_action_title_text_view);
+                mTitleTextView.setText(mGroup.get_name());
+                mSubheadTextView =
+                        (TextView) itemView.findViewById(R.id.group_details_action_subhead_text_view);
 
-            String memberString = mGroup.get_size() == 1 ? " member." : " members.";
-            mSubheadTextView.setText(
-                    "You're in! This groups has " + mGroup.get_size() + memberString);
+                String memberString = mGroup.get_size() == 1 ? " member." : " members.";
+                mSubheadTextView.setText(
+                        "This groups has " + mGroup.get_size() + memberString);
+            }
         }
     }
 
