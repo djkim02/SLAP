@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.djkim.slap.R;
 import com.djkim.slap.models.Group;
+import com.djkim.slap.models.GroupCallback;
 import com.djkim.slap.models.User;
 import com.djkim.slap.models.Utils;
 import com.djkim.slap.profile.OthersProfileActivity;
@@ -55,7 +56,6 @@ public class GroupDetailsFragment extends Fragment {
 
         mGroupDetailsRecyclerView = (RecyclerView) rootView.findViewById(R.id.group_recycler_view);
         mGroupDetailsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
 
         Bundle bundle = getArguments();
         mGroup = (Group) bundle.getSerializable(sGroupArgumentKey);
@@ -151,10 +151,10 @@ public class GroupDetailsFragment extends Fragment {
                     public void onClick(View v) {
                         User curUser = Utils.get_current_user();
                         if (!curUser.isMemberOf(mGroup)) {
-                            JoinAppGroupDialog.show(getActivity(), fbGroupId);
                             curUser.joinAsMember(mGroup);
                             curUser.save();
                         }
+                        JoinAppGroupDialog.show(getActivity(), fbGroupId);
                     }
                 });
             }

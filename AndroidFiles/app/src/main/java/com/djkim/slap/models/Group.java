@@ -49,11 +49,16 @@ public class Group implements Serializable {
 //        m_owner = owner;
         m_capacity = capacity;
         m_description = "";
+
         m_type = type.equals(HACKER_GROUP) || type.equals(ATHLETE_GROUP) ? type : GENERAL_GROUP;
 //        m_membership.put(owner.get_facebook_id(), owner);
     }
 
     public Group(ParseObject parseGroup) {
+        updateAllFields(parseGroup);
+    }
+
+    private void updateAllFields(ParseObject parseGroup) {
         m_objectId = parseGroup.getObjectId();
         m_name = parseGroup.getString("name");
         m_description = parseGroup.getString("description");
@@ -63,6 +68,7 @@ public class Group implements Serializable {
 //            e.printStackTrace();
 //        }
         m_facebookGroupId = parseGroup.getString("facebookGroupId");
+
         m_type = parseGroup.getString("type");
         m_skills = parseGroup.getString("skills");
 
@@ -79,27 +85,6 @@ public class Group implements Serializable {
 //        }
 
         m_capacity = parseGroup.getInt("capacity");
-    }
-
-    private void updateAllFields(ParseObject parseGroup) {
-        m_name = parseGroup.getString("name");
-        m_description = parseGroup.getString("description");
-        ParseUser parseOwner = parseGroup.getParseUser("owner");
-//        m_owner = new User(parseOwner);
-        m_capacity = parseGroup.getInt("capacity");
-        m_facebookGroupId = parseGroup.getString("facebookGroupId");
-
-//        ParseRelation<ParseUser> membersRelation = parseGroup.getRelation("members");
-//        try {
-//            List<ParseUser> parseUsers = membersRelation.getQuery().find();
-//            m_membership = new Hashtable<>();
-//            for (ParseUser parseUser : parseUsers) {
-//                User user = new User(parseUser);
-//                m_membership.put(user.get_facebook_id(), user);
-//            }
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//        }
     }
 
     public void set_skills(String skills) {
@@ -220,6 +205,8 @@ public class Group implements Serializable {
         m_capacity = capacity;
     }
 
+    public String get_type() { return m_type; }
+
     public String get_facebookGroupId() {
         return m_facebookGroupId;
     }
@@ -271,7 +258,9 @@ public class Group implements Serializable {
         parseGroup.put("type", m_type);
         parseGroup.put("capacity", m_capacity);
         parseGroup.put("skills", m_skills);
-        parseGroup.put("facebookGroupId", m_facebookGroupId);
+        if (m_facebookGroupId != null) {
+            parseGroup.put("facebookGroupId", m_facebookGroupId);
+        }
 
         // Iterates through and adds all members that are not already in the array.
 //        addMembersToParseGroup(parseGroup);
@@ -280,7 +269,7 @@ public class Group implements Serializable {
 //        }
     }
 
-    public void save(){
+    public void saveInBackground(final GroupCallback callback){
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Group");
         try {
             ParseObject parseGroup = query.get(m_objectId);
@@ -292,6 +281,10 @@ public class Group implements Serializable {
                         Log.d("DEBUG", "Save completed successfully.");
                     } else {
                         e.printStackTrace();
+                        Group.this.sync();
+                        if (callback != null) {
+                            callback.done();
+                        }
                     }
                 }
             });
@@ -308,12 +301,43 @@ public class Group implements Serializable {
                         curUser.getRelation("ownerOf").add(ParseObject.createWithoutData("Group", objectId));
                         curUser.getRelation("memberOf").add(ParseObject.createWithoutData("Group", objectId));
                         curUser.saveInBackground();
+
+                        Group.this.m_objectId = parseGroup.getObjectId();
+//                        Group.this.sync();
+                        if (callback != null) {
+                            callback.done();
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    public void save() {
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Group");
+        try {
+            ParseObject parseGroup = query.get(m_objectId);
+            saveAllFieldsToParse(parseGroup);
+            parseGroup.save();
+        } catch (ParseException e) {
+            // object is null. Saving a new group
+            final ParseObject parseGroup = new ParseObject("Group");
+            saveAllFieldsToParse(parseGroup);
+            parseGroup.saveInBackground(new SaveCallback() {
+                @Override
+                public void done(ParseException e) {
+                    if (e == null) {
+                        ParseUser curUser = ParseUser.getCurrentUser();
+                        String objectId = parseGroup.getObjectId();
+                        curUser.getRelation("ownerOf").add(ParseObject.createWithoutData("Group", objectId));
+                        curUser.getRelation("memberOf").add(ParseObject.createWithoutData("Group", objectId));
+                        curUser.saveInBackground();
+                        Group.this.m_objectId = parseGroup.getObjectId();
                     } else {
                         e.printStackTrace();
                     }
                 }
             });
-            m_objectId = parseGroup.getObjectId();
         }
     }
 }

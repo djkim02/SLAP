@@ -37,6 +37,8 @@ public class User implements Serializable {
     private Hashtable<String, Group> m_ownerOf = new Hashtable<>();
 
     // Constructors
+    public User(){}
+
     public User(String objectId, String username, Long facebookId)
     {
         m_objectId = objectId;
@@ -183,10 +185,10 @@ public class User implements Serializable {
             @Override
             public void done(ParseUser parseUser, ParseException e) {
                 if (e == null) {
-                    ParseQuery<ParseObject> query = ParseQuery.getQuery("Group");
-                    query.whereEqualTo("members", parseUser);
-                    query.orderByDescending("createdAt");
-                    query.findInBackground(new FindCallback<ParseObject>() {
+                    ParseQuery.getQuery("Group")
+                            .whereEqualTo("members", parseUser)
+                            .orderByDescending("createdAt")
+                            .findInBackground(new FindCallback<ParseObject>() {
                         @Override
                         public void done(List<ParseObject> parseGroups, ParseException e) {
                             if (e == null) {

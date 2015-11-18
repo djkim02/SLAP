@@ -40,6 +40,7 @@ import android.widget.Toast;
 import com.djkim.slap.R;
 import com.djkim.slap.menubar.MainActivity;
 import com.djkim.slap.models.Group;
+import com.djkim.slap.models.GroupCallback;
 import com.djkim.slap.models.User;
 import com.djkim.slap.models.Utils;
 import com.djkim.slap.selectionModel.ModelCallbacks;
@@ -96,14 +97,25 @@ public class CreateGroupActivity extends ActionBarActivity implements
             public void onSuccess(CreateAppGroupDialog.Result result) {
                 String id = result.getId();
                 group.set_facebookGroupId(id);
-                group.save();
-                User user = Utils.get_current_user();
-                Toast.makeText(CreateGroupActivity.this, "Successfully created the group!",
-                        Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(CreateGroupActivity.this, MainActivity.class));
+                group.saveInBackground(new GroupCallback() {
+                    @Override
+                    public void done() {
+                        Toast.makeText(CreateGroupActivity.this, "Successfully created the group!",
+                                Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(CreateGroupActivity.this, MainActivity.class));
+                    }
+                });
             }
 
             public void onCancel() {
+                group.saveInBackground(new GroupCallback() {
+                    @Override
+                    public void done() {
+                        Toast.makeText(CreateGroupActivity.this, "Failed to create the group!",
+                                Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(CreateGroupActivity.this, MainActivity.class));
+                    }
+                });
             }
 
             public void onError(FacebookException error) {
