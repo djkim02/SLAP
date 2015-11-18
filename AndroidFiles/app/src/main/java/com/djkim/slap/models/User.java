@@ -16,7 +16,6 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -37,8 +36,6 @@ public class User implements Serializable {
     private Hashtable<String, Group> m_ownerOf = new Hashtable<>();
 
     // Constructors
-    public User(){}
-
     public User(String objectId, String username, Long facebookId)
     {
         m_objectId = objectId;
@@ -61,14 +58,10 @@ public class User implements Serializable {
         ParseRelation<ParseObject> memberOfRelation = parseUser.getRelation("memberOf");
         try {
             List<ParseObject> parseGroups = memberOfRelation.getQuery().find();
-            Log.d("DEBUG", "Current username is " + parseUser.getUsername());
-            Log.d("DEBUG", "length of parseGroups is " + parseGroups.size());
             m_memberOf = new Hashtable<>();
             for (ParseObject parseGroup : parseGroups) {
                 Group group = new Group(parseGroup);
-                Log.d("DEBUG", "putting group id: " + group.get_id());
                 m_memberOf.put(group.get_id(), group);
-                Log.d("DEBUG", "after putting, size is: " + m_memberOf.size());
             }
         } catch (ParseException e) {
             e.printStackTrace();
@@ -235,7 +228,7 @@ public class User implements Serializable {
     private void saveAllFieldsToParse(ParseUser parseUser) {
         parseUser.put("username", m_username);
         parseUser.put("facebookId", m_facebookId);
-        //parseUser.put("imageUrl", m_facebookProfileId);
+        parseUser.put("facebookProfileId", m_facebookProfileId);
         uploadAthleteSkills(parseUser);
         uploadHackerSkills(parseUser);
         uploadMemberGroups(parseUser);

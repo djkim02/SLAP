@@ -63,7 +63,6 @@ public class GroupListFragment extends Fragment {
      */
     protected void getGroupsInBackground() {
         User user = Utils.get_current_user();
-        Log.d("DEBUG", "Current user is in " + user.getGroups().size());
         setAdapterWithGroups(user.getGroups());
 //        user.getGroupsInBackground(new GroupsCallback() {
 //            @Override
@@ -129,7 +128,6 @@ public class GroupListFragment extends Fragment {
                 public void onClick(View v) {
                     User curUser = Utils.get_current_user();
                     if (!curUser.isMemberOf(mGroup)) {
-                        Log.d("DEBUG", "Adding current member to this group");
                         curUser.joinAsMember(mGroup);
                         curUser.save();
                     }

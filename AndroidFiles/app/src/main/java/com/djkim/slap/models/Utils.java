@@ -1,11 +1,6 @@
 package com.djkim.slap.models;
 
-import android.util.Log;
-
 import com.parse.FunctionCallback;
-import com.parse.GetCallback;
-import com.parse.Parse;
-import com.parse.ParseClassName;
 import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -25,7 +20,6 @@ public class Utils{
     public static User get_current_user() {
         ParseUser parseUser = ParseUser.getCurrentUser();
         User user = new User(parseUser);
-        Log.d("DEBUG", "in get_current_user, user is in: " + user.getGroups().size());
         // TODO: TEST if sync is really necessary
 //        user.sync();
         return user;
