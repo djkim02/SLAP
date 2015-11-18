@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.djkim.slap.R;
@@ -33,6 +34,7 @@ public class EditMyProfileActivity extends FragmentActivity {
     private Button prevButton;
     private Button nextButton;
     private TextView editProfileText;
+    private LinearLayout editProfileLayout;
 
     public void updateHackerSkills(ArrayList<Skill> skills) {
         user.set_hacker_skills(skills);
@@ -76,6 +78,9 @@ public class EditMyProfileActivity extends FragmentActivity {
         prevButton = (Button) findViewById(R.id.prev_button);
         nextButton = (Button) findViewById(R.id.next_button);
         editProfileText = (TextView) findViewById(R.id.edit_profile_text);
+        editProfileLayout = (LinearLayout) findViewById(R.id.create_profile_layout);
+        editProfileLayout.setBackgroundColor(0xffffffff);
+
         setTitleText("Edit My Hacker Skills");
 
         prevButton.setOnClickListener(new View.OnClickListener() {
