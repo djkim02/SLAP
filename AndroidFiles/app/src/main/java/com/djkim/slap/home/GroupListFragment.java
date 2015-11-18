@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,12 +62,14 @@ public class GroupListFragment extends Fragment {
      */
     protected void getGroupsInBackground() {
         User user = Utils.get_current_user();
-        user.getGroupsInBackground(new GroupsCallback() {
-            @Override
-            public void done(List<Group> groups) {
-                setAdapterWithGroups(groups);
-            }
-        });
+        Log.d("DEBUG", "Current user is in " + user.getGroups().size() );
+        setAdapterWithGroups(user.getGroups());
+//        user.getGroupsInBackground(new GroupsCallback() {
+//            @Override
+//            public void done(List<Group> groups) {
+//                setAdapterWithGroups(groups);
+//            }
+//        });
     }
 
     private class GroupHolder extends RecyclerView.ViewHolder {
@@ -123,9 +126,11 @@ public class GroupListFragment extends Fragment {
             mRemainingSlotsButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (!mGroup.isMember(Utils.get_current_user())) {
-                        mGroup.addMember(Utils.get_current_user());
-                        mGroup.save();
+                    User curUser = Utils.get_current_user();
+                    if (!curUser.isMemberOf(mGroup)) {
+                        Log.d("DEBUG", "Adding current member to this group");
+                        curUser.joinAsMember(mGroup);
+                        curUser.save();
                     }
                     FragmentManager fragmentManager = getFragmentManager();
                     Fragment fragment = new GroupDetailsFragment();
@@ -144,7 +149,12 @@ public class GroupListFragment extends Fragment {
         public void bindGroup(Group group) {
             mGroup = group;
             mTitleTextView.setText(group.get_name());
-            mSubheadTextView.setText("Created by " + group.get_owner().get_name());
+            User owner = group.get_owner();
+            if (owner == null) {
+                mSubheadTextView.setText("No owner");
+            } else {
+                mSubheadTextView.setText("Created by " + owner.get_name());
+            }
             mSupportingTextView.setText(group.get_description());
 
             int remainingSlots = group.get_capacity() - group.get_size();

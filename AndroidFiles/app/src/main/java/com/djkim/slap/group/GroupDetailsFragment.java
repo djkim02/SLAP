@@ -60,14 +60,12 @@ public class GroupDetailsFragment extends Fragment {
         Bundle bundle = getArguments();
         mGroup = (Group) bundle.getSerializable(sGroupArgumentKey);
 
-        List<com.djkim.slap.models.User> groupUsers = mGroup.get_members();
+        List<com.djkim.slap.models.User> groupUsers = mGroup.getMembers();
         mGroupDetailsAdapter = new UserAdapter(groupUsers);
         mGroupDetailsRecyclerView.setAdapter(mGroupDetailsAdapter);
 
         return rootView;
     }
-
-    public class User {}
 
     private class SectionHeaderHolder extends RecyclerView.ViewHolder {
         private TextView mSectionHeaderTextView;
@@ -151,10 +149,11 @@ public class GroupDetailsFragment extends Fragment {
                 mLinearLayout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (!mGroup.isMember(Utils.get_current_user())) {
+                        User curUser = Utils.get_current_user();
+                        if (!curUser.isMemberOf(mGroup)) {
                             JoinAppGroupDialog.show(getActivity(), fbGroupId);
-                            mGroup.addMember(Utils.get_current_user());
-                            mGroup.save();
+                            curUser.joinAsMember(mGroup);
+                            curUser.save();
                         }
                     }
                 });

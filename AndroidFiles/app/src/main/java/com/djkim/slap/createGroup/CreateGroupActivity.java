@@ -97,6 +97,7 @@ public class CreateGroupActivity extends ActionBarActivity implements
                 String id = result.getId();
                 group.set_facebookGroupId(id);
                 group.save();
+                User user = Utils.get_current_user();
                 Toast.makeText(CreateGroupActivity.this, "Successfully created the group!",
                         Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(CreateGroupActivity.this, MainActivity.class));
