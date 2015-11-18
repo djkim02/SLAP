@@ -24,11 +24,10 @@ public class Utils{
 
     public static User get_current_user() {
         ParseUser parseUser = ParseUser.getCurrentUser();
-        User user = new User(
-                parseUser.getObjectId(),
-                parseUser.getUsername(),
-                parseUser.getLong("facebookId"));
-        user.sync();
+        User user = new User(parseUser);
+        Log.d("DEBUG", "in get_current_user, user is in: " + user.getGroups().size());
+        // TODO: TEST if sync is really necessary
+//        user.sync();
         return user;
     }
 
