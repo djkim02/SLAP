@@ -40,6 +40,8 @@ public class CreateProfileAthleteFragment extends CreateProfileAbstractFragment 
         CreateProfileActivity createProfileActivity = (CreateProfileActivity) this.getActivity();
         createProfileActivity.updateAthleteSkills(athleteSkills);
         createProfileActivity.setTitleText("Programming Skills");
+        createProfileActivity.setPrevButtonColorToPrimary();
+        createProfileActivity.setNextButtonColorToPrimary();
     }
 
     public void onNextButtonClick() {
@@ -47,5 +49,8 @@ public class CreateProfileAthleteFragment extends CreateProfileAbstractFragment 
         createProfileActivity.updateAthleteSkills(athleteSkills);
         createProfileActivity.setTitleText("Congratulations!");
         createProfileActivity.setNextButtonText("Done");
+        createProfileActivity.setPrevButtonColorToBlack();
+        createProfileActivity.setNextButtonColorToBlack();
+        createProfileActivity.getCreateProfileLayout().setBackgroundResource(R.drawable.groupmountain);
     }
 }
