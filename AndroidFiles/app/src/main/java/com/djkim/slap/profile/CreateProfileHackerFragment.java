@@ -39,12 +39,17 @@ public class CreateProfileHackerFragment extends CreateProfileAbstractFragment {
         createProfileActivity.setPrevButtonText("");
         createProfileActivity.updateHackerSkills(hackerSkills);
         createProfileActivity.setTitleText("Tell us about yourself");
+        createProfileActivity.setPrevButtonColorToBlack();
+        createProfileActivity.setNextButtonColorToBlack();
+        createProfileActivity.getCreateProfileLayout().setBackgroundResource(R.drawable.tellme);
     }
 
     public void onNextButtonClick() {
         CreateProfileActivity createProfileActivity = (CreateProfileActivity) this.getActivity();
         createProfileActivity.updateHackerSkills(hackerSkills);
         createProfileActivity.setTitleText("Athlete Skills");
+        createProfileActivity.setPrevButtonColorToPrimary();
+        createProfileActivity.setNextButtonColorToPrimary();
     }
 
 //    public ArrayList<Skill> updateHackerSkills() {

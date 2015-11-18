@@ -1,7 +1,6 @@
 package com.djkim.slap.models;
 
 import android.util.Log;
-import android.widget.Toast;
 
 import com.parse.FindCallback;
 import com.parse.GetCallback;
@@ -17,6 +16,7 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 
 /**
@@ -31,43 +31,64 @@ public class User implements Serializable {
     private String m_objectId;
     private String m_username;
     private Long m_facebookId;
-    private String m_url;
+    private String m_facebookProfileId;
+    private Hashtable<String, Group> m_memberOf = new Hashtable<>();
+    private Hashtable<String, Group> m_ownerOf = new Hashtable<>();
 
     // Constructors
-    public User(){}
     public User(String objectId, String username, Long facebookId)
     {
         m_objectId = objectId;
         m_username = username;
         m_facebookId = facebookId;
-        //m_url = url;
     }
 
     public User(ParseUser parseUser) {
         m_objectId = parseUser.getObjectId();
         m_username = parseUser.getUsername();
         m_facebookId = parseUser.getLong("facebookId");
+        m_facebookProfileId = parseUser.getString("facebookProfileId");
+        syncMemberGroups(parseUser);
+        syncOwnerGroups(parseUser);
+        syncHackerSkills(parseUser);
+        syncAthleteSkills(parseUser);
     }
 
-//    public void addGroup (Group group) {
-//        m_groups.add(group);
-//    }
+    private void syncMemberGroups(ParseUser parseUser) {
+        ParseRelation<ParseObject> memberOfRelation = parseUser.getRelation("memberOf");
+        try {
+            List<ParseObject> parseGroups = memberOfRelation.getQuery().find();
+            m_memberOf = new Hashtable<>();
+            for (ParseObject parseGroup : parseGroups) {
+                Group group = new Group(parseGroup);
+                m_memberOf.put(group.get_id(), group);
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
 
-//    public void syncUsername(ParseUser parseUser) {
-//        m_username = parseUser.getUsername();
-//    }
-//
-//    public void syncFacebookId(ParseUser parseUser) {
-//        m_facebookId = parseUser.getLong("facebookId");
-//    }
+    private void syncOwnerGroups(ParseUser parseUser) {
+        ParseRelation<ParseObject> ownerOfRelation = parseUser.getRelation("ownerOf");
+        try {
+            List<ParseObject> parseGroups = ownerOfRelation.getQuery().find();
+            m_ownerOf = new Hashtable<>();
+            for (ParseObject parseGroup : parseGroups) {
+                Group group = new Group(parseGroup);
+                m_ownerOf.put(group.get_id(), group);
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
 
-    public void syncAthleteSkills(ParseUser parseUser)	//retrieve data from Parse and update user's athlete skills
+    private void syncAthleteSkills(ParseUser parseUser)	//retrieve data from Parse and update user's athlete skills
     {
         JSONArray fetched_array = parseUser.getJSONArray("athlete_skills");
         convertJSONtoArrayList_Athlete(fetched_array);
     }
 
-    public void syncHackerSkills(ParseUser parseUser)	//retrieve data from Parse and update user's hacker skills
+    private void syncHackerSkills(ParseUser parseUser)	//retrieve data from Parse and update user's hacker skills
     {
         JSONArray fetched_array = parseUser.getJSONArray("hacker_skills");
         convertJSONtoArrayList_Hacker(fetched_array);
@@ -84,8 +105,6 @@ public class User implements Serializable {
             ParseUser parseUser = query.get(m_objectId);
             syncAthleteSkills(parseUser);
             syncHackerSkills(parseUser);
-//            syncGroups(parseUser);
-
         } catch (ParseException e) {
             return; // didn't find anything
         }
@@ -96,60 +115,61 @@ public class User implements Serializable {
         return m_objectId;
     }
 
-    public void set_id(String id) {
-        m_objectId = id;
-    }
-
     public String get_name(){
         return m_username;
-    }
-
-    public void set_name(String name){
-        m_username = name;
     }
 
     public Long get_facebook_id() {
         return m_facebookId;
     }
 
-    public void set_facebook_id(Long facebook_id){
-        m_facebookId = facebook_id;
+    public ArrayList<Skill> get_hacker_skills() {
+        return hacker_skills;
     }
 
-//    public String get_image_url() {
-//        return m_url;
-//    }
+    public ArrayList<Skill> get_athlete_skills() {
+        return athlete_skills;
+    }
+
+    public void set_hacker_skills(ArrayList<Skill> hacker_skills) {
+        this.hacker_skills = hacker_skills;
+    }
+
+    public void set_athlete_skills(ArrayList<Skill> athlete_skills) {
+        this.athlete_skills = athlete_skills;
+    }
+
+    public void set_facebook_profile_id(String fbpid) {
+        m_facebookProfileId = fbpid;
+    }
+
+    public String get_facebook_profile_id() {
+        return m_facebookProfileId;
+    }
 
     public boolean equals(User anotherUser){
         return (anotherUser.get_facebook_id().equals(this.m_facebookId));
     }
 
-    public void setFieldsWithParseUser(ParseUser parseOwner) {
-        m_objectId = parseOwner.getObjectId();
-        m_username = parseOwner.getUsername();
-        m_facebookId = parseOwner.getLong("facebookId");
-        syncHackerSkills(parseOwner);
-        syncAthleteSkills(parseOwner);
-        // TODO: set Arrays too!
+    public Boolean isMemberOf(Group group) {
+        return m_memberOf.containsKey(group.get_id());
+    }
+
+    public Boolean isOwnerOf(Group group) {
+        return m_ownerOf.containsKey(group.get_id());
+    }
+
+    public void joinAsMember(Group group) {
+        m_memberOf.put(group.get_id(), group);
+    }
+
+    public void joinAsOwner(Group group) {
+        m_ownerOf.put(group.get_id(), group);
+        joinAsMember(group);
     }
 
     public List<Group> getGroups() {
-        try {
-            ParseUser parseUser = ParseUser.getQuery().get(m_objectId);
-            ParseQuery<ParseObject> query = ParseQuery.getQuery("Group");
-            query.whereEqualTo("members", parseUser);
-            query.orderByDescending("createdAt");
-            List<ParseObject> parseGroups = query.find();
-            List<Group> groups = new ArrayList<Group>();
-            for (ParseObject parseGroup : parseGroups) {
-                Group group = new Group(parseGroup);
-                groups.add(group);
-            }
-            return groups;
-        } catch (ParseException e) {
-            // No group is found. Return an empty list.
-            return new ArrayList<Group>();
-        }
+        return new ArrayList<Group>(m_memberOf.values());
     }
 
     public void getGroupsInBackground(final GroupsCallback callback)
@@ -158,10 +178,10 @@ public class User implements Serializable {
             @Override
             public void done(ParseUser parseUser, ParseException e) {
                 if (e == null) {
-                    ParseQuery<ParseObject> query = ParseQuery.getQuery("Group");
-                    query.whereEqualTo("members", parseUser);
-                    query.orderByDescending("createdAt");
-                    query.findInBackground(new FindCallback<ParseObject>() {
+                    ParseQuery.getQuery("Group")
+                            .whereEqualTo("members", parseUser)
+                            .orderByDescending("createdAt")
+                            .findInBackground(new FindCallback<ParseObject>() {
                         @Override
                         public void done(List<ParseObject> parseGroups, ParseException e) {
                             if (e == null) {
@@ -191,12 +211,28 @@ public class User implements Serializable {
         }
     }
 
+    private void uploadMemberGroups(ParseUser parseUser) {
+        ParseRelation<ParseObject> relation = parseUser.getRelation("memberOf");
+        for (Group group : m_memberOf.values()) {
+            relation.add(ParseObject.createWithoutData("Group", group.get_id()));
+        }
+    }
+
+    private void uploadOwnerGroups(ParseUser parseUser) {
+        ParseRelation<ParseObject> relation = parseUser.getRelation("ownerOf");
+        for (Group group : m_ownerOf.values()) {
+            relation.add(ParseObject.createWithoutData("Group", group.get_id()));
+        }
+    }
+
     private void saveAllFieldsToParse(ParseUser parseUser) {
         parseUser.put("username", m_username);
         parseUser.put("facebookId", m_facebookId);
-        //parseUser.put("imageUrl", m_url);
+        parseUser.put("facebookProfileId", m_facebookProfileId);
         uploadAthleteSkills(parseUser);
         uploadHackerSkills(parseUser);
+        uploadMemberGroups(parseUser);
+        uploadOwnerGroups(parseUser);
     }
 
     public void save() {
@@ -210,13 +246,13 @@ public class User implements Serializable {
     }
 
     //helper functions for uploading to and retrieving from Parse
-    public void uploadAthleteSkills(ParseUser parseUser)	//send data to Parse
+    private void uploadAthleteSkills(ParseUser parseUser)	//send data to Parse
     {
         JSONArray new_array = this.convertToJSON(this.athlete_skills);
         parseUser.put("athlete_skills", new_array);
     }
 
-    public void uploadHackerSkills(ParseUser parseUser)	//send data to Parse
+    private void uploadHackerSkills(ParseUser parseUser)	//send data to Parse
     {
         JSONArray new_array = this.convertToJSON(this.hacker_skills);
         parseUser.put("hacker_skills", new_array);
@@ -277,22 +313,6 @@ public class User implements Serializable {
                 System.out.println("Cannot get athlete skills from JSONArray.\n");
             }
         }
-    }
-
-    public ArrayList<Skill> get_hacker_skills() {
-        return hacker_skills;
-    }
-
-    public ArrayList<Skill> get_athlete_skills() {
-        return athlete_skills;
-    }
-
-    public void set_hacker_skills(ArrayList<Skill> hacker_skills) {
-        this.hacker_skills = hacker_skills;
-    }
-
-    public void set_athlete_skills(ArrayList<Skill> athlete_skills) {
-        this.athlete_skills = athlete_skills;
     }
 }
 

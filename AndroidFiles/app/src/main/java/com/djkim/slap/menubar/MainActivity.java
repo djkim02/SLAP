@@ -28,6 +28,8 @@ import com.parse.ParseUser;
 public class MainActivity extends ActionBarActivity {
     public static final String sBackStackTag = "main_activity_back_stack";
 
+    private static final int GET_MATCH_TAGS_AND_TYPE = 0;
+
     private ListView mDrawerList;
     private ArrayAdapter<String> mAdapter;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -102,12 +104,7 @@ public class MainActivity extends ActionBarActivity {
                         break;
                     case 3:     // Find Matches
                         Intent matchGroupIntent = new Intent(MainActivity.this, MatchGroupActivity.class);
-                        startActivity(matchGroupIntent);
-//                        fragment = new MatchGroupListFragment();
-//                        fragmentManager.beginTransaction()
-//                                .replace(R.id.main_layout, fragment)
-//                                .addToBackStack(sBackStackTag)
-//                                .commit();
+                        startActivityForResult(matchGroupIntent, GET_MATCH_TAGS_AND_TYPE);
                         break;
                     case 5:     // Logout
                         // TODO: replace this with Utils method
@@ -171,5 +168,17 @@ public class MainActivity extends ActionBarActivity {
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         mDrawerToggle.onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == GET_MATCH_TAGS_AND_TYPE && resultCode == RESULT_OK) {
+            Fragment fragment = new MatchGroupListFragment();
+            fragment.setArguments(data.getExtras());
+            getFragmentManager().beginTransaction()
+                    .replace(R.id.main_layout, fragment)
+                    .addToBackStack(sBackStackTag)
+                    .commit();
+        }
     }
 }

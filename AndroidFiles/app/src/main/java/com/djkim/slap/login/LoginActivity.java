@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -18,6 +19,7 @@ import android.view.View;
 import com.djkim.slap.R;
 import com.djkim.slap.menubar.MainActivity;
 import com.djkim.slap.messenger.MessageService;
+import com.djkim.slap.models.Group;
 import com.djkim.slap.models.ParseButton;
 import com.djkim.slap.models.User;
 import com.djkim.slap.models.Utils;
@@ -126,6 +128,7 @@ public class LoginActivity extends FragmentActivity {
                             try {
                                 facebookId = new Long(jsonObject.getLong("id"));
                                 name = jsonObject.getString("name");
+                                Profile profile = Profile.getCurrentProfile();
                                 //final JSONObject mPicture = jsonObject.getJSONObject("picture");
                                 //final JSONObject mPictureData = jsonObject.getJSONObject("data");
                                 //final String mImageUrl = mPictureData.getString("url");
@@ -133,6 +136,7 @@ public class LoginActivity extends FragmentActivity {
                                 User user = new User(parseUser.getObjectId(), name, facebookId);
                                 Intent intent = new Intent(LoginActivity.this, CreateProfileActivity.class);
                                 intent.putExtra("user", user);
+                                user.set_facebook_profile_id(profile.getId());
                                 startActivity(intent);
                             }
                             catch (JSONException e) {
@@ -153,24 +157,28 @@ public class LoginActivity extends FragmentActivity {
         ParseFacebookUtils.onActivityResult(requestCode, resultCode, data);
     }
 
-    private class LoginPagerAdapter extends FragmentPagerAdapter {
+    private class LoginPagerAdapter extends FragmentStatePagerAdapter {
         public LoginPagerAdapter(FragmentManager fm) {
             super(fm);
         }
+        SlapLoginFragment slapLoginFragment = new SlapLoginFragment();
+        GroupsFragment groupsFragment = new GroupsFragment();
+        HackerFragment hackerFragment = new HackerFragment();
+        AthleteFragment athleteFragment = new AthleteFragment();
 
         @Override
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    return new SlapLoginFragment();
+                    return slapLoginFragment;
                 case 1:
-                    return new GroupsFragment();
+                    return groupsFragment;
                 case 2:
-                    return new HackerFragment();
+                    return hackerFragment;
                 case 3:
-                    return new AthleteFragment();
+                    return athleteFragment;
                 default:
-                    return new SlapLoginFragment();
+                    return slapLoginFragment;
             }
         }
 

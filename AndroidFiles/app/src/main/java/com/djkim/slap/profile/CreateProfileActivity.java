@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.djkim.slap.R;
@@ -35,6 +36,7 @@ public class CreateProfileActivity extends FragmentActivity {
     private Button prevButton;
     private Button nextButton;
     private TextView createProfileTitle;
+    private LinearLayout createProfileLayout;
 
     public void updateHackerSkills(ArrayList<Skill> skills) {
         user.set_hacker_skills(skills);
@@ -56,8 +58,28 @@ public class CreateProfileActivity extends FragmentActivity {
         nextButton.setText(text);
     }
 
+    public void setPrevButtonColorToPrimary() {
+        prevButton.setTextColor(getResources().getColor(R.color.colorPrimary));
+    }
+
+    public void setNextButtonColorToPrimary() {
+        nextButton.setTextColor(getResources().getColor(R.color.colorPrimary));
+    }
+
+    public void setPrevButtonColorToBlack() {
+        prevButton.setTextColor(getResources().getColor(R.color.vpi__background_holo_dark));
+    }
+
+    public void setNextButtonColorToBlack() {
+        nextButton.setTextColor(getResources().getColor(R.color.vpi__background_holo_dark));
+    }
+
     public void saveUser() {
         user.save();
+    }
+
+    public LinearLayout getCreateProfileLayout() {
+        return createProfileLayout;
     }
 
     @Override
@@ -75,6 +97,7 @@ public class CreateProfileActivity extends FragmentActivity {
         mPagerAdapter = new profilePageAdapter(fragmentManager);
         mPager.setAdapter(mPagerAdapter);
         mPager.setPageTransformer(true, new ZoomOutPageTransformer());
+        createProfileLayout = (LinearLayout) findViewById(R.id.create_profile_layout);
 
         fragments = new ArrayList<CreateProfileAbstractFragment>();
         fragments.add(new CreateProfileWelcomeFragment());

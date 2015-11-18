@@ -15,18 +15,22 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.djkim.slap.R;
 import com.djkim.slap.messenger.MessagingActivity;
 import com.djkim.slap.models.Group;
+import com.djkim.slap.models.GroupCallback;
 import com.djkim.slap.models.User;
 import com.djkim.slap.models.Utils;
+import com.djkim.slap.profile.OthersProfileActivity;
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
+import com.facebook.login.widget.ProfilePictureView;
 import com.facebook.share.widget.JoinAppGroupDialog;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -62,11 +66,10 @@ public class GroupDetailsFragment extends Fragment {
         mGroupDetailsRecyclerView = (RecyclerView) rootView.findViewById(R.id.group_recycler_view);
         mGroupDetailsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-
         Bundle bundle = getArguments();
         mGroup = (Group) bundle.getSerializable(sGroupArgumentKey);
 
-        ArrayList<com.djkim.slap.models.User> groupUsers = mGroup.get_members();
+        List<com.djkim.slap.models.User> groupUsers = mGroup.getMembers();
         mGroupDetailsAdapter = new UserAdapter(groupUsers);
         mGroupDetailsRecyclerView.setAdapter(mGroupDetailsAdapter);
 
@@ -74,8 +77,6 @@ public class GroupDetailsFragment extends Fragment {
 
         return rootView;
     }
-
-    public class User {}
 
     private class SectionHeaderHolder extends RecyclerView.ViewHolder {
         private TextView mSectionHeaderTextView;
@@ -93,7 +94,7 @@ public class GroupDetailsFragment extends Fragment {
 
     private class UserHolder extends RecyclerView.ViewHolder {
         private com.djkim.slap.models.User mUser;
-        private ImageView mThumbnailImageView;
+        private ProfilePictureView mThumbnailImageView;
         private TextView mTitleTextView;
         private TextView mSubheadTextView;
         private LinearLayout mUserItem;
@@ -104,8 +105,13 @@ public class GroupDetailsFragment extends Fragment {
 
             mUserItem =
                     (LinearLayout) itemView.findViewById(R.id.group_details_item);
+        private RelativeLayout mRelativeLayout;
+
+        public UserHolder(View itemView) {
+            super(itemView);
+            mRelativeLayout = (RelativeLayout) itemView.findViewById(R.id.group_details_layout);
             mThumbnailImageView =
-                    (ImageView) itemView.findViewById(R.id.group_details_item_thumbnail_image_view);
+                    (ProfilePictureView) itemView.findViewById(R.id.group_details_item_thumbnail_image_view);
             mTitleTextView =
                     (TextView) itemView.findViewById(R.id.group_details_item_title_text_view);
             mSubheadTextView =
@@ -129,9 +135,20 @@ public class GroupDetailsFragment extends Fragment {
 
         public void bindUser(com.djkim.slap.models.User user) {
             mUser = user;
-
+            mThumbnailImageView.setProfileId(user.get_facebook_profile_id());
             mTitleTextView.setText(user.get_name());
             mSubheadTextView.setText(mGroup.get_owner().equals(mUser) ? "Admin" : "Member");
+
+            if (mUser.get_facebook_profile_id() != null) {
+                mRelativeLayout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(getActivity(), OthersProfileActivity.class);
+                        intent.putExtra("user", mUser);
+                        startActivity(intent);
+                    }
+                });
+            }
         }
     }
 
@@ -166,12 +183,12 @@ public class GroupDetailsFragment extends Fragment {
                 mLinearLayout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        JoinAppGroupDialog.show(getActivity(), fbGroupId);
-
-                        if (!mGroup.isMember(Utils.get_current_user())) {
-                            mGroup.addMember(Utils.get_current_user());
-                            mGroup.save();
+                        User curUser = Utils.get_current_user();
+                        if (!curUser.isMemberOf(mGroup)) {
+                            curUser.joinAsMember(mGroup);
+                            curUser.save();
                         }
+                        JoinAppGroupDialog.show(getActivity(), fbGroupId);
                     }
                 });
             }
@@ -191,7 +208,7 @@ public class GroupDetailsFragment extends Fragment {
     private class UserAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         private List<com.djkim.slap.models.User> mGroupUsers;
 
-        public UserAdapter(ArrayList<com.djkim.slap.models.User> groupUsers) {
+        public UserAdapter(List<com.djkim.slap.models.User> groupUsers) {
             mGroupUsers = groupUsers;
         }
 

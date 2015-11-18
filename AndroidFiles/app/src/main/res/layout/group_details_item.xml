@@ -5,23 +5,48 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="#FFFFFF"
     android:orientation="horizontal">
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/group_details_item_thumbnail_image_view"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_gravity="center_vertical"
-        android:src="@drawable/com_facebook_profile_picture_blank_square" />
     <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:id="@+id/group_details_layout">
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="72dp"
+            android:id="@+id/profile_frame">
+
+            <com.facebook.login.widget.ProfilePictureView
+                android:id="@+id/group_details_item_thumbnail_image_view"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_gravity="center_vertical">
+            </com.facebook.login.widget.ProfilePictureView>
+
+            <ImageView
+                android:id="@+id/android"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/subtracted_circle"
+                android:contentDescription="@null" />
+
+        </FrameLayout>
+
         <LinearLayout
             android:id="@+id/group_details_item"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
+            android:layout_marginLeft="72dp"
             android:paddingLeft="0dp"
             android:paddingRight="16dp"
             android:paddingStart="0dp"
