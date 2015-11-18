@@ -29,7 +29,9 @@ import com.facebook.HttpMethod;
 import com.facebook.login.widget.ProfilePictureView;
 import com.facebook.share.widget.JoinAppGroupDialog;
 
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +51,8 @@ public class GroupDetailsFragment extends Fragment {
     private RecyclerView mGroupDetailsRecyclerView;
     private UserAdapter mGroupDetailsAdapter;
     private Group mGroup;
+    private User currentUser = Utils.get_current_user();
+    public Boolean hideButton = false;
 
     @Override
     public View onCreateView(
@@ -68,8 +72,6 @@ public class GroupDetailsFragment extends Fragment {
 
         return rootView;
     }
-
-    public class User {}
 
     private class SectionHeaderHolder extends RecyclerView.ViewHolder {
         private TextView mSectionHeaderTextView;
@@ -135,23 +137,34 @@ public class GroupDetailsFragment extends Fragment {
 
             // We only set the onClickListener if there is such a Facebook Group.
             // We only show the onClickListener if that person is in the SLAP group, but not in the facebook group
-            //TODO: Need to remove the slap card if the person left the group on Facebook
-//            new GraphRequest(
-//                    AccessToken.getCurrentAccessToken(),
-//                    "/6EZmymlOoCjIFnPPnJ13XcpeyyoXNIVoXTq2RwMo/groups",
-//                    null,
-//                    HttpMethod.GET,
-//                    new GraphRequest.Callback() {
-//                        public void onCompleted(GraphResponse response) {
-//                            Log.w("ALERT", response.toString());
-//                            try {
-//                                response.getJSONObject().get("data");
-//                            } catch (JSONException j) {
-//                                Log.w("HERE:", response.toString());
-//                            }
-//                        }
-//                    }
-//            ).executeAsync();
+            // TODO: Need to remove the slap card if the person left the group on Facebook
+            new GraphRequest(
+                    AccessToken.getCurrentAccessToken(),
+                    "/" + mGroup.get_facebookGroupId() + "/groups",
+                    null,
+                    HttpMethod.GET,
+                    new GraphRequest.Callback() {
+                        public void onCompleted(GraphResponse response) {
+                            try {
+                                JSONArray json = response.getJSONArray();
+                                //Log.w("ALERT", json.getJSONObject(0).get("data").toString());
+//                                if(currentUser.get_facebook_id() == json.getJSONObject(0).get("data") ) {
+//                                    //user is in the group
+//                                    hideButton = true;
+//                                }
+                            } catch (Exception e) {
+                                //Log.w("HERE:", response.toString());
+                            }
+                        }
+                    }
+            ).executeAsync();
+
+            if(hideButton) {
+
+            } else {
+                //TODO: Put victor's button code here
+            }
+
             final String fbGroupId = mGroup.get_facebookGroupId();
             if (fbGroupId != null) {
                 mLinearLayout.setOnClickListener(new View.OnClickListener() {
@@ -166,7 +179,6 @@ public class GroupDetailsFragment extends Fragment {
                     }
                 });
             }
-
             mTitleTextView =
                     (TextView) itemView.findViewById(R.id.group_details_action_title_text_view);
             mTitleTextView.setText(mGroup.get_name());
