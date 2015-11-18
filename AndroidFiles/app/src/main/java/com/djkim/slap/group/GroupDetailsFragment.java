@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.djkim.slap.R;
 import com.djkim.slap.models.Group;
+import com.djkim.slap.models.GroupCallback;
 import com.djkim.slap.models.User;
 import com.djkim.slap.models.Utils;
 import com.facebook.AccessToken;
@@ -61,8 +62,6 @@ public class GroupDetailsFragment extends Fragment {
 
         return rootView;
     }
-
-    public class User {}
 
     private class SectionHeaderHolder extends RecyclerView.ViewHolder {
         private TextView mSectionHeaderTextView;
@@ -137,7 +136,7 @@ public class GroupDetailsFragment extends Fragment {
                         if (!mGroup.isMember(Utils.get_current_user())) {
                             JoinAppGroupDialog.show(getActivity(), fbGroupId);
                             mGroup.addMember(Utils.get_current_user());
-                            mGroup.save();
+                            mGroup.saveInBackground(null);
                         }
                     }
                 });

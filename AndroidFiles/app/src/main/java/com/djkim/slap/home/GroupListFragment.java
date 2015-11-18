@@ -21,6 +21,7 @@ import com.djkim.slap.group.GroupDetailsActivity;
 import com.djkim.slap.group.GroupDetailsFragment;
 import com.djkim.slap.menubar.MainActivity;
 import com.djkim.slap.models.Group;
+import com.djkim.slap.models.GroupCallback;
 import com.djkim.slap.models.GroupsCallback;
 import com.djkim.slap.models.User;
 import com.djkim.slap.models.Utils;
@@ -125,23 +126,22 @@ public class GroupListFragment extends Fragment {
                 public void onClick(View v) {
                     if (!mGroup.isMember(Utils.get_current_user())) {
                         mGroup.addMember(Utils.get_current_user());
-                        mGroup.save();
+                        mGroup.saveInBackground(new GroupCallback() {
+                            @Override
+                            public void done() {
+                                FragmentManager fragmentManager = getFragmentManager();
+                                Fragment fragment = new GroupDetailsFragment();
 
-                        // TODO(victorkwan): Right now, this won't work! What we really need to do
-                        // is that after saving in background, we want to have a callback that will
-                        // then force an update on our local Group before we put it into the view.
-                        mGroup.sync();
-
-                        FragmentManager fragmentManager = getFragmentManager();
-                        Fragment fragment = new GroupDetailsFragment();
-
-                        Bundle bundle = new Bundle();
-                        bundle.putSerializable(GroupDetailsFragment.sGroupArgumentKey, mGroup);
-                        fragment.setArguments(bundle);
-                        fragmentManager.beginTransaction()
-                                .replace(R.id.main_layout, fragment)
-                                .addToBackStack(MainActivity.sBackStackTag)
-                                .commit();
+                                Bundle bundle = new Bundle();
+                                bundle.putSerializable(
+                                        GroupDetailsFragment.sGroupArgumentKey, mGroup);
+                                fragment.setArguments(bundle);
+                                fragmentManager.beginTransaction()
+                                        .replace(R.id.main_layout, fragment)
+                                        .addToBackStack(MainActivity.sBackStackTag)
+                                        .commit();
+                            }
+                        });
                     }
                 }
             });

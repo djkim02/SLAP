@@ -49,20 +49,29 @@ public class Group implements Serializable {
     public Group(String name, User owner, int capacity, String type) {
         m_name = name;
         m_owner = owner;
-        m_capacity = capacity;
         m_description = "";
+
         m_type = type.equals(HACKER_GROUP) || type.equals(ATHLETE_GROUP) ? type : GENERAL_GROUP;
+
+        m_capacity = capacity;
         m_members.add(owner);
+        m_membership.add(owner.get_id());
     }
 
     public Group(ParseObject parseGroup) {
+        updateAllFields(parseGroup);
+    }
+
+    private void updateAllFields(ParseObject parseGroup) {
         m_objectId = parseGroup.getObjectId();
         m_name = parseGroup.getString("name");
         m_description = parseGroup.getString("description");
         m_facebookGroupId = parseGroup.getString("facebookGroupId");
+
         m_type = parseGroup.getString("type");
         m_skills = parseGroup.getString("skills");
 
+        m_capacity = parseGroup.getInt("capacity");
         m_members = new ArrayList<>();
         m_membership = new HashSet<>();
 
@@ -93,34 +102,6 @@ public class Group implements Serializable {
                             parseGroup.getParseUser("owner").fetchIfNeeded());
                 } catch (ParseException e) {
                     Log.d("Debug", "Fetch failed!");
-                }
-            }
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        m_capacity = parseGroup.getInt("capacity");
-    }
-
-    private void updateAllFields(ParseObject parseGroup) {
-        m_name = parseGroup.getString("name");
-        m_description = parseGroup.getString("description");
-        ParseUser parseOwner = parseGroup.getParseUser("owner");
-        m_owner.setFieldsWithParseUser(parseOwner);
-        m_capacity = parseGroup.getInt("capacity");
-        m_facebookGroupId = parseGroup.getString("facebookGroupId");
-
-        ParseRelation<ParseUser> membersRelation = parseGroup.getRelation("members");
-        try {
-            List<ParseUser> parseUsers = membersRelation.getQuery().find();
-            m_members = new ArrayList<>();
-            for (ParseUser parseUser : parseUsers) {
-                User user = new User();
-                user.setFieldsWithParseUser(parseUser);
-
-                if (!m_membership.contains(user.get_id())) {
-                    m_members.add(user);
-                    m_membership.add(user.get_id());
                 }
             }
         } catch (ParseException e) {
@@ -244,7 +225,10 @@ public class Group implements Serializable {
         parseGroup.put("type", m_type);
         parseGroup.put("capacity", m_capacity);
         parseGroup.put("skills", m_skills);
-        parseGroup.put("facebookGroupId", m_facebookGroupId);
+
+        if (m_facebookGroupId != null) {
+            parseGroup.put("facebookGroupId", m_facebookGroupId);
+        }
 
         // We never have to add any user other than ourselves.
         if (m_membership.contains(currentUser.get_id())) {
@@ -252,22 +236,47 @@ public class Group implements Serializable {
         }
     }
 
-    public void save(){
-        ParseObject parseGroup;
+    public void saveInBackground(final GroupCallback callback){
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Group");
         try {
-            parseGroup = query.get(m_objectId);
+            ParseObject parseGroup = query.get(m_objectId);
             saveAllFieldsToParse(parseGroup);
             parseGroup.saveInBackground(new SaveCallback() {
                 @Override
                 public void done(ParseException e) {
                     if (e == null) {
-                        Log.d("Debug", "Save completed successfully.");
-                    } else {
-                        e.printStackTrace();
+                        Group.this.sync();
+                        if (callback != null) {
+                            callback.done();
+                        }
                     }
                 }
             });
+        } catch (ParseException e) {
+            final ParseObject parseGroup = new ParseObject("Group");
+            saveAllFieldsToParse(parseGroup);
+            parseGroup.saveInBackground(new SaveCallback() {
+                @Override
+                public void done(ParseException e) {
+                    if (e == null) {
+                        Group.this.m_objectId = parseGroup.getObjectId();
+                        Group.this.sync();
+                        if (callback != null) {
+                            callback.done();
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    public void save() {
+        ParseObject parseGroup;
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Group");
+        try {
+            parseGroup = query.get(m_objectId);
+            saveAllFieldsToParse(parseGroup);
+            parseGroup.save();
         } catch (ParseException e) {
             parseGroup = new ParseObject("Group");
             saveAllFieldsToParse(parseGroup);
