@@ -1,21 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/group_details_action_tile"
     android:layout_width="match_parent"
-    android:layout_height="72dp"
-    android:background="#00bde4"
-    android:orientation="vertical"
-    android:gravity="center">
-    <TextView
-        android:id="@+id/group_details_action_title_text_view"
-        android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="#009688"
+    android:orientation="vertical">
+    <LinearLayout
+        android:id="@+id/group_details_action_tile"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:singleLine="true"
-        style="@style/Base.TextAppearance.AppCompat.Subhead" />
-    <TextView
-        android:id="@+id/group_details_action_subhead_text_view"
-        android:layout_width="wrap_content"
+        android:background="#00796B"
+        android:orientation="vertical"
+        android:padding="16dp">
+        <TextView
+            android:id="@+id/group_details_action_title_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#FFFFFF"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:text="The Potatoes Are Back (TPAB)"/>
+        <TextView
+            android:id="@+id/group_details_action_subhead_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:textColor="#B3FFFFFF"
+            android:textSize="16sp" />
+    </LinearLayout>
+    <Button
+        android:id="@+id/group_details_action_join_group_button"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:singleLine="true"
-        style="@style/TextAppearance.AppCompat.Caption" />
+        android:textColor="@color/textColorPrimary"
+        style="@style/Base.Widget.AppCompat.Button.Borderless" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF"
+        android:orientation="vertical"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingBottom="16dp">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:paddingTop="16dp"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="#80000000"
+                android:textSize="14sp"
+                android:text="@string/group_details_description"/>
+            <TextView
+                android:id="@+id/group_details_action_description_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="?android:textColorPrimary"
+                android:textSize="14sp"
+                android:text="This is a description of the group and all that it entails. You might notice that it's the same style as the list items."/>
+    </LinearLayout>
+
 </LinearLayout>

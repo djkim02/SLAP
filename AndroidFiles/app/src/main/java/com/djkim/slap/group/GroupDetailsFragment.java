@@ -141,15 +141,23 @@ public class GroupDetailsFragment extends Fragment {
     }
 
     private class DetailsActivityHolder extends RecyclerView.ViewHolder {
-        // TODO(victorkwan): Let's update this to be nicer.
-        private LinearLayout mLinearLayout;
         private TextView mTitleTextView;
         private TextView mSubheadTextView;
+        private TextView mDescriptionTextView;
+        private Button mJoinGroupButton;
 
         public DetailsActivityHolder(View itemView) {
             super(itemView);
 
-            mLinearLayout = (LinearLayout) itemView.findViewById(R.id.group_details_action_tile);
+            mJoinGroupButton =
+                    (Button) itemView.findViewById(R.id.group_details_action_join_group_button);
+
+            User currentUser = Utils.get_current_user();
+            if (currentUser.isMemberOf(mGroup)) {
+                mJoinGroupButton.setText("Join the Facebook Group!");
+            } else {
+                mJoinGroupButton.setText("Join the group?");
+            }
 
             // We only set the onClickListener if there is such a Facebook Group.
 //            // We only show the onClickListener if that person is in the SLAP group, but not in the facebook group
@@ -168,7 +176,7 @@ public class GroupDetailsFragment extends Fragment {
 //            ).executeAsync();
             final String fbGroupId = mGroup.get_facebookGroupId();
             if (fbGroupId != null) {
-                mLinearLayout.setOnClickListener(new View.OnClickListener() {
+                mJoinGroupButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         User curUser = Utils.get_current_user();
@@ -187,9 +195,13 @@ public class GroupDetailsFragment extends Fragment {
             mSubheadTextView =
                     (TextView) itemView.findViewById(R.id.group_details_action_subhead_text_view);
 
-            String memberString = mGroup.get_size() == 1 ? " member." : " members.";
+            String memberString = mGroup.get_size() == 1 ? " member" : " members";
             mSubheadTextView.setText(
-                    "You're in! This groups has " + mGroup.get_size() + memberString);
+                    mGroup.get_type() + " group • " + mGroup.get_size() + memberString);
+
+            mDescriptionTextView = (TextView) itemView.findViewById(
+                    R.id.group_details_action_description_text_view);
+            mDescriptionTextView.setText(mGroup.get_description());
         }
     }
 
