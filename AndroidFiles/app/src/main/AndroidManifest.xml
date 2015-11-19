@@ -73,6 +73,10 @@
             android:name=".match.MatchGroupListActivity"
             android:label="@string/app_name">
         </activity>
+        <activity android:name=".messenger.MessagingActivity"
+            android:label="Messenger">
+        </activity>
+        <service android:name=".messenger.MessageService"></service>
         <activity
             android:name=".profile.OthersProfileActivity"
             android:label="@string/app_name">
