@@ -1,36 +1,32 @@
 package com.djkim.slap.group;
 
 
-import android.app.ActionBar;
 import android.app.Fragment;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.djkim.slap.R;
+import com.djkim.slap.messenger.MessagingActivity;
 import com.djkim.slap.models.Group;
-import com.djkim.slap.models.GroupCallback;
 import com.djkim.slap.models.User;
 import com.djkim.slap.models.Utils;
 import com.djkim.slap.profile.OthersProfileActivity;
-import com.facebook.AccessToken;
-import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
-import com.facebook.HttpMethod;
 import com.facebook.login.widget.ProfilePictureView;
 import com.facebook.share.widget.JoinAppGroupDialog;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -49,6 +45,8 @@ public class GroupDetailsFragment extends Fragment {
     private UserAdapter mGroupDetailsAdapter;
     private Group mGroup;
 
+    private Context globalContext = null;
+
     @Override
     public View onCreateView(
             LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -63,6 +61,8 @@ public class GroupDetailsFragment extends Fragment {
         List<com.djkim.slap.models.User> groupUsers = mGroup.getMembers();
         mGroupDetailsAdapter = new UserAdapter(groupUsers);
         mGroupDetailsRecyclerView.setAdapter(mGroupDetailsAdapter);
+
+        globalContext = this.getActivity();
 
         return rootView;
     }
@@ -86,10 +86,14 @@ public class GroupDetailsFragment extends Fragment {
         private ProfilePictureView mThumbnailImageView;
         private TextView mTitleTextView;
         private TextView mSubheadTextView;
+        private LinearLayout mUserItem;
         private RelativeLayout mRelativeLayout;
+
 
         public UserHolder(View itemView) {
             super(itemView);
+                mUserItem =
+                        (LinearLayout) itemView.findViewById(R.id.group_details_item);
             mRelativeLayout = (RelativeLayout) itemView.findViewById(R.id.group_details_layout);
             mThumbnailImageView =
                     (ProfilePictureView) itemView.findViewById(R.id.group_details_item_thumbnail_image_view);
@@ -97,6 +101,24 @@ public class GroupDetailsFragment extends Fragment {
                     (TextView) itemView.findViewById(R.id.group_details_item_title_text_view);
             mSubheadTextView =
                     (TextView) itemView.findViewById(R.id.group_details_item_subhead_text_view);
+
+            //Set on-click listener for messaging with Sinch
+            mUserItem.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    /*JoinAppGroupDialog.show(getActivity(), fbGroupId);
+
+                    if (!mGroup.isMember(Utils.get_current_user())) {
+                        mGroup.addMember(Utils.get_current_user());
+                        mGroup.save();
+                    }*/
+
+                    //Check if user is trying to click on himself/herself
+                    if(!mUser.get_id().equals(ParseUser.getCurrentUser().getObjectId())) {
+                        openConversation(mUser.get_id());
+                    }
+                }
+            });
         }
 
         public void bindUser(com.djkim.slap.models.User user) {
@@ -226,5 +248,24 @@ public class GroupDetailsFragment extends Fragment {
 
         @Override
         public int getItemCount() { return mGroupUsers.size() + 2; }
+
+
     }
+
+        public void openConversation(String userID) {
+            ParseQuery<ParseUser> query = ParseUser.getQuery();
+            query.whereEqualTo("objectId", userID);
+            query.findInBackground(new FindCallback<ParseUser>() {
+                @Override
+                public void done(List<ParseUser> user, ParseException e) {
+                    if (e == null) {
+                        Intent intent = new Intent(globalContext.getApplicationContext(), MessagingActivity.class);
+                        intent.putExtra("RECIPIENT_ID", user.get(0).getObjectId());
+                        startActivity(intent);
+                    } else {
+                        //show some sort of error
+                    }
+                }
+            });
+        }
 }

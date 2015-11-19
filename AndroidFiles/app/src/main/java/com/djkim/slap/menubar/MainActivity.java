@@ -19,6 +19,7 @@ import com.djkim.slap.R;
 import com.djkim.slap.dispatch.DispatchActivity;
 import com.djkim.slap.home.GroupListFragment;
 import com.djkim.slap.createGroup.CreateGroupActivity;
+import com.djkim.slap.messenger.MessageService;
 import com.djkim.slap.profile.MyProfileFragment;
 import com.djkim.slap.match.MatchGroupActivity;
 import com.djkim.slap.match.MatchGroupListFragment;
@@ -64,6 +65,10 @@ public class MainActivity extends ActionBarActivity {
         getFragmentManager().beginTransaction()
                 .replace(R.id.main_layout, fragment)
                 .commit();
+
+        //Set up Sinch service. Might want to put this in a better place.
+        final Intent serviceIntent = new Intent(getApplicationContext(), MessageService.class);
+        startService(serviceIntent);
     }
 
     private void addDrawerItems() {
