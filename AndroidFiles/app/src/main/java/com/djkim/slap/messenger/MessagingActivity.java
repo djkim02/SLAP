@@ -13,9 +13,13 @@ import android.widget.Toast;
 
 import com.djkim.slap.R;
 import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseInstallation;
 import com.parse.ParseObject;
+import com.parse.ParsePush;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.SendCallback;
 import com.sinch.android.rtc.PushPair;
 import com.sinch.android.rtc.messaging.Message;
 import com.sinch.android.rtc.messaging.MessageClient;
@@ -50,6 +54,7 @@ public class MessagingActivity extends Activity {
         Intent intent = getIntent();
         recipientId = intent.getStringExtra("RECIPIENT_ID");
         currentUserId = ParseUser.getCurrentUser().getObjectId();
+
         messageBodyField = (EditText) findViewById(R.id.txtTextBody);
 
         messagesList = (ListView) findViewById(R.id.lstMessages);
@@ -157,6 +162,32 @@ public class MessagingActivity extends Activity {
         public void onMessageDelivered(MessageClient client, MessageDeliveryInfo deliveryInfo) {}
         //Don't worry about this right now
         @Override
-        public void onShouldSendPushData(MessageClient client, Message message, List<PushPair> pushPairs) {}
+        public void onShouldSendPushData(MessageClient client, Message message, List<PushPair> pushPairs) {
+            final WritableMessage writableMessage = new WritableMessage(message.getRecipientIds().get(0), message.getTextBody());
+
+            ParseQuery userQuery = ParseUser.getQuery();
+            userQuery.whereEqualTo("objectId", writableMessage.getRecipientIds().get(0));
+
+            ParseQuery pushQuery = ParseInstallation.getQuery();
+            pushQuery.whereMatchesQuery("user", userQuery);
+
+// Send push notification to query
+            ParsePush push = new ParsePush();
+            push.setQuery(pushQuery); // Set our Installation query
+            push.setMessage(ParseUser.getCurrentUser().getUsername()+" sent you a message");
+            push.sendInBackground(new SendCallback() {
+                @Override
+                public void done(ParseException e) {
+
+                    if(e==null){
+//the push is sent!
+                    }else{
+
+//some problem occured. Analyze what is happening
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
     }
 }
