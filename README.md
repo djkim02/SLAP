@@ -19,7 +19,7 @@ Welcome to *Sounds Like A Plan*, or as we like to call it, SLAP. This quick star
 3. Navigate to the SLAP folder that was cloned from the repository
 4. Navigate one level down to the `/AndroidFiles` and open that as the existing project
 5. The code will take a while to load and for Gradle to sync
-6. Pay special attention to any warnings or errors. On the upper right hand corner, a "Configure" or "Sync" dialog box might appear. Sync or configure if necessary.
+6. Pay special attention to any warnings or errors. On the upper right hand corner, a *Configure* or *Sync* dialog box might appear. Sync or configure if necessary.
 
 #### If Testing on Device
 
@@ -36,7 +36,7 @@ android {
 4. Navigate to `app/manifests/AndroidManifest.xml` right above Gradle Scripts
 5. Add `android:debuggable="true"` under the `<application>` tag on its own line
 6. Enable Debugging on your device under Settings > About phone and tap Build number seven times very quickly
-7. Return to the previous screen and a new option "Developer options" will be enabled. Enable this option by clicking on it.
+7. Return to the previous screen and a new option *Developer options* will be enabled. Enable this option by clicking on it.
 8. Plug in your device and run the program by pressing the green play button or `^R` command
 
 
@@ -44,7 +44,7 @@ android {
 
 1. Open the AVD Manager (the fourth last icon in the toolbar). You can hover over the icons to see what each icon stands for.
 2. Create a virtual device on the bottom left
-3. Choose a phone as the category, e.g. Nexus 5. Click "Next".
+3. Choose a phone as the category, e.g. Nexus 5. Click *Next*.
 4. For System Image, choose: Lollipop, API Level 22, ABI x86, Target Android 5.1.1. Change your AVD name to be `<Your Name>`'s Phone and select Finish. Leave the default settings or change it if you wish.
 5. Your emulator is now set!
 6. Go back to the AVD Manager and press the green play button
