@@ -48,10 +48,10 @@ public class User implements Serializable {
         m_username = parseUser.getUsername();
         m_facebookId = parseUser.getLong("facebookId");
         m_facebookProfileId = parseUser.getString("facebookProfileId");
-//        syncMemberGroups(parseUser);
-//        syncOwnerGroups(parseUser);
-//        syncHackerSkills(parseUser);
-//        syncAthleteSkills(parseUser);
+        syncMemberGroups(parseUser);
+        syncOwnerGroups(parseUser);
+        syncHackerSkills(parseUser);
+        syncAthleteSkills(parseUser);
     }
 
     private void syncMemberGroups(ParseUser parseUser) {
