@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="72dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="#FFFFFF"
     android:orientation="horizontal">
     <RelativeLayout
@@ -56,15 +57,18 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:singleLine="true"
-                android:textColor="?android:textColorPrimary"
-                android:textSize="16sp" />
+                style="@style/Base.TextAppearance.AppCompat.Subhead" />
             <TextView
                 android:id="@+id/group_details_item_subhead_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:singleLine="true"
-                android:textColor="?android:textColorSecondary"
-                android:textSize="14sp" />
+                style="@style/TextAppearance.AppCompat.Caption" />
         </LinearLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_alignParentBottom="true"
+            android:background="#d3d3d3"/>
     </RelativeLayout>
 </LinearLayout>

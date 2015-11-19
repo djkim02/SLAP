@@ -75,10 +75,10 @@ public class GroupListFragment extends Fragment {
     private class GroupHolder extends RecyclerView.ViewHolder {
         private Group mGroup;
         private ImageView mThumbnailImageView;
+        private ImageView mCoverImageView;
         private TextView mTitleTextView;
         private TextView mSubheadTextView;
-        private TextView mSkillsTextView;
-        private TextView mTagsTextView;
+        private TextView mSupportingTextView;
         private Button mDetailsButton;
         private Button mRemainingSlotsButton;
 
@@ -88,6 +88,8 @@ public class GroupListFragment extends Fragment {
 
             mThumbnailImageView =
                     (ImageView) itemView.findViewById(R.id.group_list_item_thumbnail_image_view);
+            mCoverImageView =
+                    (ImageView) itemView.findViewById(R.id.group_list_item_image_view);
 
             mTitleTextView = (TextView) itemView.findViewById(R.id.group_list_item_title_text_view);
             mTitleTextView.setText("Friday Night Soccer!");
@@ -96,10 +98,10 @@ public class GroupListFragment extends Fragment {
                     (TextView) itemView.findViewById(R.id.group_list_item_subhead_text_view);
             mSubheadTextView.setText("John Wooden Center");
 
-            mSkillsTextView =
-                    (TextView) itemView.findViewById(R.id.group_list_item_skills_text_view);
-            mTagsTextView =
-                    (TextView) itemView.findViewById(R.id.group_list_item_tags_text_view);
+            mSupportingTextView =
+                    (TextView) itemView.findViewById(R.id.group_list_item_supporting_text_view);
+            mSupportingTextView.setText(
+                    "We're a group of three lads looking for two more to play soccer with us.");
 
             mDetailsButton = (Button) itemView.findViewById(R.id.group_list_item_details_button);
             mDetailsButton.setOnClickListener(new View.OnClickListener() {
@@ -167,10 +169,10 @@ public class GroupListFragment extends Fragment {
             String text = group.get_type() + " Group";
             User owner = group.get_owner();
             if (owner != null) {
-                text += " created by " + owner.get_name();
+                text += " Created by " + owner.get_name();
             }
             mSubheadTextView.setText(text);
-            mSkillsTextView.setText(group.get_skills());
+            mSupportingTextView.setText(group.get_description());
 
             int remainingSlots = group.get_capacity() - group.get_size();
             if(remainingSlots > 1)
