@@ -107,13 +107,6 @@ public class GroupDetailsFragment extends Fragment {
             mUserItem.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    /*JoinAppGroupDialog.show(getActivity(), fbGroupId);
-
-                    if (!mGroup.isMember(Utils.get_current_user())) {
-                        mGroup.addMember(Utils.get_current_user());
-                        mGroup.save();
-                    }*/
-
                     //Check if user is trying to click on himself/herself
                     if(!mUser.get_id().equals(ParseUser.getCurrentUser().getObjectId())) {
                         openConversation(mUser.get_id());
@@ -183,7 +176,7 @@ public class GroupDetailsFragment extends Fragment {
                         User curUser = Utils.get_current_user();
                         if (!curUser.isMemberOf(mGroup)) {
                             curUser.joinAsMember(mGroup);
-                            curUser.save();
+                            curUser.saveInBackground(null);
                         }
                         JoinAppGroupDialog.show(getActivity(), fbGroupId);
                     }

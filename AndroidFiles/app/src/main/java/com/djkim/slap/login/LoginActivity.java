@@ -133,10 +133,9 @@ public class LoginActivity extends FragmentActivity {
                                 //final JSONObject mPictureData = jsonObject.getJSONObject("data");
                                 //final String mImageUrl = mPictureData.getString("url");
 
-                                User user = new User(parseUser.getObjectId(), name, facebookId);
+                                User user = new User(parseUser.getObjectId(), name, facebookId, profile.getId());
                                 Intent intent = new Intent(LoginActivity.this, CreateProfileActivity.class);
                                 intent.putExtra("user", user);
-                                user.set_facebook_profile_id(profile.getId());
                                 startActivity(intent);
                             }
                             catch (JSONException e) {

@@ -27,6 +27,7 @@ import com.djkim.slap.models.Group;
 import com.djkim.slap.models.GroupCallback;
 import com.djkim.slap.models.GroupsCallback;
 import com.djkim.slap.models.User;
+import com.djkim.slap.models.UserCallback;
 import com.djkim.slap.models.Utils;
 import com.facebook.login.widget.ProfilePictureView;
 
@@ -135,38 +136,29 @@ public class GroupListFragment extends Fragment {
                     User curUser = Utils.get_current_user();
                     if (!curUser.isMemberOf(mGroup)) {
                         curUser.joinAsMember(mGroup);
-                        curUser.save();
+                        curUser.saveInBackground(new UserCallback() {
+                            @Override
+                            public void done() {
+                                openDetails();
+                            }
+                        });
+                    } else {
+                        openDetails();
                     }
-                    FragmentManager fragmentManager = getFragmentManager();
-                    Fragment fragment = new GroupDetailsFragment();
-
-                    Bundle bundle = new Bundle();
-                    bundle.putSerializable(
-                            GroupDetailsFragment.sGroupArgumentKey, mGroup);
-                    fragment.setArguments(bundle);
-                    fragmentManager.beginTransaction()
-                            .replace(R.id.main_layout, fragment)
-                            .addToBackStack(MainActivity.sBackStackTag)
-                            .commit();
-
-//                        mGroup.saveInBackground(new GroupCallback() {
-//                            @Override
-//                            public void done() {
-//                                FragmentManager fragmentManager = getFragmentManager();
-//                                Fragment fragment = new GroupDetailsFragment();
-//
-//                                Bundle bundle = new Bundle();
-//                                bundle.putSerializable(
-//                                        GroupDetailsFragment.sGroupArgumentKey, mGroup);
-//                                fragment.setArguments(bundle);
-//                                fragmentManager.beginTransaction()
-//                                        .replace(R.id.main_layout, fragment)
-//                                        .addToBackStack(MainActivity.sBackStackTag)
-//                                        .commit();
-//                            }
-//                        });
                 }
             });
+        }
+
+        private void openDetails() {
+            FragmentManager fragmentManager = getFragmentManager();
+            Fragment fragment = new GroupDetailsFragment();
+            Bundle bundle = new Bundle();
+            bundle.putSerializable(GroupDetailsFragment.sGroupArgumentKey, mGroup);
+            fragment.setArguments(bundle);
+            fragmentManager.beginTransaction()
+                    .replace(R.id.main_layout, fragment)
+                    .addToBackStack(MainActivity.sBackStackTag)
+                    .commit();
         }
 
         public void bindGroup(Group group) {

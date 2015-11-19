@@ -209,12 +209,9 @@ public class Group implements Serializable {
                 public void done(ParseException e) {
                     if (e == null) {
                         Log.d("DEBUG", "Save completed successfully.");
-                    } else {
-                        e.printStackTrace();
-                        Group.this.sync();
-                        if (callback != null) {
-                            callback.done();
-                        }
+                    }
+                    if (callback != null) {
+                        callback.done();
                     }
                 }
             });
