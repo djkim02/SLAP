@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.djkim.slap.R;
 import com.djkim.slap.models.Group;
+import com.djkim.slap.models.GroupCallback;
 import com.djkim.slap.models.User;
 import com.djkim.slap.models.Utils;
 import com.djkim.slap.profile.OthersProfileActivity;
@@ -62,11 +63,10 @@ public class GroupDetailsFragment extends Fragment {
         mGroupDetailsRecyclerView = (RecyclerView) rootView.findViewById(R.id.group_recycler_view);
         mGroupDetailsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-
         Bundle bundle = getArguments();
         mGroup = (Group) bundle.getSerializable(sGroupArgumentKey);
 
-        ArrayList<com.djkim.slap.models.User> groupUsers = mGroup.get_members();
+        List<com.djkim.slap.models.User> groupUsers = mGroup.getMembers();
         mGroupDetailsAdapter = new UserAdapter(groupUsers);
         mGroupDetailsRecyclerView.setAdapter(mGroupDetailsAdapter);
 
@@ -146,8 +146,8 @@ public class GroupDetailsFragment extends Fragment {
                     new GraphRequest.Callback() {
                         public void onCompleted(GraphResponse response) {
                             try {
-                                JSONArray json = response.getJSONArray();
-                                Log.w("ALERT", json.toString());
+                                //JSONArray json = response.getJSONArray();
+                                //Log.w("ALERT", json.toString());
 //                                if(currentUser.get_facebook_id() == json.getJSONObject(0).get("data") ) {
 //                                    //user is in the group
 //                                    hideButton = true;
@@ -156,8 +156,7 @@ public class GroupDetailsFragment extends Fragment {
                                 //Log.w("HERE:", response.toString());
                             }
                         }
-                    }
-            ).executeAsync();
+                    });
 
             if(hideButton) {
                 //User is already in the group
@@ -167,12 +166,12 @@ public class GroupDetailsFragment extends Fragment {
                     mLinearLayout.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            JoinAppGroupDialog.show(getActivity(), fbGroupId);
-
-                            if (!mGroup.isMember(Utils.get_current_user())) {
-                                mGroup.addMember(Utils.get_current_user());
-                                mGroup.save();
+                            User curUser = Utils.get_current_user();
+                            if (!curUser.isMemberOf(mGroup)) {
+                                curUser.joinAsMember(mGroup);
+                                curUser.save();
                             }
+                            JoinAppGroupDialog.show(getActivity(), fbGroupId);
                         }
                     });
                 }
@@ -184,15 +183,16 @@ public class GroupDetailsFragment extends Fragment {
 
                 String memberString = mGroup.get_size() == 1 ? " member." : " members.";
                 mSubheadTextView.setText(
-                        "This groups has " + mGroup.get_size() + memberString);
+                        "You're in! This groups has " + mGroup.get_size() + memberString);
             }
         }
     }
 
+
     private class UserAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         private List<com.djkim.slap.models.User> mGroupUsers;
 
-        public UserAdapter(ArrayList<com.djkim.slap.models.User> groupUsers) {
+        public UserAdapter(List<com.djkim.slap.models.User> groupUsers) {
             mGroupUsers = groupUsers;
         }
 

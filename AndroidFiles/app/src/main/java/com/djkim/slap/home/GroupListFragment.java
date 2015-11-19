@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ import com.djkim.slap.group.GroupDetailsActivity;
 import com.djkim.slap.group.GroupDetailsFragment;
 import com.djkim.slap.menubar.MainActivity;
 import com.djkim.slap.models.Group;
+import com.djkim.slap.models.GroupCallback;
 import com.djkim.slap.models.GroupsCallback;
 import com.djkim.slap.models.User;
 import com.djkim.slap.models.Utils;
@@ -61,12 +63,13 @@ public class GroupListFragment extends Fragment {
      */
     protected void getGroupsInBackground() {
         User user = Utils.get_current_user();
-        user.getGroupsInBackground(new GroupsCallback() {
-            @Override
-            public void done(List<Group> groups) {
-                setAdapterWithGroups(groups);
-            }
-        });
+        setAdapterWithGroups(user.getGroups());
+//        user.getGroupsInBackground(new GroupsCallback() {
+//            @Override
+//            public void done(List<Group> groups) {
+//                setAdapterWithGroups(groups);
+//            }
+//        });
     }
 
     private class GroupHolder extends RecyclerView.ViewHolder {
@@ -123,21 +126,39 @@ public class GroupListFragment extends Fragment {
             mRemainingSlotsButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (!mGroup.isMember(Utils.get_current_user())) {
-                        mGroup.addMember(Utils.get_current_user());
-                        mGroup.save();
-
-                        FragmentManager fragmentManager = getFragmentManager();
-                        Fragment fragment = new GroupDetailsFragment();
-
-                        Bundle bundle = new Bundle();
-                        bundle.putSerializable(GroupDetailsFragment.sGroupArgumentKey, mGroup);
-                        fragment.setArguments(bundle);
-                        fragmentManager.beginTransaction()
-                                .replace(R.id.main_layout, fragment)
-                                .addToBackStack(MainActivity.sBackStackTag)
-                                .commit();
+                    User curUser = Utils.get_current_user();
+                    if (!curUser.isMemberOf(mGroup)) {
+                        curUser.joinAsMember(mGroup);
+                        curUser.save();
                     }
+                    FragmentManager fragmentManager = getFragmentManager();
+                    Fragment fragment = new GroupDetailsFragment();
+
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable(
+                            GroupDetailsFragment.sGroupArgumentKey, mGroup);
+                    fragment.setArguments(bundle);
+                    fragmentManager.beginTransaction()
+                            .replace(R.id.main_layout, fragment)
+                            .addToBackStack(MainActivity.sBackStackTag)
+                            .commit();
+
+//                        mGroup.saveInBackground(new GroupCallback() {
+//                            @Override
+//                            public void done() {
+//                                FragmentManager fragmentManager = getFragmentManager();
+//                                Fragment fragment = new GroupDetailsFragment();
+//
+//                                Bundle bundle = new Bundle();
+//                                bundle.putSerializable(
+//                                        GroupDetailsFragment.sGroupArgumentKey, mGroup);
+//                                fragment.setArguments(bundle);
+//                                fragmentManager.beginTransaction()
+//                                        .replace(R.id.main_layout, fragment)
+//                                        .addToBackStack(MainActivity.sBackStackTag)
+//                                        .commit();
+//                            }
+//                        });
                 }
             });
         }
@@ -145,7 +166,12 @@ public class GroupListFragment extends Fragment {
         public void bindGroup(Group group) {
             mGroup = group;
             mTitleTextView.setText(group.get_name());
-            mSubheadTextView.setText("Created by " + group.get_owner().get_name());
+            String text = group.get_type() + " Group";
+            User owner = group.get_owner();
+            if (owner != null) {
+                text += " Created by " + owner.get_name();
+            }
+            mSubheadTextView.setText(text);
             mSupportingTextView.setText(group.get_description());
 
             int remainingSlots = group.get_capacity() - group.get_size();

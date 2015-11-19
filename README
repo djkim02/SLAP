@@ -57,17 +57,41 @@ Emulation Method:
 
 --------------------------------------------------------------------
 Layout:
-1) Open the application to check out the UI
+1) Open the application to check out the UI, swipe right to see more activities
 2) Login using your facebook credentials, nothing important is stored
 3) The menu tab is located in the upper left of the action bar
 
 Tutorial:
 
-Joining Groups:
+Joining Groups: 
+If you have similar skills to any of the groups created in our backend, you will see groups show up in the cardview
+Ex) Change your athletic skills to include football or basketball
+If no skill sets match with the groups on our backend, no cardviews will show up
+1) Once you find a group you want to join, click details, and click the green at the top to join the facebook group
+2) A facebook confirmation window will appear
+3) Log onto facebook, an invite has been sent to you
+4) The homepage will update you on the groups you are currently in right now
 
 Creating Groups:
+1) Click create a group
+2) Specify if it is going to be a hacker group or a recreational event
+3) Enter a group name
+4) Give a description
+5) Specify the group size
+6) Select the desired sports you want the group to be about
+7) Enter any tags you want to make a search easier to locate your group (This can be left empty)
+8) Confirm your submission
+9) The Facebook API will be called to confirm the group creation with you as the admin of the group
+10) Once the group is create you may go to facebook to manage it or wait for others to join your group
 
 Finding Matches:
+Go to the menu bar and click Find Matches. If nothing shows on the homescreen, there are no groups in the backend with the same similar skill sets as you
+
 
 Editing Profile:
-To edit your profile if your skills have changed go to "My Profile" and press "Edit"
+To edit your profile if your skills have changed go to "My Profile" and press "Edit Profile"
+My Hacker Skills will display your Hacker Skills
+My Athlete Skills will display your Athletic Skills
+
+My Groups: 
+Will return you to the homescreen
