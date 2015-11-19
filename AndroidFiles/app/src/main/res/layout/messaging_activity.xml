@@ -9,18 +9,6 @@
             android:layout_height="48dp"
             android:background="@android:color/white"
             android:paddingLeft="10dp">
-
-        <EditText
-                android:id="@+id/txtRecipient"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:hint="Recipient"
-                android:background="@android:color/white"
-                android:textColor="@color/sinch_purple"
-                android:inputType="textPersonName">
-
-            <requestFocus/>
-        </EditText>
     </RelativeLayout>
 
     <ListView

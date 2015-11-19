@@ -113,7 +113,10 @@ public class GroupDetailsFragment extends Fragment {
                         mGroup.save();
                     }*/
 
-                    openConversation(mUser.get_id());
+                    //Check if user is trying to click on himself/herself
+                    if(!mUser.get_id().equals(ParseUser.getCurrentUser().getObjectId())) {
+                        openConversation(mUser.get_id());
+                    }
                 }
             });
         }
