@@ -18,20 +18,33 @@
                 android:layout_height="72dp"
                 android:padding="16dp"
                 android:background="#009688">
-                <de.hdodenhof.circleimageview.CircleImageView
+                <com.facebook.login.widget.ProfilePictureView
                     android:id="@+id/group_list_item_thumbnail_image_view"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:layout_marginRight="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:src="@drawable/com_facebook_profile_picture_blank_square" />
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_gravity="center_vertical">
+                </com.facebook.login.widget.ProfilePictureView>
+                <ImageView
+                    android:id="@+id/group_list_item_subtracted_circle"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/subtracted_circle"
+                    android:contentDescription="@null" />
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_toRightOf="@id/group_list_item_thumbnail_image_view"
                     android:layout_toEndOf="@id/group_list_item_thumbnail_image_view"
                     android:layout_centerVertical="true"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:layout_marginLeft="5dp">
                     <TextView
                         android:id="@+id/group_list_item_title_text_view"
                         android:layout_width="wrap_content"
