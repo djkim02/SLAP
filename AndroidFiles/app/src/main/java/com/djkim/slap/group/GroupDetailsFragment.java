@@ -19,6 +19,7 @@ import com.djkim.slap.R;
 import com.djkim.slap.messenger.MessagingActivity;
 import com.djkim.slap.models.Group;
 import com.djkim.slap.models.User;
+import com.djkim.slap.models.UsersCallback;
 import com.djkim.slap.models.Utils;
 import com.djkim.slap.profile.OthersProfileActivity;
 import com.facebook.login.widget.ProfilePictureView;
@@ -59,10 +60,13 @@ public class GroupDetailsFragment extends Fragment {
         Bundle bundle = getArguments();
         mGroup = (Group) bundle.getSerializable(sGroupArgumentKey);
 
-        List<com.djkim.slap.models.User> groupUsers = mGroup.getMembers();
-        mGroupDetailsAdapter = new UserAdapter(groupUsers);
-        mGroupDetailsRecyclerView.setAdapter(mGroupDetailsAdapter);
-
+        mGroup.getMembersInBackground(new UsersCallback() {
+            @Override
+            public void done(List<User> users) {
+                mGroupDetailsAdapter = new UserAdapter(users);
+                mGroupDetailsRecyclerView.setAdapter(mGroupDetailsAdapter);
+            }
+        });
         globalContext = this.getActivity();
 
         return rootView;
@@ -119,7 +123,7 @@ public class GroupDetailsFragment extends Fragment {
             mUser = user;
             mThumbnailImageView.setProfileId(user.get_facebook_profile_id());
             mTitleTextView.setText(user.get_name());
-            mSubheadTextView.setText(mGroup.get_owner().equals(mUser) ? "Admin" : "Member");
+            mSubheadTextView.setText(mGroup.isOwner(mUser) ? "Admin" : "Member");
 
             if (mUser.get_facebook_profile_id() != null) {
                 mRelativeLayout.setOnClickListener(new View.OnClickListener() {

@@ -181,12 +181,16 @@ public class User implements Serializable {
         if (m_objectId.equals(ParseUser.getCurrentUser().getObjectId())) {
             m_memberOf.put(group.get_id(), group);
         }
+        group.increment_size();
+        group.saveInBackground(null);
     }
 
     public void joinAsOwner(Group group) {
+        Log.d("DEBUG", "IN JOIN AS OWNER");
         if (m_objectId.equals(ParseUser.getCurrentUser().getObjectId())) {
             m_ownerOf.put(group.get_id(), group);
             m_memberOf.put(group.get_id(), group);
+            Log.d("DEBUG", "SUCCESSFULLY JOINED AS OWNER");
         }
     }
 

@@ -22,6 +22,7 @@ public class Group implements Serializable {
     private final String HACKER_GROUP = "Hacker";
     private final String ATHLETE_GROUP = "Athlete";
     private final String GENERAL_GROUP = "General";
+
     private String m_objectId;
     private String m_name;
     private String m_description;
@@ -30,12 +31,18 @@ public class Group implements Serializable {
     private int m_capacity;
     private String m_skills;    // comma-separated string of skills
 
+    private String m_ownerName;
+    private String m_ownerFacebookProfileId;
+    private int m_size;
+
     public Group(String name, User owner, int capacity, String type) {
         m_name = name;
         m_capacity = capacity;
         m_description = "";
-
         m_type = type.equals(HACKER_GROUP) || type.equals(ATHLETE_GROUP) ? type : GENERAL_GROUP;
+        m_ownerName = owner.get_name();
+        m_ownerFacebookProfileId = owner.get_facebook_profile_id();
+        m_size = 1;
     }
 
     public Group(ParseObject parseGroup) {
@@ -50,6 +57,9 @@ public class Group implements Serializable {
         m_type = parseGroup.getString("type");
         m_skills = parseGroup.getString("skills");
         m_capacity = parseGroup.getInt("capacity");
+        m_ownerName = parseGroup.getString("ownerName");
+        m_ownerFacebookProfileId = parseGroup.getString("ownerFacebookProfileId");
+        m_size = parseGroup.getInt("size");
     }
 
     public void set_skills(String skills) {
@@ -72,7 +82,6 @@ public class Group implements Serializable {
     }
 
     public List<User> getMembers() {
-        ParseQuery query = ParseQuery.getQuery("Group");
         try {
             ParseQuery<ParseUser> userQuery = ParseUser.getQuery();
             userQuery.whereEqualTo("memberOf", ParseObject.createWithoutData("Group", m_objectId));
@@ -89,28 +98,23 @@ public class Group implements Serializable {
     }
 
     public void getMembersInBackground(final UsersCallback callback) {
-        ParseQuery.getQuery("Group").getInBackground(m_objectId, new GetCallback<ParseObject>() {
-                    @Override
-                    public void done(ParseObject object, ParseException e) {
-                        if (e == null) {
-                            ParseQuery<ParseUser> query = ParseUser.getQuery();
-                            query.whereEqualTo("memberOf", object);
-                            query.findInBackground(new FindCallback<ParseUser>() {
-                                @Override
-                                public void done(List<ParseUser> objects, ParseException e) {
-                                    if (e == null) {
-                                        List<User> users = new ArrayList<User>();
-                                        for (ParseUser parseUser : objects) {
-                                            User user = new User(parseUser);
-                                            users.add(user);
-                                        }
-                                        callback.done(users);
-                                    }
-                                }
-                            });
-                        }
+        ParseQuery<ParseUser> userQuery = ParseUser.getQuery();
+        userQuery.whereEqualTo("memberOf", ParseObject.createWithoutData("Group", m_objectId));
+        userQuery.findInBackground(new FindCallback<ParseUser>() {
+            @Override
+            public void done(List<ParseUser> objects, ParseException e) {
+                if (e == null) {
+                    List<User> users = new ArrayList<User>();
+                    for (ParseUser parseUser : objects) {
+                        User user = new User(parseUser);
+                        users.add(user);
                     }
-                });
+                    callback.done(users);
+                } else {
+                    callback.done(new ArrayList<User>());
+                }
+            }
+        });
     }
 
     public String get_name() {
@@ -144,15 +148,32 @@ public class Group implements Serializable {
         }
     }
 
+    public Boolean isOwner(User user) {
+        return user.get_facebook_profile_id().equals(m_ownerFacebookProfileId);
+    }
+
+    public String get_owner_name() {
+        return m_ownerName;
+    }
+
+    public String get_owner_facebook_profile_id() {
+        return m_ownerFacebookProfileId;
+    }
+
     public int get_size() {
-        ParseQuery query = ParseQuery.getQuery("Group");
-        try {
-            ParseQuery<ParseUser> userQuery = ParseUser.getQuery();
-            userQuery.whereEqualTo("memberOf", ParseObject.createWithoutData("Group", m_objectId));
-            return userQuery.count();
-        } catch (ParseException e) {
-            return 0;
-        }
+        return m_size;
+//        ParseQuery query = ParseQuery.getQuery("Group");
+//        try {
+//            ParseQuery<ParseUser> userQuery = ParseUser.getQuery();
+//            userQuery.whereEqualTo("memberOf", ParseObject.createWithoutData("Group", m_objectId));
+//            return userQuery.count();
+//        } catch (ParseException e) {
+//            return 0;
+//        }
+    }
+
+    public void increment_size() {
+        m_size++;
     }
 
     public String get_skills() {
@@ -197,6 +218,9 @@ public class Group implements Serializable {
         if (m_facebookGroupId != null) {
             parseGroup.put("facebookGroupId", m_facebookGroupId);
         }
+        parseGroup.put("ownerName", m_ownerName);
+        parseGroup.put("ownerFacebookProfileId", m_ownerFacebookProfileId);
+        parseGroup.put("size", m_size);
     }
 
     public void saveInBackground(final GroupCallback callback){
@@ -228,7 +252,7 @@ public class Group implements Serializable {
                         curUser.getRelation("ownerOf").add(ParseObject.createWithoutData("Group", objectId));
                         curUser.getRelation("memberOf").add(ParseObject.createWithoutData("Group", objectId));
                         curUser.saveInBackground();
-
+                        Utils.get_current_user().joinAsOwner(new Group(parseGroup));
                         Group.this.m_objectId = parseGroup.getObjectId();
 //                        Group.this.sync();
                         if (callback != null) {
@@ -259,6 +283,7 @@ public class Group implements Serializable {
                         curUser.getRelation("ownerOf").add(ParseObject.createWithoutData("Group", objectId));
                         curUser.getRelation("memberOf").add(ParseObject.createWithoutData("Group", objectId));
                         curUser.saveInBackground();
+                        Utils.get_current_user().joinAsOwner(new Group(parseGroup));
                         Group.this.m_objectId = parseGroup.getObjectId();
                     } else {
                         e.printStackTrace();
