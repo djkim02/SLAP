@@ -19,7 +19,6 @@ Parse.Cloud.define("match", function(request, response) {
         success: function(results) {
             for (var group = 0; group < results.length; group++) {
                 members[results[group].id] = true;
-                console.log(results[group].id);
             }
             var query = new Parse.Query("Group");
             query.equalTo("type", request.params.type);
@@ -44,7 +43,7 @@ Parse.Cloud.define("match", function(request, response) {
                             continue;
                         }
                         var skills = results[i].get("skills");
-                        var skillArray = skills.split(',');
+                        var skillArray = skills.split(", ");
                         var satisfies = true;
                         for (var j = 0; j < skillArray.length; j++) {
                             if (!(skillArray[j] in userSkillSet)) {
