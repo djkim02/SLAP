@@ -13,6 +13,7 @@ import android.widget.ListView;
 
 import com.djkim.slap.models.Skill;
 import com.djkim.slap.models.SkillsListAdapter;
+import com.djkim.slap.models.UserCallback;
 
 import java.util.ArrayList;
 
@@ -47,10 +48,14 @@ public class EditProfileAthleteFragment extends CreateProfileAbstractFragment {
     }
 
     public void onNextButtonClick() {
-        EditMyProfileActivity editMyProfileActivity = (EditMyProfileActivity) this.getActivity();
+        final EditMyProfileActivity editMyProfileActivity = (EditMyProfileActivity) this.getActivity();
         editMyProfileActivity.updateAthleteSkills(athleteSkills);
-        editMyProfileActivity.getUser().save();
-        Toast.makeText(this.getActivity(), "Your profile has been edited!", Toast.LENGTH_SHORT).show();
-        editMyProfileActivity.finish();
+        editMyProfileActivity.getUser().saveInBackground(new UserCallback() {
+            @Override
+            public void done() {
+                Toast.makeText(EditProfileAthleteFragment.this.getActivity(), "Your profile has been edited!", Toast.LENGTH_SHORT).show();
+                editMyProfileActivity.finish();
+            }
+        });
     }
 }

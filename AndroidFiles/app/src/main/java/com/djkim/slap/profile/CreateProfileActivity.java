@@ -17,6 +17,7 @@ import com.djkim.slap.models.Group;
 import com.djkim.slap.models.NonSwipeableViewPager;
 import com.djkim.slap.models.Skill;
 import com.djkim.slap.models.User;
+import com.djkim.slap.models.UserCallback;
 import com.djkim.slap.models.Utils;
 import com.djkim.slap.models.ZoomOutPageTransformer;
 
@@ -74,8 +75,8 @@ public class CreateProfileActivity extends FragmentActivity {
         nextButton.setTextColor(getResources().getColor(R.color.vpi__background_holo_dark));
     }
 
-    public void saveUser() {
-        user.save();
+    public void saveUser(final UserCallback callback) {
+        user.saveInBackground(callback);
     }
 
     public LinearLayout getCreateProfileLayout() {

@@ -9,6 +9,7 @@ import com.parse.ParseQuery;
 import com.parse.ParseRelation;
 import com.parse.ParseUser;
 import com.parse.ParseException;
+import com.parse.SaveCallback;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -32,15 +33,18 @@ public class User implements Serializable {
     private String m_username;
     private Long m_facebookId;
     private String m_facebookProfileId;
+
+    // Save the membership info of only the current user.
     private Hashtable<String, Group> m_memberOf = new Hashtable<>();
     private Hashtable<String, Group> m_ownerOf = new Hashtable<>();
 
     // Constructors
-    public User(String objectId, String username, Long facebookId)
+    public User(String objectId, String username, Long facebookId, String facebookProfileId)
     {
         m_objectId = objectId;
         m_username = username;
         m_facebookId = facebookId;
+        m_facebookProfileId = facebookProfileId;
     }
 
     public User(ParseUser parseUser) {
@@ -48,16 +52,21 @@ public class User implements Serializable {
         m_username = parseUser.getUsername();
         m_facebookId = parseUser.getLong("facebookId");
         m_facebookProfileId = parseUser.getString("facebookProfileId");
-        syncMemberGroups(parseUser);
-        syncOwnerGroups(parseUser);
         syncHackerSkills(parseUser);
         syncAthleteSkills(parseUser);
+        if (m_objectId.equals(ParseUser.getCurrentUser().getObjectId())) {
+            syncMemberGroups(parseUser);
+            syncOwnerGroups(parseUser);
+        }
     }
 
     private void syncMemberGroups(ParseUser parseUser) {
+        if (!m_objectId.equals(ParseUser.getCurrentUser().getObjectId())) {
+            return;
+        }
         ParseRelation<ParseObject> memberOfRelation = parseUser.getRelation("memberOf");
         try {
-            List<ParseObject> parseGroups = memberOfRelation.getQuery().find();
+            List<ParseObject> parseGroups = memberOfRelation.getQuery().orderByDescending("createdAt").find();
             m_memberOf = new Hashtable<>();
             for (ParseObject parseGroup : parseGroups) {
                 Group group = new Group(parseGroup);
@@ -69,9 +78,12 @@ public class User implements Serializable {
     }
 
     private void syncOwnerGroups(ParseUser parseUser) {
+        if (!m_objectId.equals(ParseUser.getCurrentUser().getObjectId())) {
+            return;
+        }
         ParseRelation<ParseObject> ownerOfRelation = parseUser.getRelation("ownerOf");
         try {
-            List<ParseObject> parseGroups = ownerOfRelation.getQuery().find();
+            List<ParseObject> parseGroups = ownerOfRelation.getQuery().orderByDescending("createdAt").find();
             m_ownerOf = new Hashtable<>();
             for (ParseObject parseGroup : parseGroups) {
                 Group group = new Group(parseGroup);
@@ -98,13 +110,15 @@ public class User implements Serializable {
     // update the Java User's data with
     // the ParseUser's data from the database
     public void sync(){
-        // query for user based on m_objectId
-        // update username and other fields
         ParseQuery<ParseUser> query = ParseUser.getQuery();
         try {
             ParseUser parseUser = query.get(m_objectId);
             syncAthleteSkills(parseUser);
             syncHackerSkills(parseUser);
+            if (m_objectId.equals(ParseUser.getCurrentUser().getObjectId())) {
+                syncMemberGroups(parseUser);
+                syncOwnerGroups(parseUser);
+            }
         } catch (ParseException e) {
             return; // didn't find anything
         }
@@ -131,6 +145,10 @@ public class User implements Serializable {
         return athlete_skills;
     }
 
+    public String get_facebook_profile_id() {
+        return m_facebookProfileId;
+    }
+
     public void set_hacker_skills(ArrayList<Skill> hacker_skills) {
         this.hacker_skills = hacker_skills;
     }
@@ -139,75 +157,48 @@ public class User implements Serializable {
         this.athlete_skills = athlete_skills;
     }
 
-    public void set_facebook_profile_id(String fbpid) {
-        m_facebookProfileId = fbpid;
-    }
-
-    public String get_facebook_profile_id() {
-        return m_facebookProfileId;
-    }
-
     public boolean equals(User anotherUser){
         return (anotherUser.get_facebook_id().equals(this.m_facebookId));
     }
 
     public Boolean isMemberOf(Group group) {
-        return m_memberOf.containsKey(group.get_id());
+        if (!m_objectId.equals(ParseUser.getCurrentUser().getObjectId())) {
+            return false;
+        } else {
+            return m_memberOf.containsKey(group.get_id());
+        }
     }
 
     public Boolean isOwnerOf(Group group) {
-        return m_ownerOf.containsKey(group.get_id());
+        if (!m_objectId.equals(ParseUser.getCurrentUser().getObjectId())) {
+            return false;
+        } else {
+            return m_ownerOf.containsKey(group.get_id());
+        }
     }
 
     public void joinAsMember(Group group) {
-        m_memberOf.put(group.get_id(), group);
+        if (m_objectId.equals(ParseUser.getCurrentUser().getObjectId())) {
+            m_memberOf.put(group.get_id(), group);
+        }
+        group.increment_size();
+        group.saveInBackground(null);
     }
 
     public void joinAsOwner(Group group) {
-        m_ownerOf.put(group.get_id(), group);
-        joinAsMember(group);
+        Log.d("DEBUG", "IN JOIN AS OWNER");
+        if (m_objectId.equals(ParseUser.getCurrentUser().getObjectId())) {
+            m_ownerOf.put(group.get_id(), group);
+            m_memberOf.put(group.get_id(), group);
+            Log.d("DEBUG", "SUCCESSFULLY JOINED AS OWNER");
+        }
     }
 
     public List<Group> getGroups() {
-        return new ArrayList<Group>(m_memberOf.values());
-    }
-
-    public void getGroupsInBackground(final GroupsCallback callback)
-    {
-        ParseUser.getQuery().getInBackground(m_objectId, new GetCallback<ParseUser>() {
-            @Override
-            public void done(ParseUser parseUser, ParseException e) {
-                if (e == null) {
-                    ParseQuery.getQuery("Group")
-                            .whereEqualTo("members", parseUser)
-                            .orderByDescending("createdAt")
-                            .findInBackground(new FindCallback<ParseObject>() {
-                        @Override
-                        public void done(List<ParseObject> parseGroups, ParseException e) {
-                            if (e == null) {
-                                List<Group> groups = new ArrayList<Group>();
-                                for (ParseObject parseGroup : parseGroups) {
-                                    Group group = new Group(parseGroup);
-                                    groups.add(group);
-                                }
-                                callback.done(groups);
-                            }
-                        }
-                    });
-                }
-            }
-        });
-    }
-
-    public ParseUser toParseUser()
-    {
-        ParseUser parseUser = new ParseUser();
-        ParseQuery<ParseUser> query = ParseUser.getQuery();
-        try {
-            parseUser = query.get(m_objectId);
-            return parseUser;
-        } catch (ParseException e) {
-            return parseUser;
+        if (!m_objectId.equals(ParseUser.getCurrentUser().getObjectId())) {
+            return new ArrayList<Group>();
+        } else {
+            return new ArrayList<Group>(m_memberOf.values());
         }
     }
 
@@ -231,15 +222,39 @@ public class User implements Serializable {
         parseUser.put("facebookProfileId", m_facebookProfileId);
         uploadAthleteSkills(parseUser);
         uploadHackerSkills(parseUser);
-        uploadMemberGroups(parseUser);
-        uploadOwnerGroups(parseUser);
+        if (m_objectId.equals(ParseUser.getCurrentUser().getObjectId())) {
+            uploadMemberGroups(parseUser);
+            uploadOwnerGroups(parseUser);
+        }
     }
 
     public void save() {
         try {
             ParseUser parseUser = ParseUser.getQuery().get(m_objectId);
             saveAllFieldsToParse(parseUser);
-            parseUser.saveInBackground();
+            parseUser.save();
+        } catch (ParseException e) {
+            Log.e("", "Could not save ParseUser");
+        }
+    }
+
+
+    // TODO(yjchoi): In the callback, should sync user if curUser
+    public void saveInBackground(final UserCallback callback) {
+        try {
+            ParseUser parseUser = ParseUser.getQuery().get(m_objectId);
+            saveAllFieldsToParse(parseUser);
+            parseUser.saveInBackground(new SaveCallback() {
+                @Override
+                public void done(ParseException e) {
+                    if (e == null) {
+                        Log.d("DEBUG", "User saved successfully");
+                    }
+                    if (callback != null) {
+                        callback.done();
+                    }
+                }
+            });
         } catch (ParseException e) {
             Log.e("", "Could not save ParseUser");
         }
@@ -315,4 +330,3 @@ public class User implements Serializable {
         }
     }
 }
-

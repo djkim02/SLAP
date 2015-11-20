@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.djkim.slap.R;
 import com.djkim.slap.menubar.MainActivity;
+import com.djkim.slap.models.UserCallback;
 
 /**
  * Created by dongjoonkim on 10/25/15.
@@ -40,8 +41,14 @@ public class CreateProfileDoneFragment extends CreateProfileAbstractFragment {
     }
 
     public void onNextButtonClick() {
-        CreateProfileActivity createProfileActivity = (CreateProfileActivity) this.getActivity();
-        createProfileActivity.saveUser();
+        final CreateProfileActivity createProfileActivity = (CreateProfileActivity) this.getActivity();
+        createProfileActivity.saveUser(new UserCallback() {
+            @Override
+            public void done() {
+                startActivity(new Intent(createProfileActivity, MainActivity.class));
+                CreateProfileDoneFragment.this.getActivity().finish();
+            }
+        });
         startActivity(new Intent(createProfileActivity, MainActivity.class));
         this.getActivity().finish();
     }
