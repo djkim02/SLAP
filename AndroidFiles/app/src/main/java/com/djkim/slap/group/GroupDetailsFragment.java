@@ -20,6 +20,7 @@ import com.djkim.slap.R;
 import com.djkim.slap.messenger.MessagingActivity;
 import com.djkim.slap.models.Group;
 import com.djkim.slap.models.User;
+import com.djkim.slap.models.UsersCallback;
 import com.djkim.slap.models.Utils;
 import com.djkim.slap.profile.OthersProfileActivity;
 import com.facebook.AccessToken;
@@ -69,10 +70,13 @@ public class GroupDetailsFragment extends Fragment {
         Bundle bundle = getArguments();
         mGroup = (Group) bundle.getSerializable(sGroupArgumentKey);
 
-        List<com.djkim.slap.models.User> groupUsers = mGroup.getMembers();
-        mGroupDetailsAdapter = new UserAdapter(groupUsers);
-        mGroupDetailsRecyclerView.setAdapter(mGroupDetailsAdapter);
-
+        mGroup.getMembersInBackground(new UsersCallback() {
+            @Override
+            public void done(List<User> users) {
+                mGroupDetailsAdapter = new UserAdapter(users);
+                mGroupDetailsRecyclerView.setAdapter(mGroupDetailsAdapter);
+            }
+        });
         globalContext = this.getActivity();
 
         return rootView;
@@ -117,13 +121,6 @@ public class GroupDetailsFragment extends Fragment {
             mUserItem.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    /*JoinAppGroupDialog.show(getActivity(), fbGroupId);
-
-                    if (!mGroup.isMember(Utils.get_current_user())) {
-                        mGroup.addMember(Utils.get_current_user());
-                        mGroup.save();
-                    }*/
-
                     //Check if user is trying to click on himself/herself
                     if(!mUser.get_id().equals(ParseUser.getCurrentUser().getObjectId())) {
                         openConversation(mUser.get_id());
@@ -136,7 +133,7 @@ public class GroupDetailsFragment extends Fragment {
             mUser = user;
             mThumbnailImageView.setProfileId(user.get_facebook_profile_id());
             mTitleTextView.setText(user.get_name());
-            mSubheadTextView.setText(mGroup.get_owner().equals(mUser) ? "Admin" : "Member");
+            mSubheadTextView.setText(mGroup.isOwner(mUser) ? "Admin" : "Member");
 
             if (mUser.get_facebook_profile_id() != null) {
                 mRelativeLayout.setOnClickListener(new View.OnClickListener() {
@@ -161,34 +158,43 @@ public class GroupDetailsFragment extends Fragment {
             super(itemView);
             mJoinGroupButton =
                     (Button) itemView.findViewById(R.id.group_details_action_join_group_button);
+            mJoinGroupButton.setVisibility(View.GONE);
 
             // We only set the onClickListener if there is such a Facebook Group.
             // We only show the onClickListener if that person is in the SLAP group, but not in the facebook group
             // TODO: Need to remove the slap card if the person left the group on Facebook
-            new GraphRequest(
-                    AccessToken.getCurrentAccessToken(),
-                    "/" + mGroup.get_facebookGroupId() + "/members",
-                    null,
-                    HttpMethod.GET,
-                    new GraphRequest.Callback() {
-                        public void onCompleted(GraphResponse response) {
-                            try {
-                                boolean hideButton = false;
-                                JSONArray jsonDataArray = response.getJSONObject().getJSONArray("data");
-                                for(int i = 0; i < jsonDataArray.length(); i++) {
-                                    JSONObject jsonGroupMember = (JSONObject)jsonDataArray.get(i);
-                                    if(currentUser.get_facebook_id().toString().equals(jsonGroupMember.getString("id"))) {
-                                        hideButton = true;
-                                        break;
+            String facebookGroupId = mGroup.get_facebookGroupId();
+            if (facebookGroupId != null) {
+                new GraphRequest(
+                        AccessToken.getCurrentAccessToken(),
+                        "/" + facebookGroupId + "/members",
+                        null,
+                        HttpMethod.GET,
+                        new GraphRequest.Callback() {
+                            public void onCompleted(GraphResponse response) {
+                                try {
+                                    boolean hideButton = false;
+                                    JSONObject jsonResult = response.getJSONObject();
+                                    if (jsonResult != null) {
+                                        JSONArray jsonDataArray = jsonResult.getJSONArray("data");
+                                        for(int i = 0; i < jsonDataArray.length(); i++) {
+                                            JSONObject jsonGroupMember =
+                                                    (JSONObject) jsonDataArray.get(i);
+                                            if(currentUser.get_facebook_id().toString()
+                                                    .equals(jsonGroupMember.getString("id"))) {
+                                                hideButton = true;
+                                                break;
+                                            }
+                                        }
+                                        configureJoinButton(!hideButton);
                                     }
-                                }
-                                configureJoinButton(!hideButton);
-                            } catch (JSONException e) {
+                                } catch (JSONException e) {
 
+                                }
                             }
                         }
-                    }
-            ).executeAsync();
+                ).executeAsync();
+            }
 
             mTitleTextView =
                     (TextView) itemView.findViewById(R.id.group_details_action_title_text_view);
@@ -205,8 +211,13 @@ public class GroupDetailsFragment extends Fragment {
             mDescriptionTextView.setText(mGroup.get_description());
         }
 
+        // TODO(victorkwan): Need to configure the button for an admin creating the group.
         private void configureJoinButton(boolean shouldDisplay) {
             if (shouldDisplay) {
+                // TODO(victorkwan): Currently, this is quite jumpy. We should add an animation for
+                // the button to "slide" down.
+                mJoinGroupButton.setVisibility(View.VISIBLE);
+
                 if (currentUser.isMemberOf(mGroup)) {
                     mJoinGroupButton.setText("Join the Facebook Group!");
                 } else {
@@ -227,8 +238,6 @@ public class GroupDetailsFragment extends Fragment {
                         }
                     });
                 }
-            } else {
-                mJoinGroupButton.setVisibility(View.GONE);
             }
         }
     }

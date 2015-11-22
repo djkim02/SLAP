@@ -27,6 +27,7 @@ import com.djkim.slap.models.Group;
 import com.djkim.slap.models.GroupCallback;
 import com.djkim.slap.models.GroupsCallback;
 import com.djkim.slap.models.User;
+import com.djkim.slap.models.UserCallback;
 import com.djkim.slap.models.Utils;
 import com.facebook.login.widget.ProfilePictureView;
 
@@ -67,12 +68,6 @@ public class GroupListFragment extends Fragment {
     protected void getGroupsInBackground() {
         User user = Utils.get_current_user();
         setAdapterWithGroups(user.getGroups());
-//        user.getGroupsInBackground(new GroupsCallback() {
-//            @Override
-//            public void done(List<Group> groups) {
-//                setAdapterWithGroups(groups);
-//            }
-//        });
     }
 
     private class GroupHolder extends RecyclerView.ViewHolder {
@@ -135,48 +130,42 @@ public class GroupListFragment extends Fragment {
                     User curUser = Utils.get_current_user();
                     if (!curUser.isMemberOf(mGroup)) {
                         curUser.joinAsMember(mGroup);
-                        curUser.save();
+                        curUser.saveInBackground(new UserCallback() {
+                            @Override
+                            public void done() {
+                                openDetails();
+                            }
+                        });
+                    } else {
+                        openDetails();
                     }
-                    FragmentManager fragmentManager = getFragmentManager();
-                    Fragment fragment = new GroupDetailsFragment();
-
-                    Bundle bundle = new Bundle();
-                    bundle.putSerializable(
-                            GroupDetailsFragment.sGroupArgumentKey, mGroup);
-                    fragment.setArguments(bundle);
-                    fragmentManager.beginTransaction()
-                            .replace(R.id.main_layout, fragment)
-                            .addToBackStack(MainActivity.sBackStackTag)
-                            .commit();
-
-//                        mGroup.saveInBackground(new GroupCallback() {
-//                            @Override
-//                            public void done() {
-//                                FragmentManager fragmentManager = getFragmentManager();
-//                                Fragment fragment = new GroupDetailsFragment();
-//
-//                                Bundle bundle = new Bundle();
-//                                bundle.putSerializable(
-//                                        GroupDetailsFragment.sGroupArgumentKey, mGroup);
-//                                fragment.setArguments(bundle);
-//                                fragmentManager.beginTransaction()
-//                                        .replace(R.id.main_layout, fragment)
-//                                        .addToBackStack(MainActivity.sBackStackTag)
-//                                        .commit();
-//                            }
-//                        });
                 }
             });
         }
 
+        private void openDetails() {
+            FragmentManager fragmentManager = getFragmentManager();
+            Fragment fragment = new GroupDetailsFragment();
+            Bundle bundle = new Bundle();
+            bundle.putSerializable(GroupDetailsFragment.sGroupArgumentKey, mGroup);
+            fragment.setArguments(bundle);
+            fragmentManager.beginTransaction()
+                    .replace(R.id.main_layout, fragment)
+                    .addToBackStack(MainActivity.sBackStackTag)
+                    .commit();
+        }
+
+        // TODO(yjchoi): this slows down main thread. Better way of getting owners?
         public void bindGroup(Group group) {
             mGroup = group;
             mTitleTextView.setText(group.get_name());
             String text = group.get_type() + " Group";
-            User owner = group.get_owner();
-            if (owner != null) {
-                mThumbnailImageView.setProfileId(owner.get_facebook_profile_id());
-                text += " created by " + owner.get_name();
+            String ownerFacebookProfileId = group.get_owner_facebook_profile_id();
+            mThumbnailImageView.setProfileId(group.get_owner_facebook_profile_id());
+            if (Utils.get_current_user().get_facebook_profile_id().equals(group.get_owner_facebook_profile_id())) {
+                text += " created by me";
+            } else {
+                text += " created by " + group.get_owner_name();
             }
             mSubheadTextView.setText(text);
             mSkillsTextView.setText(group.get_skills());
@@ -205,6 +194,7 @@ public class GroupListFragment extends Fragment {
             return new GroupHolder(view);
         }
 
+        // TODO(yjchoi): maybe get all list of owners here?
         @Override
         public void onBindViewHolder(GroupHolder holder, int position) {
             Group group = mGroups.get(position);
