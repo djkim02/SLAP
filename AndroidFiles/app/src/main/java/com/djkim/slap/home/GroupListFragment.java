@@ -4,6 +4,8 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
@@ -26,6 +28,7 @@ import com.djkim.slap.models.GroupCallback;
 import com.djkim.slap.models.GroupsCallback;
 import com.djkim.slap.models.User;
 import com.djkim.slap.models.Utils;
+import com.facebook.login.widget.ProfilePictureView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,22 +77,25 @@ public class GroupListFragment extends Fragment {
 
     private class GroupHolder extends RecyclerView.ViewHolder {
         private Group mGroup;
-        private ImageView mThumbnailImageView;
-        private ImageView mCoverImageView;
+        private ProfilePictureView mThumbnailImageView;
         private TextView mTitleTextView;
         private TextView mSubheadTextView;
-        private TextView mSupportingTextView;
+        private TextView mSkillsTextView;
+        private TextView mTagsTextView;
         private Button mDetailsButton;
         private Button mRemainingSlotsButton;
+        private ImageView mSubtractedCircle;
 
         // TODO(victorkwan): Declare and assign the relevant fields.
         public GroupHolder(View itemView) {
             super(itemView);
 
+            mSubtractedCircle = (ImageView) itemView.findViewById(R.id.group_list_item_subtracted_circle);
+            int color = Color.parseColor("#009688");
+            mSubtractedCircle.setColorFilter(color);
+
             mThumbnailImageView =
-                    (ImageView) itemView.findViewById(R.id.group_list_item_thumbnail_image_view);
-            mCoverImageView =
-                    (ImageView) itemView.findViewById(R.id.group_list_item_image_view);
+                    (ProfilePictureView) itemView.findViewById(R.id.group_list_item_thumbnail_image_view);
 
             mTitleTextView = (TextView) itemView.findViewById(R.id.group_list_item_title_text_view);
             mTitleTextView.setText("Friday Night Soccer!");
@@ -98,10 +104,10 @@ public class GroupListFragment extends Fragment {
                     (TextView) itemView.findViewById(R.id.group_list_item_subhead_text_view);
             mSubheadTextView.setText("John Wooden Center");
 
-            mSupportingTextView =
-                    (TextView) itemView.findViewById(R.id.group_list_item_supporting_text_view);
-            mSupportingTextView.setText(
-                    "We're a group of three lads looking for two more to play soccer with us.");
+            mSkillsTextView =
+                    (TextView) itemView.findViewById(R.id.group_list_item_skills_text_view);
+            mTagsTextView =
+                    (TextView) itemView.findViewById(R.id.group_list_item_tags_text_view);
 
             mDetailsButton = (Button) itemView.findViewById(R.id.group_list_item_details_button);
             mDetailsButton.setOnClickListener(new View.OnClickListener() {
@@ -169,10 +175,11 @@ public class GroupListFragment extends Fragment {
             String text = group.get_type() + " Group";
             User owner = group.get_owner();
             if (owner != null) {
-                text += " Created by " + owner.get_name();
+                mThumbnailImageView.setProfileId(owner.get_facebook_profile_id());
+                text += " created by " + owner.get_name();
             }
             mSubheadTextView.setText(text);
-            mSupportingTextView.setText(group.get_description());
+            mSkillsTextView.setText(group.get_skills());
 
             int remainingSlots = group.get_capacity() - group.get_size();
             if(remainingSlots > 1)

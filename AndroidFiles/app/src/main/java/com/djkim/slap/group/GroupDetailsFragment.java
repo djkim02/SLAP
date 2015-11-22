@@ -7,9 +7,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -31,6 +33,9 @@ import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.util.List;
 
 /**
@@ -48,7 +53,7 @@ public class GroupDetailsFragment extends Fragment {
     private RecyclerView mGroupDetailsRecyclerView;
     private UserAdapter mGroupDetailsAdapter;
     private Group mGroup;
-    private User currentUser = Utils.get_current_user();
+    final User currentUser = Utils.get_current_user();
     public Boolean hideButton = false;
 
     private Context globalContext = null;
@@ -147,45 +152,56 @@ public class GroupDetailsFragment extends Fragment {
     }
 
     private class DetailsActivityHolder extends RecyclerView.ViewHolder {
-        // TODO(victorkwan): Let's update this to be nicer.
-        private LinearLayout mLinearLayout;
         private TextView mTitleTextView;
         private TextView mSubheadTextView;
+        private TextView mDescriptionTextView;
+        private Button mJoinGroupButton;
 
         public DetailsActivityHolder(View itemView) {
             super(itemView);
-
-            mLinearLayout = (LinearLayout) itemView.findViewById(R.id.group_details_action_tile);
 
             // We only set the onClickListener if there is such a Facebook Group.
             // We only show the onClickListener if that person is in the SLAP group, but not in the facebook group
             // TODO: Need to remove the slap card if the person left the group on Facebook
             new GraphRequest(
                     AccessToken.getCurrentAccessToken(),
-                    "/" + mGroup.get_facebookGroupId() + "/groups",
+                    "/" + mGroup.get_facebookGroupId() + "/members",
                     null,
                     HttpMethod.GET,
                     new GraphRequest.Callback() {
                         public void onCompleted(GraphResponse response) {
                             try {
-                                //JSONArray json = response.getJSONArray();
-                                //Log.w("ALERT", json.toString());
-//                                if(currentUser.get_facebook_id() == json.getJSONObject(0).get("data") ) {
-//                                    //user is in the group
-//                                    hideButton = true;
-//                                }
+                                JSONObject json = response.getJSONObject();
+                                JSONArray jsonData = json.getJSONArray("data");
+                                for(int i = 0; i < jsonData.length(); i++) {
+                                    JSONObject jsonOb = (JSONObject)jsonData.get(i);
+                                    //Log.w("TEST", jsonOb.getString("id"));
+                                    if(currentUser.get_facebook_id().toString() == jsonOb.getString("id")) {
+                                        hideButton = true;
+                                    }
+                                }
                             } catch (Exception e) {
-                                //Log.w("HERE:", response.toString());
+                                Log.w("FAIL:", response.toString());
                             }
                         }
-                    });
+                    }
+            ).executeAsync();
 
             if(hideButton) {
                 //User is already in the group
             } else {
+                mJoinGroupButton =
+                        (Button) itemView.findViewById(R.id.group_details_action_join_group_button);
+                if (currentUser.isMemberOf(mGroup)) {
+                    mJoinGroupButton.setText("Join the Facebook Group!");
+                } else {
+                    mJoinGroupButton.setText("Join the group?");
+                }
+
+
                 final String fbGroupId = mGroup.get_facebookGroupId();
                 if (fbGroupId != null) {
-                    mLinearLayout.setOnClickListener(new View.OnClickListener() {
+                    mJoinGroupButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             User curUser = Utils.get_current_user();
@@ -203,9 +219,13 @@ public class GroupDetailsFragment extends Fragment {
                 mSubheadTextView =
                         (TextView) itemView.findViewById(R.id.group_details_action_subhead_text_view);
 
-                String memberString = mGroup.get_size() == 1 ? " member." : " members.";
+                String memberString = mGroup.get_size() == 1 ? " member" : " members";
                 mSubheadTextView.setText(
-                        "You're in! This groups has " + mGroup.get_size() + memberString);
+                        mGroup.get_type() + " group • " + mGroup.get_size() + memberString);
+
+                mDescriptionTextView = (TextView) itemView.findViewById(
+                        R.id.group_details_action_description_text_view);
+                mDescriptionTextView.setText(mGroup.get_description());
             }
         }
     }
