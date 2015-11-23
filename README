@@ -1,0 +1,97 @@
+README File
+
+Welcome to our SLAP app
+This README file was designed from a MAC perspective
+Other operating systems might vary
+
+Warning: Android Studio utilizes a large amount of resources.
+For reasonable performance, run android studio on a computer with an SSD and 8GB RAM
+Testing on an actual Android Device will also be easier and more efficient
+
+Download the Android Studio GUI:
+https://developer.android.com/sdk/index.html
+--------------------------------------------------------
+Clone our repo to get the latest code:
+https://github.com/djkim02/SLAP.git
+
+Instructions:
+1) Upon succesful installation, the set up window should appear labeled "Android Studio"
+2) Under "Quick Start", choose open an existing Android Studio project
+3) Navigate to the SLAP folder that was cloned from the repository
+4) Navigate one level down to the "AndroidFiles" and open that as the existing project
+5) The code will take a while to load and for the gradle to sync
+6) Pay special attention to any warnings or errors. On the upper right hand corner, a "Configure" or "Sync" dialog box might appear. Sync or configure if necessary.
+
+Real device method:
+1) Connect your device via USB port
+2) On the left hand side of the file heirarchy in android studio after opening the existing project, in the toolbar of the file heirarchy, navigate to the "Android" tab. This will show all the android fiels
+3) Navigate to Gradle Scripts > build.gradle (Module: app) and copy and put debuggable true under buildTypes:
+
+android {
+    buildTypes {
+        debug { <-----------------
+            debuggable true <----- Put this right under buildTypes
+        } <-----------------------
+
+4) Navigate to app > manifests > AndroidManifest.xml right above Gradle Scripts 
+5) Add 
+
+android:debuggable="true"
+
+under the "<application" tag on its own line
+
+6) Enable Debugging on your device under Settings > About phone and tap Build number seven times very quickly
+7) Return to the previous screen and a new option "Developer options" will be enabled. Enable this option by clicking on it
+8) Plug in your device and run the program by pressing the green play button or ^R command
+
+
+Emulation Method:
+1) Open the AVD Manager (The fourth last icon in the toolbar). You can hover over the icons to see what each icon stands for
+2) Create a virtual device on the bottom left
+3) Choose a phone as the category, lets say Nexus 5. Click "Next"
+4) For System Image, choose Lollipop, API Level 22, ABI x86, Target Android 5.1.1, Change your AVD name to be <Your Name>'s Phone and select Finish. Leave the default settings or change it if you wish. 
+5) Your emulator is now set
+6) Go back to the AVD Manager and press the green paly button
+7) Wait a few moments for the emulator to show up. This might slow down your computer
+8) Once your emulator is finished and your able to interact with it, you can run the code and our app will play automatically
+
+--------------------------------------------------------------------
+Layout:
+1) Open the application to check out the UI, swipe right to see more activities
+2) Login using your facebook credentials, nothing important is stored
+3) The menu tab is located in the upper left of the action bar
+
+Tutorial:
+
+Joining Groups: 
+If you have similar skills to any of the groups created in our backend, you will see groups show up in the cardview
+Ex) Change your athletic skills to include football or basketball
+If no skill sets match with the groups on our backend, no cardviews will show up
+1) Once you find a group you want to join, click details, and click the green at the top to join the facebook group
+2) A facebook confirmation window will appear
+3) Log onto facebook, an invite has been sent to you
+4) The homepage will update you on the groups you are currently in right now
+
+Creating Groups:
+1) Click create a group
+2) Specify if it is going to be a hacker group or a recreational event
+3) Enter a group name
+4) Give a description
+5) Specify the group size
+6) Select the desired sports you want the group to be about
+7) Enter any tags you want to make a search easier to locate your group (This can be left empty)
+8) Confirm your submission
+9) The Facebook API will be called to confirm the group creation with you as the admin of the group
+10) Once the group is create you may go to facebook to manage it or wait for others to join your group
+
+Finding Matches:
+Go to the menu bar and click Find Matches. If nothing shows on the homescreen, there are no groups in the backend with the same similar skill sets as you
+
+
+Editing Profile:
+To edit your profile if your skills have changed go to "My Profile" and press "Edit Profile"
+My Hacker Skills will display your Hacker Skills
+My Athlete Skills will display your Athletic Skills
+
+My Groups: 
+Will return you to the homescreen

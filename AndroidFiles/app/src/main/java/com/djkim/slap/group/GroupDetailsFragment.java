@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,12 +23,20 @@ import com.djkim.slap.models.User;
 import com.djkim.slap.models.UsersCallback;
 import com.djkim.slap.models.Utils;
 import com.djkim.slap.profile.OthersProfileActivity;
+import com.facebook.AccessToken;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.HttpMethod;
 import com.facebook.login.widget.ProfilePictureView;
 import com.facebook.share.widget.JoinAppGroupDialog;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.List;
 
@@ -46,6 +55,7 @@ public class GroupDetailsFragment extends Fragment {
     private RecyclerView mGroupDetailsRecyclerView;
     private UserAdapter mGroupDetailsAdapter;
     private Group mGroup;
+    final User currentUser = Utils.get_current_user();
 
     private Context globalContext = null;
 
@@ -146,45 +156,44 @@ public class GroupDetailsFragment extends Fragment {
 
         public DetailsActivityHolder(View itemView) {
             super(itemView);
-
             mJoinGroupButton =
                     (Button) itemView.findViewById(R.id.group_details_action_join_group_button);
-
-            User currentUser = Utils.get_current_user();
-            if (currentUser.isMemberOf(mGroup)) {
-                mJoinGroupButton.setText("Join the Facebook Group!");
-            } else {
-                mJoinGroupButton.setText("Join the group?");
-            }
+            mJoinGroupButton.setVisibility(View.GONE);
 
             // We only set the onClickListener if there is such a Facebook Group.
-//            // We only show the onClickListener if that person is in the SLAP group, but not in the facebook group
-//            //TODO: Need to remove the slap card if the person left the group on Facebook
-//            new GraphRequest(
-//                    AccessToken.getCurrentAccessToken(),
-//                    "/6EZmymlOoCjIFnPPnJ13XcpeyyoXNIVoXTq2RwMo/groups",
-//                    null,
-//                    HttpMethod.GET,
-//                    new GraphRequest.Callback() {
-//                        public void onCompleted(GraphResponse response) {
-//                            Log.w("ALERT", response);
-//                            response.getJSONObject().get("")
-//                        }
-//                    }
-//            ).executeAsync();
-            final String fbGroupId = mGroup.get_facebookGroupId();
-            if (fbGroupId != null) {
-                mJoinGroupButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        User curUser = Utils.get_current_user();
-                        if (!curUser.isMemberOf(mGroup)) {
-                            curUser.joinAsMember(mGroup);
-                            curUser.saveInBackground(null);
+            // We only show the onClickListener if that person is in the SLAP group, but not in the facebook group
+            // TODO: Need to remove the slap card if the person left the group on Facebook
+            String facebookGroupId = mGroup.get_facebookGroupId();
+            if (facebookGroupId != null) {
+                new GraphRequest(
+                        AccessToken.getCurrentAccessToken(),
+                        "/" + facebookGroupId + "/members",
+                        null,
+                        HttpMethod.GET,
+                        new GraphRequest.Callback() {
+                            public void onCompleted(GraphResponse response) {
+                                try {
+                                    boolean hideButton = false;
+                                    JSONObject jsonResult = response.getJSONObject();
+                                    if (jsonResult != null) {
+                                        JSONArray jsonDataArray = jsonResult.getJSONArray("data");
+                                        for(int i = 0; i < jsonDataArray.length(); i++) {
+                                            JSONObject jsonGroupMember =
+                                                    (JSONObject) jsonDataArray.get(i);
+                                            if(currentUser.get_facebook_id().toString()
+                                                    .equals(jsonGroupMember.getString("id"))) {
+                                                hideButton = true;
+                                                break;
+                                            }
+                                        }
+                                        configureJoinButton(!hideButton);
+                                    }
+                                } catch (JSONException e) {
+
+                                }
+                            }
                         }
-                        JoinAppGroupDialog.show(getActivity(), fbGroupId);
-                    }
-                });
+                ).executeAsync();
             }
 
             mTitleTextView =
@@ -201,7 +210,38 @@ public class GroupDetailsFragment extends Fragment {
                     R.id.group_details_action_description_text_view);
             mDescriptionTextView.setText(mGroup.get_description());
         }
+
+        // TODO(victorkwan): Need to configure the button for an admin creating the group.
+        private void configureJoinButton(boolean shouldDisplay) {
+            if (shouldDisplay) {
+                // TODO(victorkwan): Currently, this is quite jumpy. We should add an animation for
+                // the button to "slide" down.
+                mJoinGroupButton.setVisibility(View.VISIBLE);
+
+                if (currentUser.isMemberOf(mGroup)) {
+                    mJoinGroupButton.setText("Join the Facebook Group!");
+                } else {
+                    mJoinGroupButton.setText("Join the group?");
+                }
+
+                final String fbGroupId = mGroup.get_facebookGroupId();
+                if (fbGroupId != null) {
+                    mJoinGroupButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            User curUser = Utils.get_current_user();
+                            if (!curUser.isMemberOf(mGroup)) {
+                                curUser.joinAsMember(mGroup);
+                                curUser.save();
+                            }
+                            JoinAppGroupDialog.show(getActivity(), fbGroupId);
+                        }
+                    });
+                }
+            }
+        }
     }
+
 
     private class UserAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         private List<com.djkim.slap.models.User> mGroupUsers;
