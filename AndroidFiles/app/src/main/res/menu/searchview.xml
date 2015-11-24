@@ -1,10 +1,19 @@
-<menu
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:appcompat="http://schemas.android.com/apk/res-auto">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:appcompat="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/tools">
+    
+    <!--<item-->
+        <!--android:id="@+id/action_settings"-->
+        <!--android:title="@string/action_settings"-->
+        <!--android:orderInCategory="100"-->
+        <!--app:showAsAction="never"/>-->
+
     <item
         android:id="@+id/search"
-        android:title="search"
         android:icon="@drawable/ic_search_white_24dp"
+        android:title="search"
         appcompat:showAsAction="always"
-        android:actionViewClass="android.widget.SearchView" />
+        appcompat:actionViewClass="android.widget.SearchView" />
+
+
 </menu>

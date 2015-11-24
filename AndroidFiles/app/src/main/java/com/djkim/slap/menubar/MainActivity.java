@@ -152,12 +152,13 @@ public class MainActivity extends ActionBarActivity {
 
         menuInflater.inflate(R.menu.searchview, menu);
         // Associate searchable configuration with the SearchView
-        SearchManager searchManager =
-                (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView =
-                (SearchView) menu.findItem(R.id.search).getActionView();
-//        searchView.setSearchableInfo(
-//                searchManager.getSearchableInfo(getComponentName()));
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+        //searchView.setIconified();
+        searchView.setIconifiedByDefault(true);
+        //searchView.setSearchableInfo(
+        //        searchManager.getSearchableInfo(getComponentName()));
+        //onSearchRequested();
         return super.onCreateOptionsMenu(menu);
     }
 
