@@ -43,7 +43,7 @@ import java.util.List;
 /**
  * Created by kylemn on 10/26/15.
  */
-public class GroupDetailsFragment extends Fragment {
+public abstract class GroupDetailsFragment extends Fragment {
     private static int VIEW_TYPE_HEADER = 0;
 
     // Placeholder for the future "Convert to FB group" option.
@@ -54,7 +54,7 @@ public class GroupDetailsFragment extends Fragment {
 
     private RecyclerView mGroupDetailsRecyclerView;
     private UserAdapter mGroupDetailsAdapter;
-    private Group mGroup;
+    protected Group mGroup;
     final User currentUser = Utils.get_current_user();
 
     private Context globalContext = null;
@@ -148,99 +148,11 @@ public class GroupDetailsFragment extends Fragment {
         }
     }
 
-    private class DetailsActivityHolder extends RecyclerView.ViewHolder {
-        private TextView mTitleTextView;
-        private TextView mSubheadTextView;
-        private TextView mDescriptionTextView;
-        private Button mJoinGroupButton;
-
-        public DetailsActivityHolder(View itemView) {
-            super(itemView);
-            mJoinGroupButton =
-                    (Button) itemView.findViewById(R.id.group_details_action_join_group_button);
-            mJoinGroupButton.setVisibility(View.GONE);
-
-            // We only set the onClickListener if there is such a Facebook Group.
-            // We only show the onClickListener if that person is in the SLAP group, but not in the facebook group
-            // TODO: Need to remove the slap card if the person left the group on Facebook
-            String facebookGroupId = mGroup.get_facebookGroupId();
-            if (facebookGroupId != null) {
-                new GraphRequest(
-                        AccessToken.getCurrentAccessToken(),
-                        "/" + facebookGroupId + "/members",
-                        null,
-                        HttpMethod.GET,
-                        new GraphRequest.Callback() {
-                            public void onCompleted(GraphResponse response) {
-                                try {
-                                    boolean hideButton = false;
-                                    JSONObject jsonResult = response.getJSONObject();
-                                    if (jsonResult != null) {
-                                        JSONArray jsonDataArray = jsonResult.getJSONArray("data");
-                                        for(int i = 0; i < jsonDataArray.length(); i++) {
-                                            JSONObject jsonGroupMember =
-                                                    (JSONObject) jsonDataArray.get(i);
-                                            if(currentUser.get_facebook_id().toString()
-                                                    .equals(jsonGroupMember.getString("id"))) {
-                                                hideButton = true;
-                                                break;
-                                            }
-                                        }
-                                        configureJoinButton(!hideButton);
-                                    }
-                                } catch (JSONException e) {
-
-                                }
-                            }
-                        }
-                ).executeAsync();
-            }
-
-            mTitleTextView =
-                    (TextView) itemView.findViewById(R.id.group_details_action_title_text_view);
-            mTitleTextView.setText(mGroup.get_name());
-            mSubheadTextView =
-                    (TextView) itemView.findViewById(R.id.group_details_action_subhead_text_view);
-
-            String memberString = mGroup.get_size() == 1 ? " member" : " members";
-            mSubheadTextView.setText(
-                    mGroup.get_type() + " group • " + mGroup.get_size() + memberString);
-
-            mDescriptionTextView = (TextView) itemView.findViewById(
-                    R.id.group_details_action_description_text_view);
-            mDescriptionTextView.setText(mGroup.get_description());
-        }
-
-        // TODO(victorkwan): Need to configure the button for an admin creating the group.
-        private void configureJoinButton(boolean shouldDisplay) {
-            if (shouldDisplay) {
-                // TODO(victorkwan): Currently, this is quite jumpy. We should add an animation for
-                // the button to "slide" down.
-                mJoinGroupButton.setVisibility(View.VISIBLE);
-
-                if (currentUser.isMemberOf(mGroup)) {
-                    mJoinGroupButton.setText("Join the Facebook Group!");
-                } else {
-                    mJoinGroupButton.setText("Join the group?");
-                }
-
-                final String fbGroupId = mGroup.get_facebookGroupId();
-                if (fbGroupId != null) {
-                    mJoinGroupButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            User curUser = Utils.get_current_user();
-                            if (!curUser.isMemberOf(mGroup)) {
-                                curUser.joinAsMember(mGroup);
-                                curUser.save();
-                            }
-                            JoinAppGroupDialog.show(getActivity(), fbGroupId);
-                        }
-                    });
-                }
-            }
-        }
-    }
+    /**
+     * Factory method that returns a ViewHolder for the header cell.
+     * @return The ViewHolder to be returned.
+     */
+    protected abstract RecyclerView.ViewHolder createDetailsActivityHolder(View itemView);
 
 
     private class UserAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -259,7 +171,7 @@ public class GroupDetailsFragment extends Fragment {
             } else if (viewType == VIEW_TYPE_ACTION) {
                 LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
                 View view = layoutInflater.inflate(R.layout.group_details_action, parent, false);
-                return new DetailsActivityHolder(view);
+                return createDetailsActivityHolder(view);
             } else {
                 LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
                 View view = layoutInflater.inflate(R.layout.group_details_item, parent, false);

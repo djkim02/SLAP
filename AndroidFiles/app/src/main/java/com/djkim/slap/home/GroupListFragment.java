@@ -22,6 +22,7 @@ import android.widget.TextView;
 import com.djkim.slap.R;
 import com.djkim.slap.group.GroupDetailsActivity;
 import com.djkim.slap.group.GroupDetailsFragment;
+import com.djkim.slap.group.MemberGroupDetailsFragment;
 import com.djkim.slap.menubar.MainActivity;
 import com.djkim.slap.models.Group;
 import com.djkim.slap.models.GroupCallback;
@@ -109,7 +110,7 @@ public class GroupListFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     FragmentManager fragmentManager = getFragmentManager();
-                    Fragment fragment = new GroupDetailsFragment();
+                    Fragment fragment = new MemberGroupDetailsFragment();
 
                     Bundle bundle = new Bundle();
                     bundle.putSerializable(GroupDetailsFragment.sGroupArgumentKey, mGroup);
@@ -145,7 +146,7 @@ public class GroupListFragment extends Fragment {
 
         private void openDetails() {
             FragmentManager fragmentManager = getFragmentManager();
-            Fragment fragment = new GroupDetailsFragment();
+            Fragment fragment = new MemberGroupDetailsFragment();
             Bundle bundle = new Bundle();
             bundle.putSerializable(GroupDetailsFragment.sGroupArgumentKey, mGroup);
             fragment.setArguments(bundle);
