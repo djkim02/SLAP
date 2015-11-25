@@ -1,5 +1,7 @@
 package com.djkim.slap.models;
 
+import android.util.Log;
+
 import com.parse.FunctionCallback;
 import com.parse.ParseCloud;
 import com.parse.ParseException;
@@ -43,6 +45,41 @@ public class Utils{
                         callback.done(groups);
                     }
                 });
+    }
+
+    public static void getStringSearchGroupsFromCloudInBackground(String queryName, final GroupsCallback callback) {
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("name", queryName);
+        ParseCloud.callFunctionInBackground(
+                "partialStringSearch", map, new FunctionCallback<List<ParseObject> >() {
+                    @Override
+                    public void done(List<ParseObject> parseGroups, ParseException e) {
+                        List<Group> groups = new ArrayList<Group>();
+                        for (ParseObject parseGroup : parseGroups) {
+                            Group group = new Group(parseGroup);
+                            groups.add(group);
+                        }
+                        callback.done(groups);
+                    }
+                });
+    }
+
+    public static List<Group> getStringSearchGroupsFromCloud(String name) {
+        try {
+            Map<String, String> map = new HashMap<String, String>();
+            map.put("name", name);
+            List<ParseObject> parseGroups = ParseCloud.callFunction("partialStringSearch", map);
+            List<Group> groups = new ArrayList<Group>();
+            for (ParseObject parseGroup : parseGroups) {
+                Group group = new Group(parseGroup);
+                groups.add(group);
+                Log.d("stringSearch", group.get_id());
+            }
+            return groups;
+        } catch (ParseException e) {
+            // No group is found. Return an empty list.
+            return new ArrayList<Group>();
+        }
     }
 
     public static List<Group> getGroupsFromCloud(String type) {
