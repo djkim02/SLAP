@@ -173,7 +173,7 @@ public class MainActivity extends ActionBarActivity {
                 @Override
                 public void done(List<Group> groups) {
                     //Groups will contain the matched group names
-                    
+                    //setAdapterWithGroups(groups);
                 }
             });
         }
