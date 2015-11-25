@@ -127,9 +127,11 @@ Parse.Cloud.beforeSave("Group", function(request, response) {
     var group = request.object;
   
     var toLowerCase = function(w) { return w.toLowerCase(); };
+	var removeNewline = function(w) {return w.replace(/(\r\n|\n|\r)/gm,"");};
   
     var keywords = group.get("name").split(' ');
     keywords = _.map(keywords, toLowerCase);
+	keywords = _.map(keywords, removeNewline);
     var stopWords = ["the", "in", "and", "to", "but", "for", "or", "yet", "so"];
      
     Array.prototype.contains = function ( needle ) {
@@ -155,9 +157,11 @@ Parse.Cloud.beforeSave("Group", function(request, response) {
  
 Parse.Cloud.define("partialStringSearch", function(request, response) {
     var toLowerCase = function(w) { return w.toLowerCase(); };
-  
+	var removeNewline = function(w) {return w.replace(/(\r\n|\n|\r)/gm,"");};
+	
     var keywords = request.params.name.split(' ');
     keywords = _.map(keywords, toLowerCase);
+	keywords = _.map(keywords, removeNewline);
     var stopWords = ["the", "in", "and", "to", "but", "for", "or", "yet", "so"];
      
     Array.prototype.contains = function ( needle ) {
