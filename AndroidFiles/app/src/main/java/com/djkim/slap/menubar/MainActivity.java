@@ -39,6 +39,7 @@ public class MainActivity extends ActionBarActivity {
     public static final String sBackStackTag = "main_activity_back_stack";
 
     private static final int GET_MATCH_TAGS_AND_TYPE = 0;
+    private static final int GET_STRING_SEARCH_TYPE = 1;
 
     private ListView mDrawerList;
     private ArrayAdapter<String> mAdapter;
@@ -170,21 +171,25 @@ public class MainActivity extends ActionBarActivity {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
 
-
-            FragmentManager fragmentManager = getFragmentManager();
-            Fragment fragment = null;
-
+            Intent stringSearchGroupIntent = new Intent(MainActivity.this, StringSearchGroupListActivity.class);
             Bundle bundle = new Bundle();
             bundle.putString("name", query);
-            intent.putExtras(bundle);
-            fragment = new StringSearchGroupListFragment();
-            fragment.setArguments(bundle);
-            fragmentManager.beginTransaction()
-                    .replace(R.id.main_layout, fragment)
-                    .addToBackStack(sBackStackTag)
-                    .commit();
-        }
+            stringSearchGroupIntent.putExtras(bundle);
+            startActivityForResult(stringSearchGroupIntent, GET_STRING_SEARCH_TYPE);
 
+//            FragmentManager fragmentManager = getFragmentManager();
+//            Fragment fragment = null;
+//
+//            Bundle bundle = new Bundle();
+//            bundle.putString("name", query);
+//            intent.putExtras(bundle);
+//            fragment = new StringSearchGroupListFragment();
+//            fragment.setArguments(bundle);
+//            fragmentManager.beginTransaction()
+//                    .replace(R.id.main_layout, fragment)
+//                    .addToBackStack(sBackStackTag)
+//                    .commit();
+        }
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -220,5 +225,14 @@ public class MainActivity extends ActionBarActivity {
                     .addToBackStack(sBackStackTag)
                     .commit();
         }
+        if (requestCode == GET_STRING_SEARCH_TYPE && resultCode == RESULT_OK) {
+            Fragment fragment = new StringSearchGroupListFragment();
+            fragment.setArguments(data.getExtras());
+            getFragmentManager().beginTransaction()
+                    .replace(R.id.main_layout, fragment)
+                    .addToBackStack(sBackStackTag)
+                    .commit();
+        }
+
     }
 }
