@@ -24,6 +24,7 @@ import com.djkim.slap.dispatch.DispatchActivity;
 import com.djkim.slap.home.GroupListFragment;
 import com.djkim.slap.createGroup.CreateGroupActivity;
 import com.djkim.slap.messenger.MessageService;
+import com.djkim.slap.models.Utils;
 import com.djkim.slap.profile.MyProfileFragment;
 import com.djkim.slap.match.MatchGroupActivity;
 import com.djkim.slap.match.MatchGroupListFragment;
@@ -154,11 +155,19 @@ public class MainActivity extends ActionBarActivity {
         // Associate searchable configuration with the SearchView
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
-        //searchView.setIconified();
         searchView.setIconifiedByDefault(true);
-        //searchView.setSearchableInfo(
-        //        searchManager.getSearchableInfo(getComponentName()));
+        searchView.setSearchableInfo(
+                searchManager.getSearchableInfo(getComponentName()));
         //onSearchRequested();
+
+        // Get the intent, verify the action and get the query
+        Intent intent = getIntent();
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            String query = intent.getStringExtra(SearchManager.QUERY);
+            //doMySearch(query);
+            //Utils.getGroupsFromCloud();
+        }
+
         return super.onCreateOptionsMenu(menu);
     }
 
