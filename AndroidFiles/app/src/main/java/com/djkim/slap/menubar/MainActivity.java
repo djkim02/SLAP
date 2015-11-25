@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -24,11 +25,15 @@ import com.djkim.slap.dispatch.DispatchActivity;
 import com.djkim.slap.home.GroupListFragment;
 import com.djkim.slap.createGroup.CreateGroupActivity;
 import com.djkim.slap.messenger.MessageService;
+import com.djkim.slap.models.Group;
+import com.djkim.slap.models.GroupsCallback;
 import com.djkim.slap.models.Utils;
 import com.djkim.slap.profile.MyProfileFragment;
 import com.djkim.slap.match.MatchGroupActivity;
 import com.djkim.slap.match.MatchGroupListFragment;
 import com.parse.ParseUser;
+
+import java.util.List;
 
 public class MainActivity extends ActionBarActivity {
     public static final String sBackStackTag = "main_activity_back_stack";
@@ -164,6 +169,8 @@ public class MainActivity extends ActionBarActivity {
         Intent intent = getIntent();
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
+
+
             FragmentManager fragmentManager = getFragmentManager();
             Fragment fragment = null;
 
