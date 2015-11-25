@@ -77,6 +77,23 @@ public class MainActivity extends ActionBarActivity {
                 .replace(R.id.main_layout, fragment)
                 .commit();
 
+        Intent intent = getIntent();
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            String query = intent.getStringExtra(SearchManager.QUERY);
+
+            FragmentManager fragmentManager = getFragmentManager();
+
+            Bundle bundle = new Bundle();
+            bundle.putString("name", query);
+            intent.putExtras(bundle);
+            fragment = new StringSearchGroupListFragment();
+            fragment.setArguments(bundle);
+            fragmentManager.beginTransaction()
+                    .replace(R.id.main_layout, fragment)
+                    .addToBackStack(sBackStackTag)
+                    .commit();
+        }
+
         //Set up Sinch service. Might want to put this in a better place.
         final Intent serviceIntent = new Intent(getApplicationContext(), MessageService.class);
         startService(serviceIntent);
@@ -167,29 +184,6 @@ public class MainActivity extends ActionBarActivity {
         //onSearchRequested();
 
         // Get the intent, verify the action and get the query
-        Intent intent = getIntent();
-        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            String query = intent.getStringExtra(SearchManager.QUERY);
-
-            Intent stringSearchGroupIntent = new Intent(MainActivity.this, StringSearchGroupListActivity.class);
-            Bundle bundle = new Bundle();
-            bundle.putString("name", query);
-            stringSearchGroupIntent.putExtras(bundle);
-            startActivityForResult(stringSearchGroupIntent, GET_STRING_SEARCH_TYPE);
-
-//            FragmentManager fragmentManager = getFragmentManager();
-//            Fragment fragment = null;
-//
-//            Bundle bundle = new Bundle();
-//            bundle.putString("name", query);
-//            intent.putExtras(bundle);
-//            fragment = new StringSearchGroupListFragment();
-//            fragment.setArguments(bundle);
-//            fragmentManager.beginTransaction()
-//                    .replace(R.id.main_layout, fragment)
-//                    .addToBackStack(sBackStackTag)
-//                    .commit();
-        }
         return super.onCreateOptionsMenu(menu);
     }
 
