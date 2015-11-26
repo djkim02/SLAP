@@ -129,7 +129,9 @@ Parse.Cloud.beforeSave("Group", function(request, response) {
     var toLowerCase = function(w) { return w.toLowerCase(); };
   
     var keywords = group.get("name").split(' ');
+    var hashtags = group.get("tags").split(',');
     keywords = _.map(keywords, toLowerCase);
+    hashtags = _.map(hashtags, toLowerCase);
     var stopWords = ["the", "in", "and", "to", "but", "for", "or", "yet", "so"];
      
     Array.prototype.contains = function ( needle ) {
@@ -142,11 +144,15 @@ Parse.Cloud.beforeSave("Group", function(request, response) {
     keywords = keywords.filter(function (w) {
     return w.match(/[a-zA-Z0-9]+/) && !stopWords.contains(w);
     });
-  
-    var hashtags = keywords;
-	hashtags = hashtags.filter(function (w) {
-    return w.indexOf('#') > -1;
+
+    hashtags = hashtags.filter(function (w) {
+    return w.match(/[a-zA-Z0-9]+/) && !stopWords.contains(w);
     });
+  
+ //    var hashtags = keywords;
+	// hashtags = hashtags.filter(function (w) {
+ //    return w.indexOf('#') > -1;
+ //    });
   
     group.set("keywords", keywords);
     group.set("hashtags", hashtags);
@@ -183,10 +189,36 @@ Parse.Cloud.define("partialStringSearch", function(request, response) {
             response.error("group fetch failed");
         }
     });
-     
-     
+});
+
+Parse.Cloud.define("customTagsSearch", function(request, response) {
+    var toLowerCase = function(w) { return w.toLowerCase(); };
   
-     //TO DO: search hashtags
-    // var hashtags = group.get("name").match(/[#][a-zA-Z0-9]+/);
-    // hashtags = _.map(hashtags, toLowerCase);
+    var keywords = request.params.tags.split(',');
+    keywords = _.map(keywords, toLowerCase);
+    var stopWords = ["the", "in", "and", "to", "but", "for", "or", "yet", "so"];
+     
+    Array.prototype.contains = function ( needle ) {
+    for (i in this) {
+       if (this[i] == needle) return true;
+    }
+    return false;
+    }
+     
+    keywords = keywords.filter(function (w) {
+    return w.match(/[a-zA-Z0-9]+/) && !stopWords.contains(w);
+    });
+     
+    var query = new Parse.Query("Group");
+    query.containsAll("hashtags", keywords);
+    query.include("owner, members");
+    query.find({
+        success: function(results) {
+            // just return the results for now
+            response.success(results);
+        },
+        error: function() {
+            response.error("group fetch failed");
+        }
+    });
 });
