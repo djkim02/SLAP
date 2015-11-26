@@ -51,6 +51,8 @@ public class MessagingActivity extends Activity {
     private ListView messagesList;
     private MessageAdapter messageAdapter;
 
+    public static final String DATEFORMAT = "EEE, MMM dd h:mm a";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,7 +88,7 @@ public class MessagingActivity extends Activity {
 
                         //Get object created at, convert it to a readable format for date
                         Date createdAt = messageList.get(i).getCreatedAt();
-                        SimpleDateFormat newFormat = new SimpleDateFormat("EEE, MMM dd h:mm a");
+                        SimpleDateFormat newFormat = new SimpleDateFormat(DATEFORMAT);
 
                         try {
                             String parsedTimeStamp = newFormat.format(createdAt);
@@ -152,6 +154,19 @@ public class MessagingActivity extends Activity {
             //Display an incoming message
             if (message.getSenderId().equals(recipientId)) {
                 WritableMessage writableMessage = new WritableMessage(message.getRecipientIds().get(0), message.getTextBody());
+
+                //Parse the headers and stuff here too
+                writableMessage.addHeader(RECIPIENT, recipientName);
+
+                SimpleDateFormat newFormat = new SimpleDateFormat(DATEFORMAT);
+                try {
+                    Date createdAt = new Date();
+                    String parsedTimeStamp = newFormat.format(createdAt);
+                    writableMessage.addHeader(TIMESTAMP, parsedTimeStamp);
+                } catch (Exception err) {
+                    ;
+                }
+
                 messageAdapter.addMessage(writableMessage, MessageAdapter.DIRECTION_INCOMING);
             }
         }
@@ -175,6 +190,19 @@ public class MessagingActivity extends Activity {
                             parseMessage.put("messageText", writableMessage.getTextBody());
                             parseMessage.put("sinchId", writableMessage.getMessageId());
                             parseMessage.saveInBackground();
+
+                            //Parse the headers and stuff here three
+                            writableMessage.addHeader(RECIPIENT, currentUserName);
+
+                            SimpleDateFormat newFormat = new SimpleDateFormat(DATEFORMAT);
+                            try {
+                                Date createdAt = new Date();
+                                String parsedTimeStamp = newFormat.format(createdAt);
+                                writableMessage.addHeader(TIMESTAMP, parsedTimeStamp);
+                            } catch (Exception err) {
+                                ;
+                            }
+
                             messageAdapter.addMessage(writableMessage, MessageAdapter.DIRECTION_OUTGOING);
                         }
                     }
