@@ -9,6 +9,8 @@ import android.os.IBinder;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.djkim.slap.R;
@@ -24,7 +26,10 @@ import com.sinch.android.rtc.messaging.MessageDeliveryInfo;
 import com.sinch.android.rtc.messaging.MessageFailureInfo;
 import com.sinch.android.rtc.messaging.WritableMessage;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -38,9 +43,14 @@ public class MessagingActivity extends Activity {
     private String currentUserId;
     private ServiceConnection serviceConnection = new MyServiceConnection();
     private MessageClientListener messageClientListener = new MyMessageClientListener();
-
+    private String recipientName;
+    private String currentUserName;
+    public static final String RECIPIENT = "recipientName";
+    public static final String CURRENTUSER = "currentUserName";
+    public static final String TIMESTAMP = "timeStamp";
     private ListView messagesList;
     private MessageAdapter messageAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,12 +59,17 @@ public class MessagingActivity extends Activity {
         //get recipientId from the intent
         Intent intent = getIntent();
         recipientId = intent.getStringExtra("RECIPIENT_ID");
+        recipientName = intent.getStringExtra(RECIPIENT);
+        currentUserName = intent.getStringExtra(CURRENTUSER);
         currentUserId = ParseUser.getCurrentUser().getObjectId();
         messageBodyField = (EditText) findViewById(R.id.txtTextBody);
 
         messagesList = (ListView) findViewById(R.id.lstMessages);
         messageAdapter = new MessageAdapter(this);
         messagesList.setAdapter(messageAdapter);
+
+        TextView recipientNameField = (TextView) findViewById(R.id.relRecipientText);
+        recipientNameField.setText(recipientName);
 
         //Todo: put into its own function
         String[] userIds = {currentUserId, recipientId};
@@ -68,9 +83,23 @@ public class MessagingActivity extends Activity {
                 if (e == null) {
                     for (int i = 0; i < messageList.size(); i++) {
                         WritableMessage message = new WritableMessage(messageList.get(i).get("recipientId").toString(), messageList.get(i).get("messageText").toString());
+
+                        //Get object created at, convert it to a readable format for date
+                        Date createdAt = messageList.get(i).getCreatedAt();
+                        SimpleDateFormat newFormat = new SimpleDateFormat("EEE, MMM dd h:mm a");
+
+                        try {
+                            String parsedTimeStamp = newFormat.format(createdAt);
+                            message.addHeader(TIMESTAMP, parsedTimeStamp);
+                        } catch (Exception err) {
+                            ;
+                        }
+
                         if (messageList.get(i).get("senderId").toString().equals(currentUserId)) {
+                            message.addHeader(RECIPIENT, currentUserName);
                             messageAdapter.addMessage(message, MessageAdapter.DIRECTION_OUTGOING);
                         } else {
+                            message.addHeader(RECIPIENT, recipientName);
                             messageAdapter.addMessage(message, MessageAdapter.DIRECTION_INCOMING);
                         }
                     }
