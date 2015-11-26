@@ -169,13 +169,19 @@ public class MainActivity extends ActionBarActivity {
         Intent intent = getIntent();
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
-            Utils.getStringSearchGroupsFromCloudInBackground(query, new GroupsCallback() {
-                @Override
-                public void done(List<Group> groups) {
-                    //Groups will contain the matched group names
-                    //setAdapterWithGroups(groups);
-                }
-            });
+
+            FragmentManager fragmentManager = getFragmentManager();
+            Fragment fragment = null;
+
+            Bundle bundle = new Bundle();
+            bundle.putString("name", query);
+            intent.putExtras(bundle);
+            fragment = new StringSearchGroupListFragment();
+            fragment.setArguments(bundle);
+            fragmentManager.beginTransaction()
+                    .replace(R.id.main_layout, fragment)
+                    .addToBackStack(sBackStackTag)
+                    .commit();
         }
 
         return super.onCreateOptionsMenu(menu);
