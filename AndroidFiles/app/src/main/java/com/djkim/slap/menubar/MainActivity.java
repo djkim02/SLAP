@@ -39,6 +39,7 @@ public class MainActivity extends ActionBarActivity {
     public static final String sBackStackTag = "main_activity_back_stack";
 
     private static final int GET_MATCH_TAGS_AND_TYPE = 0;
+    private static final int GET_STRING_SEARCH_TYPE = 1;
 
     private ListView mDrawerList;
     private ArrayAdapter<String> mAdapter;
@@ -155,34 +156,14 @@ public class MainActivity extends ActionBarActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.activity_main_actions, menu);
-
         menuInflater.inflate(R.menu.searchview, menu);
+
         // Associate searchable configuration with the SearchView
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
         searchView.setIconifiedByDefault(true);
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(getComponentName()));
-        //onSearchRequested();
-
-        // Get the intent, verify the action and get the query
-        Intent intent = getIntent();
-        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            String query = intent.getStringExtra(SearchManager.QUERY);
-
-            FragmentManager fragmentManager = getFragmentManager();
-            Fragment fragment = null;
-
-            Bundle bundle = new Bundle();
-            bundle.putString("name", query);
-            intent.putExtras(bundle);
-            fragment = new StringSearchGroupListFragment();
-            fragment.setArguments(bundle);
-            fragmentManager.beginTransaction()
-                    .replace(R.id.main_layout, fragment)
-                    .addToBackStack(sBackStackTag)
-                    .commit();
-        }
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -214,6 +195,23 @@ public class MainActivity extends ActionBarActivity {
         if (requestCode == GET_MATCH_TAGS_AND_TYPE && resultCode == RESULT_OK) {
             Fragment fragment = new MatchGroupListFragment();
             fragment.setArguments(data.getExtras());
+            getFragmentManager().beginTransaction()
+                    .replace(R.id.main_layout, fragment)
+                    .addToBackStack(sBackStackTag)
+                    .commit();
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            String query = intent.getStringExtra(SearchManager.QUERY);
+            Bundle bundle = new Bundle();
+            bundle.putString("name", query);
+            Fragment fragment = new StringSearchGroupListFragment();
+            fragment.setArguments(bundle);
             getFragmentManager().beginTransaction()
                     .replace(R.id.main_layout, fragment)
                     .addToBackStack(sBackStackTag)
