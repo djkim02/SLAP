@@ -55,4 +55,9 @@ public class MultipleFixedChoicePage extends SingleFixedChoicePage {
         ArrayList<String> selections = mData.getStringArrayList(Page.SIMPLE_DATA_KEY);
         return selections != null && selections.size() > 0;
     }
+
+    public MultipleFixedChoicePage setValues(ArrayList<String> values) {
+        mData.putStringArrayList(SIMPLE_DATA_KEY, values);
+        return this;
+    }
 }
