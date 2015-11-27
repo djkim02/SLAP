@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -51,6 +52,9 @@ public abstract class GroupDetailsFragment extends Fragment {
     private static int VIEW_TYPE_CONTENT = 2;
 
     public final static String sGroupArgumentKey = "group_details_group_argument";
+
+    public static final String RECIPIENT = "recipientName";
+    public static final String CURRENTUSER = "currentUserName";
 
     private RecyclerView mGroupDetailsRecyclerView;
     private UserAdapter mGroupDetailsAdapter;
@@ -102,23 +106,23 @@ public abstract class GroupDetailsFragment extends Fragment {
         private TextView mTitleTextView;
         private TextView mSubheadTextView;
         private LinearLayout mUserItem;
-        private RelativeLayout mRelativeLayout;
+        //private RelativeLayout mRelativeLayout;
+        private ImageButton mMessageButton;
 
 
         public UserHolder(View itemView) {
             super(itemView);
-                mUserItem =
-                        (LinearLayout) itemView.findViewById(R.id.group_details_item);
-            mRelativeLayout = (RelativeLayout) itemView.findViewById(R.id.group_details_layout);
+            mUserItem = (LinearLayout) itemView.findViewById(R.id.group_details_item);
             mThumbnailImageView =
                     (ProfilePictureView) itemView.findViewById(R.id.group_details_item_thumbnail_image_view);
             mTitleTextView =
                     (TextView) itemView.findViewById(R.id.group_details_item_title_text_view);
             mSubheadTextView =
                     (TextView) itemView.findViewById(R.id.group_details_item_subhead_text_view);
+            mMessageButton = (ImageButton) itemView.findViewById(R.id.message_button);
 
             //Set on-click listener for messaging with Sinch
-            mUserItem.setOnClickListener(new View.OnClickListener() {
+            mMessageButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     //Check if user is trying to click on himself/herself
@@ -136,7 +140,7 @@ public abstract class GroupDetailsFragment extends Fragment {
             mSubheadTextView.setText(mGroup.isOwner(mUser) ? "Admin" : "Member");
 
             if (mUser.get_facebook_profile_id() != null) {
-                mRelativeLayout.setOnClickListener(new View.OnClickListener() {
+                mUserItem.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(getActivity(), OthersProfileActivity.class);
@@ -144,6 +148,11 @@ public abstract class GroupDetailsFragment extends Fragment {
                         startActivity(intent);
                     }
                 });
+            }
+
+            //If it's the same user, do not show the button
+            if (mUser.get_id().equals(ParseUser.getCurrentUser().getObjectId())) {
+                mMessageButton.setVisibility(View.GONE);
             }
         }
     }
@@ -223,6 +232,8 @@ public abstract class GroupDetailsFragment extends Fragment {
                     if (e == null) {
                         Intent intent = new Intent(globalContext.getApplicationContext(), MessagingActivity.class);
                         intent.putExtra("RECIPIENT_ID", user.get(0).getObjectId());
+                        intent.putExtra(RECIPIENT, user.get(0).getUsername());
+                        intent.putExtra(CURRENTUSER, ParseUser.getCurrentUser().getUsername());
                         startActivity(intent);
                     } else {
                         //show some sort of error

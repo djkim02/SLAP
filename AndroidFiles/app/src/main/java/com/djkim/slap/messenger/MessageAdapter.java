@@ -13,6 +13,7 @@ import com.sinch.android.rtc.messaging.WritableMessage;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by kylemn on 11/17/15.
@@ -20,8 +21,11 @@ import java.util.List;
 public class MessageAdapter extends BaseAdapter {
     public static final int DIRECTION_INCOMING = 0;
     public static final int DIRECTION_OUTGOING = 1;
+    public static final String RECIPIENT = "recipientName";
+    public static final String TIMESTAMP = "timeStamp";
     private List<Pair<WritableMessage, Integer>> messages;
     private LayoutInflater layoutInflater;
+
     public MessageAdapter(Activity activity) {
         layoutInflater = activity.getLayoutInflater();
         messages = new ArrayList<Pair<WritableMessage, Integer>>();
@@ -34,22 +38,27 @@ public class MessageAdapter extends BaseAdapter {
     public int getCount() {
         return messages.size();
     }
+
     @Override
     public Object getItem(int i) {
         return messages.get(i);
     }
+
     @Override
     public long getItemId(int i) {
         return i;
     }
+
     @Override
     public int getViewTypeCount() {
         return 2;
     }
+
     @Override
     public int getItemViewType(int i) {
         return messages.get(i).second;
     }
+
     @Override
     public View getView(int i, View convertView, ViewGroup viewGroup) {
         int direction = getItemViewType(i);
@@ -64,9 +73,26 @@ public class MessageAdapter extends BaseAdapter {
             }
             convertView = layoutInflater.inflate(res, viewGroup, false);
         }
+
         WritableMessage message = messages.get(i).first;
+
+        Map<String, String> headers = message.getHeaders();
+
         TextView txtMessage = (TextView) convertView.findViewById(R.id.txtMessage);
         txtMessage.setText(message.getTextBody());
+
+        //Text sender
+        TextView txtSender = (TextView) convertView.findViewById(R.id.txtSender);
+        if (headers.get(RECIPIENT) != null) {
+            txtSender.setText(headers.get(RECIPIENT));
+        }
+
+        //Text date
+        TextView txtDate = (TextView) convertView.findViewById(R.id.txtDate);
+        if (headers.get(TIMESTAMP) != null) {
+            txtDate.setText(headers.get(TIMESTAMP));
+        }
+
         return convertView;
     }
 }
