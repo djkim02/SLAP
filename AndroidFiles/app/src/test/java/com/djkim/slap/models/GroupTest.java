@@ -25,4 +25,78 @@ import java.util.List;
 @RunWith(MockitoJUnitRunner.class)
 public class UserTest {
 
+    private final String FAKE_ATHLETE_JSON_ARRAY =
+            "[{\"isSelected\":true,\"skill_name\":\"Running\"}," +
+                    "{\"isSelected\":true,\"skill_name\":\"Soccer\"}," +
+                    "{\"isSelected\":true,\"skill_name\":\"Basketball\"}," +
+                    "{\"isSelected\":true,\"skill_name\":\"Baseball\"}," +
+                    "{\"isSelected\":false,\"skill_name\":\"Football\"}," +
+                    "{\"isSelected\":false,\"skill_name\":\"Weight Training\"}," +
+                    "{\"isSelected\":false,\"skill_name\":\"Frisbee\"}," +
+                    "{\"isSelected\":false,\"skill_name\":\"Biking\"}," +
+                    "{\"isSelected\":false,\"skill_name\":\"Bowling\"}," +
+                    "{\"isSelected\":false,\"skill_name\":\"Badminton\"}," +
+                    "{\"isSelected\":false,\"skill_name\":\"Ping Pong\"}," +
+                    "{\"isSelected\":false,\"skill_name\":\"Cricket\"}," +
+                    "{\"isSelected\":false,\"skill_name\":\"Golf\"}," +
+                    "{\"isSelected\":false,\"skill_name\":\"Handball\"}," +
+                    "{\"isSelected\":false,\"skill_name\":\"Yoga\"}," +
+                    "{\"isSelected\":false,\"skill_name\":\"Boxing\"}]";
+
+    private final String FAKE_HACKER_JSON_ARRAY =
+            "[{\"isSelected\":false,\"skill_name\":\"Android Development\"}," +
+                    "{\"isSelected\":false,\"skill_name\":\"iOS Development\"}," +
+                    "{\"isSelected\":false,\"skill_name\":\"Web Development\"}," +
+                    "{\"isSelected\":false,\"skill_name\":\"Front-end Development\"}," +
+                    "{\"isSelected\":false,\"skill_name\":\"Back-end Development\"}," +
+                    "{\"isSelected\":true,\"skill_name\":\"Java\"}," +
+                    "{\"isSelected\":true,\"skill_name\":\"C++\"}," +
+                    "{\"isSelected\":true,\"skill_name\":\"C\"}," +
+                    "{\"isSelected\":false,\"skill_name\":\"C#\"}," +
+                    "{\"isSelected\":false,\"skill_name\":\"Python\"}," +
+                    "{\"isSelected\":false,\"skill_name\":\"PHP\"}," +
+                    "{\"isSelected\":false,\"skill_name\":\"HTML\"}," +
+                    "{\"isSelected\":false,\"skill_name\":\"CSS\"}," +
+                    "{\"isSelected\":false,\"skill_name\":\"JavaScript\"}," +
+                    "{\"isSelected\":false,\"skill_name\":\"Node.js\"}," +
+                    "{\"isSelected\":false,\"skill_name\":\"AngularJS\"}," +
+                    "{\"isSelected\":false,\"skill_name\":\"Ruby\"}," +
+                    "{\"isSelected\":false,\"skill_name\":\"Rails\"}," +
+                    "{\"isSelected\":false,\"skill_name\":\"Coffeescript\"}," +
+                    "{\"isSelected\":false,\"skill_name\":\"MongoDB\"}," +
+                    "{\"isSelected\":false,\"skill_name\":\"MySQL\"}," +
+                    "{\"isSelected\":false,\"skill_name\":\"PostgreSQL\"}," +
+                    "{\"isSelected\":false,\"skill_name\":\".NET\"}," +
+                    "{\"isSelected\":false,\"skill_name\":\"Git\"}," +
+                    "{\"isSelected\":false,\"skill_name\":\"Linux\"}," +
+                    "{\"isSelected\":false,\"skill_name\":\"Photoshop\"}," +
+                    "{\"isSelected\":false,\"skill_name\":\"Illustrator\"}]";
+
+    private List<Skill> fakeAthleteSkills = Skill.returnAthleteSkillsList();
+    private List<Skill> fakeHackerSkills = Skill.returnHackerSkillsList();
+    private JSONArray fakeAthleteJSONArray;
+    private JSONArray fakeHackerJSONArray;
+
+    @Mock
+    Group mockGroup;
+
+    @Before @SuppressWarnings("unchecked")
+    public void setUp() {
+
+    }
+
+    @Test
+    public void constructGroupFromParse() {
+        Group group = new Group(mockGroup);
+        assertEquals("fakeGroupId", group.get_id());
+        assertEquals("fakeFacebookGroupId", group.get_facebookGroupId());
+        assertEquals("fakeGroupDescription", group.get_description());
+        //assertEquals("fakeGroupSkills", group.get_skills());
+
+        verify(mockGroup).get_id();
+        verify(mockGroup).get_facebookGroupId();
+        verify(mockGroup).get_description();
+        //verify(mockGroup).get_skills();
+
+    }
 }
