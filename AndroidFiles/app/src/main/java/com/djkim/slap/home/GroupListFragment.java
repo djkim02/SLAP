@@ -34,6 +34,7 @@ import com.djkim.slap.models.Utils;
 import com.facebook.login.widget.ProfilePictureView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class GroupListFragment extends Fragment {
@@ -158,13 +159,25 @@ public class GroupListFragment extends Fragment {
             String ownerFacebookProfileId = group.get_owner_facebook_profile_id();
             mThumbnailImageView.setProfileId(group.get_owner_facebook_profile_id());
             if (Utils.get_current_user().get_facebook_profile_id().equals(group.get_owner_facebook_profile_id())) {
-                text += " created by me";
+                text += " created by Me";
             } else {
                 text += " created by " + group.get_owner_name();
             }
             mSubheadTextView.setText(text);
             mSkillsTextView.setText(group.get_skills());
-            mTagsTextView.setText(group.get_tags());
+
+            String tags = mGroup.get_tags();
+            if (tags == null || tags.equals("")) {
+                mTagsTextView.setText("#notags");
+            } else {
+                StringBuilder tagBuilder = new StringBuilder();
+                for (String tag : mGroup.get_tags().split(",")) {
+                    tagBuilder.append("#");
+                    tagBuilder.append(tag.toLowerCase());
+                    tagBuilder.append(" ");
+                }
+                mTagsTextView.setText(tagBuilder.toString());
+            }
 
             int remainingSlots = group.get_capacity() - group.get_size();
             if(remainingSlots > 1)

@@ -184,7 +184,12 @@ public class EditGroupActivity extends ActionBarActivity implements
                                             if (group.get_facebookGroupId() == null) {
                                                 onClickCreateButton();
                                             } else {
-                                                group.saveInBackground(null);
+                                                group.saveInBackground(new GroupCallback() {
+                                                    @Override
+                                                    public void done() {
+                                                        startActivity(new Intent(EditGroupActivity.this, MainActivity.class));
+                                                    }
+                                                });
                                             }
                                         }
                                     })
@@ -244,6 +249,7 @@ public class EditGroupActivity extends ActionBarActivity implements
         group.set_capacity(capacity);
         group.set_description(description);
         group.set_skills(skills);
+        group.set_tags(tags == null ? "" : tags);
     }
 
     private AbstractWizardModel createWizardModel(final Group group) {
@@ -256,7 +262,6 @@ public class EditGroupActivity extends ActionBarActivity implements
                 // TODO(victorkwan): Maybe we can refactor this to use the Abstract Factory pattern.
                 // Also, we might be better off defining shared constants for the setChoices.
                 if (group.get_type().equals(Group.ATHLETE_GROUP)) {
-                    // TODO(victorkwan): Update when we add tag support.
                     return new PageList(
                             new EnterTextPage(this, "What is the group name?")
                                     .setValue(group.get_name())
@@ -276,7 +281,8 @@ public class EditGroupActivity extends ActionBarActivity implements
                                             "Bowling", "Badminton", "Ping Pong", "Cricket", "Golf",
                                             "Handball", "Yoga", "Boxing"),
                             new EnterTextPage(this,
-                                    "Please specify any tags to be associated with the group"));
+                                    "Please specify any tags to be associated with the group")
+                                    .setValue(group.get_tags()));
                 } else {
                     return new PageList(
                             new EnterTextPage(this, "What is the group name?")
@@ -300,7 +306,8 @@ public class EditGroupActivity extends ActionBarActivity implements
                                             "MySQL", "PostgreSQL", ".NET", "Git", "Linux",
                                             "Photoshop", "Illustrator"),
                             new EnterTextPage(this,
-                                    "Please specify any tags to be associated with the group"));
+                                    "Please specify any tags to be associated with the group")
+                                    .setValue(group.get_tags()));
                 }
             }
         };
