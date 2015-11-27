@@ -30,6 +30,7 @@ public class Group implements Serializable {
     private String m_type;
     private int m_capacity;
     private String m_skills;    // comma-separated string of skills
+    private String m_tags;      // comma-separated string of custom tags
 
     private String m_ownerName;
     private String m_ownerFacebookProfileId;
@@ -56,11 +57,14 @@ public class Group implements Serializable {
         m_facebookGroupId = parseGroup.getString("facebookGroupId");
         m_type = parseGroup.getString("type");
         m_skills = parseGroup.getString("skills");
+        m_tags = parseGroup.getString("tags");
         m_capacity = parseGroup.getInt("capacity");
         m_ownerName = parseGroup.getString("ownerName");
         m_ownerFacebookProfileId = parseGroup.getString("ownerFacebookProfileId");
         m_size = parseGroup.getInt("size");
     }
+
+    public void set_tags(String tags) { m_tags = tags; }
 
     public void set_skills(String skills) {
         m_skills = skills;
@@ -180,6 +184,7 @@ public class Group implements Serializable {
         return m_skills;
     }
 
+    public String get_tags() { return m_tags; }
     public int get_capacity() {
         return m_capacity;
     }
@@ -215,6 +220,7 @@ public class Group implements Serializable {
         parseGroup.put("type", m_type);
         parseGroup.put("capacity", m_capacity);
         parseGroup.put("skills", m_skills);
+        parseGroup.put("tags", m_tags);
         if (m_facebookGroupId != null) {
             parseGroup.put("facebookGroupId", m_facebookGroupId);
         }

@@ -231,6 +231,7 @@ public class CreateGroupActivity extends ActionBarActivity implements
         group = new Group(name, user, capacity, type);
         group.set_description(description);
         group.set_skills(skills);
+        group.set_tags(tags);
     }
 
     private void updateBottomBar() {

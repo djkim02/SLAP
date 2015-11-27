@@ -164,6 +164,7 @@ public class GroupListFragment extends Fragment {
             }
             mSubheadTextView.setText(text);
             mSkillsTextView.setText(group.get_skills());
+            mTagsTextView.setText(group.get_tags());
 
             int remainingSlots = group.get_capacity() - group.get_size();
             if(remainingSlots > 1)
