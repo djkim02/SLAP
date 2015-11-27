@@ -57,7 +57,7 @@ public abstract class GroupDetailsFragment extends Fragment {
     public static final String CURRENTUSER = "currentUserName";
 
     private RecyclerView mGroupDetailsRecyclerView;
-    private UserAdapter mGroupDetailsAdapter;
+    protected UserAdapter mGroupDetailsAdapter;
     protected Group mGroup;
     final User currentUser = Utils.get_current_user();
 

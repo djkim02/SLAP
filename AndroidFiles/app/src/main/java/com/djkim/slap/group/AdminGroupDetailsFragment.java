@@ -1,5 +1,6 @@
 package com.djkim.slap.group;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
@@ -57,7 +58,8 @@ public class AdminGroupDetailsFragment extends GroupDetailsFragment {
                     Intent intent =
                             new Intent(AdminGroupDetailsFragment.this.getActivity(), EditGroupActivity.class);
                     intent.putExtra(EditGroupActivity.EDIT_GROUP_ACTIVITY_GROUP, mGroup);
-                    startActivity(intent);
+                    getActivity().startActivityForResult(
+                            intent, MainActivity.EDIT_GROUP_REQUEST_CODE);
                 }
             });
 

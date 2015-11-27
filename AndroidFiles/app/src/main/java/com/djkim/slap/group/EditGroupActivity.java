@@ -112,7 +112,11 @@ public class EditGroupActivity extends ActionBarActivity implements
                     public void done() {
                         Toast.makeText(EditGroupActivity.this, "Successfully created the group!",
                                 Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(EditGroupActivity.this, MainActivity.class));
+
+                        Intent intent = new Intent();
+                        intent.putExtra(MainActivity.UPDATED_GROUP_KEY, group);
+                        setResult(RESULT_OK, intent);
+                        finish();
                     }
                 });
             }
@@ -123,7 +127,11 @@ public class EditGroupActivity extends ActionBarActivity implements
                     public void done() {
                         Toast.makeText(EditGroupActivity.this, "Failed to create the group!",
                                 Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(EditGroupActivity.this, MainActivity.class));
+
+                        Intent intent = new Intent();
+                        intent.putExtra(MainActivity.UPDATED_GROUP_KEY, group);
+                        setResult(RESULT_OK, intent);
+                        finish();
                     }
                 });
             }
@@ -187,7 +195,10 @@ public class EditGroupActivity extends ActionBarActivity implements
                                                 group.saveInBackground(new GroupCallback() {
                                                     @Override
                                                     public void done() {
-                                                        startActivity(new Intent(EditGroupActivity.this, MainActivity.class));
+                                                        Intent intent = new Intent();
+                                                        intent.putExtra(MainActivity.UPDATED_GROUP_KEY, group);
+                                                        setResult(RESULT_OK, intent);
+                                                        finish();
                                                     }
                                                 });
                                             }
@@ -212,7 +223,8 @@ public class EditGroupActivity extends ActionBarActivity implements
             @Override
             public void onClick(View view) {
                 if (mPager.getCurrentItem() == 0) {
-                    startActivity(new Intent(EditGroupActivity.this, MainActivity.class));
+                    setResult(RESULT_CANCELED);
+                    finish();
                 } else {
                     mPager.setCurrentItem(mPager.getCurrentItem() - 1);
                 }

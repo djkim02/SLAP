@@ -102,7 +102,11 @@ public class CreateGroupActivity extends ActionBarActivity implements
                     public void done() {
                         Toast.makeText(CreateGroupActivity.this, "Successfully created the group!",
                                 Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(CreateGroupActivity.this, MainActivity.class));
+
+                        Intent intent = new Intent();
+                        intent.putExtra(MainActivity.UPDATED_GROUP_KEY, group);
+                        setResult(RESULT_OK, intent);
+                        finish();
                     }
                 });
             }
@@ -113,7 +117,11 @@ public class CreateGroupActivity extends ActionBarActivity implements
                     public void done() {
                         Toast.makeText(CreateGroupActivity.this, "Failed to create the group!",
                                 Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(CreateGroupActivity.this, MainActivity.class));
+
+                        Intent intent = new Intent();
+                        intent.putExtra(MainActivity.UPDATED_GROUP_KEY, group);
+                        setResult(RESULT_OK, intent);
+                        finish();
                     }
                 });
             }
@@ -193,7 +201,8 @@ public class CreateGroupActivity extends ActionBarActivity implements
             @Override
             public void onClick(View view) {
                 if (mPager.getCurrentItem() == 0) {
-                    startActivity(new Intent(CreateGroupActivity.this, MainActivity.class));
+                    setResult(RESULT_CANCELED);
+                    finish();
                 } else {
                     mPager.setCurrentItem(mPager.getCurrentItem() - 1);
                 }

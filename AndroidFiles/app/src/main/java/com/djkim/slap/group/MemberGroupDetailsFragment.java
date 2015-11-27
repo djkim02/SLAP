@@ -7,7 +7,9 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.djkim.slap.R;
+import com.djkim.slap.models.GroupCallback;
 import com.djkim.slap.models.User;
+import com.djkim.slap.models.UserCallback;
 import com.djkim.slap.models.Utils;
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
@@ -107,9 +109,17 @@ public class MemberGroupDetailsFragment extends GroupDetailsFragment {
                             User curUser = Utils.get_current_user();
                             if (!curUser.isMemberOf(mGroup)) {
                                 curUser.joinAsMember(mGroup);
-                                curUser.save();
+                                curUser.saveInBackground(new UserCallback() {
+                                    @Override
+                                    public void done() {
+                                        // TODO(victorkwan): Take into account when this is tapped
+                                        // to refresh the Fragment.
+                                        JoinAppGroupDialog.show(getActivity(), fbGroupId);
+                                    }
+                                });
+                            } else {
+                                JoinAppGroupDialog.show(getActivity(), fbGroupId);
                             }
-                            JoinAppGroupDialog.show(getActivity(), fbGroupId);
                         }
                     });
                 }
