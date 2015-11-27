@@ -19,9 +19,9 @@ import java.util.List;
  */
 
 public class Group implements Serializable {
-    private final String HACKER_GROUP = "Hacker";
-    private final String ATHLETE_GROUP = "Athlete";
-    private final String GENERAL_GROUP = "General";
+    public static final String HACKER_GROUP = "Hacker";
+    public static final String ATHLETE_GROUP = "Athlete";
+    public static final String GENERAL_GROUP = "General";
 
     private String m_objectId;
     private String m_name;

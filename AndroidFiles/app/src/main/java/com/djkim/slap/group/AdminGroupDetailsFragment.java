@@ -34,37 +34,10 @@ import org.json.JSONObject;
  * Created by victorkwan on 11/24/15.
  */
 public class AdminGroupDetailsFragment extends GroupDetailsFragment {
-    CallbackManager callbackManager;
-    CreateAppGroupDialog createAppGroupDialog;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        FacebookSdk.sdkInitialize(getActivity().getApplicationContext());
-        callbackManager = CallbackManager.Factory.create();
-        createAppGroupDialog = new CreateAppGroupDialog(getActivity());
-        createAppGroupDialog.registerCallback(
-                callbackManager, new FacebookCallback<CreateAppGroupDialog.Result>() {
-                    public void onSuccess(CreateAppGroupDialog.Result result) {
-                        String id = result.getId();
-//                        mGroup.set_facebookGroupId(id);
-//                        mGroup.saveInBackground(new GroupCallback() {
-//                            @Override
-//                            public void done() {
-//                                Toast.makeText(getActivity(), "Successfully created the group!",
-//                                        Toast.LENGTH_SHORT).show();
-//                            }
-//                        });
-                    }
-
-                    public void onCancel() {
-
-                    }
-
-                    public void onError(FacebookException error) {
-                    }
-                });
-
     }
 
     private class DetailsActivityHolder extends RecyclerView.ViewHolder {
@@ -77,24 +50,16 @@ public class AdminGroupDetailsFragment extends GroupDetailsFragment {
             super(itemView);
             mJoinGroupButton =
                     (Button) itemView.findViewById(R.id.group_details_action_join_group_button);
-
-            final String fbGroupId = mGroup.get_facebookGroupId();
-            if (fbGroupId != null) {
-                mJoinGroupButton.setText("Create a Facebook Group!");
-                mJoinGroupButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        AppGroupCreationContent content = new AppGroupCreationContent.Builder()
-                                .setName(mGroup.get_name())
-                                .setDescription(mGroup.get_description())
-                                .setAppGroupPrivacy(AppGroupCreationContent.AppGroupPrivacy.Closed)
-                                .build();
-                        createAppGroupDialog.show(content);
-                    }
-                });
-            } else {
-                mJoinGroupButton.setVisibility(View.GONE);
-            }
+            mJoinGroupButton.setText("Edit Group Details");
+            mJoinGroupButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent =
+                            new Intent(AdminGroupDetailsFragment.this.getActivity(), EditGroupActivity.class);
+                    intent.putExtra(EditGroupActivity.EDIT_GROUP_ACTIVITY_GROUP, mGroup);
+                    startActivity(intent);
+                }
+            });
 
             mTitleTextView =
                     (TextView) itemView.findViewById(R.id.group_details_action_title_text_view);

@@ -110,16 +110,7 @@ public class GroupListFragment extends Fragment {
             mDetailsButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    FragmentManager fragmentManager = getFragmentManager();
-                    Fragment fragment = new MemberGroupDetailsFragment();
-
-                    Bundle bundle = new Bundle();
-                    bundle.putSerializable(GroupDetailsFragment.sGroupArgumentKey, mGroup);
-                    fragment.setArguments(bundle);
-                    fragmentManager.beginTransaction()
-                            .replace(R.id.main_layout, fragment)
-                            .addToBackStack(MainActivity.sBackStackTag)
-                            .commit();
+                    openDetails();
                 }
             });
 

@@ -54,6 +54,10 @@
             android:label="Create Group">
         </activity>
         <activity
+            android:name=".group.EditGroupActivity"
+            android:label="Edit Group">
+        </activity>
+        <activity
             android:name=".profile.MyHackerSkillsActivity"
             android:label="My Hacker Skills">
         </activity>
