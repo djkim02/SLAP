@@ -220,7 +220,7 @@ public class Group implements Serializable {
         parseGroup.put("type", m_type);
         parseGroup.put("capacity", m_capacity);
         parseGroup.put("skills", m_skills);
-        parseGroup.put("tags", m_tags);
+        parseGroup.put("tags", m_tags == null ? "" : m_tags);
         if (m_facebookGroupId != null) {
             parseGroup.put("facebookGroupId", m_facebookGroupId);
         }

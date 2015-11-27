@@ -26,6 +26,9 @@ public class MatchGroupListFragment extends GroupListFragment {
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
+    @Override
+    protected void onResumeCalled() {}
+
     protected void getGroupsInBackground() {
         Utils.getGroupsFromCloudInBackground(mType, new GroupsCallback() {
             @Override

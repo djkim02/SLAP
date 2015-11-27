@@ -56,6 +56,12 @@ public class GroupListFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        onResumeCalled();
+    }
+
+    // I think this motivates making GroupListFragment an abstract class and making the regular
+    // GroupListFragment a subclass with its own behavior.
+    protected void onResumeCalled() {
         mGroupAdapter.setGroups(Utils.get_current_user().getGroups());
         mGroupAdapter.notifyDataSetChanged();
     }
