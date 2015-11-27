@@ -95,7 +95,8 @@ public abstract class GroupDetailsFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == UPDATED_GROUP_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             mGroup = (Group) data.getExtras().getSerializable(EditGroupActivity.EDIT_GROUP_EXTRA);
-            
+            Utils.get_current_user().updateGroup(mGroup);
+
             // In this case, we can specify that the header has changed.
             mGroupDetailsAdapter.notifyItemChanged(0, 1);
         }
