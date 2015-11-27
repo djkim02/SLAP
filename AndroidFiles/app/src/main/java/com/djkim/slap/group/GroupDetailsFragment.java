@@ -1,6 +1,7 @@
 package com.djkim.slap.group;
 
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
@@ -18,6 +19,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.djkim.slap.R;
+import com.djkim.slap.menubar.MainActivity;
 import com.djkim.slap.messenger.MessagingActivity;
 import com.djkim.slap.models.Group;
 import com.djkim.slap.models.User;
@@ -50,6 +52,8 @@ public abstract class GroupDetailsFragment extends Fragment {
     // Placeholder for the future "Convert to FB group" option.
     private static int VIEW_TYPE_ACTION = 1;
     private static int VIEW_TYPE_CONTENT = 2;
+
+    protected final static int UPDATED_GROUP_REQUEST_CODE = 100;
 
     public final static String sGroupArgumentKey = "group_details_group_argument";
 
@@ -84,6 +88,17 @@ public abstract class GroupDetailsFragment extends Fragment {
         globalContext = this.getActivity();
 
         return rootView;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == UPDATED_GROUP_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            mGroup = (Group) data.getExtras().getSerializable(EditGroupActivity.EDIT_GROUP_EXTRA);
+            
+            // In this case, we can specify that the header has changed.
+            mGroupDetailsAdapter.notifyItemChanged(0, 1);
+        }
     }
 
     private class SectionHeaderHolder extends RecyclerView.ViewHolder {
@@ -126,7 +141,7 @@ public abstract class GroupDetailsFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     //Check if user is trying to click on himself/herself
-                    if(!mUser.get_id().equals(ParseUser.getCurrentUser().getObjectId())) {
+                    if (!mUser.get_id().equals(ParseUser.getCurrentUser().getObjectId())) {
                         openConversation(mUser.get_id());
                     }
                 }

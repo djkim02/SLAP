@@ -57,9 +57,8 @@ public class AdminGroupDetailsFragment extends GroupDetailsFragment {
                 public void onClick(View v) {
                     Intent intent =
                             new Intent(AdminGroupDetailsFragment.this.getActivity(), EditGroupActivity.class);
-                    intent.putExtra(EditGroupActivity.EDIT_GROUP_ACTIVITY_GROUP, mGroup);
-                    getActivity().startActivityForResult(
-                            intent, MainActivity.EDIT_GROUP_REQUEST_CODE);
+                    intent.putExtra(EditGroupActivity.EDIT_GROUP_EXTRA, mGroup);
+                    startActivityForResult(intent, UPDATED_GROUP_REQUEST_CODE);
                 }
             });
 
@@ -83,4 +82,6 @@ public class AdminGroupDetailsFragment extends GroupDetailsFragment {
     protected RecyclerView.ViewHolder createDetailsActivityHolder(View itemView) {
         return new DetailsActivityHolder(itemView);
     }
+
+
 }

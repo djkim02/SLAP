@@ -69,7 +69,7 @@ public class EditGroupActivity extends ActionBarActivity implements
         PageFragmentCallbacks,
         ReviewFragment.Callbacks,
         ModelCallbacks {
-    public static final String EDIT_GROUP_ACTIVITY_GROUP = "edit_group_activity_group";
+    public static final String EDIT_GROUP_EXTRA = "edit_group_extra";
 
     private ViewPager mPager;
     private MyPagerAdapter mPagerAdapter;
@@ -96,7 +96,7 @@ public class EditGroupActivity extends ActionBarActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create_group_layout);
 
-        group = (Group) getIntent().getExtras().getSerializable(EDIT_GROUP_ACTIVITY_GROUP);
+        group = (Group) getIntent().getExtras().getSerializable(EDIT_GROUP_EXTRA);
         mWizardModel = createWizardModel(group);
 
         FacebookSdk.sdkInitialize(this.getApplicationContext());
@@ -114,7 +114,7 @@ public class EditGroupActivity extends ActionBarActivity implements
                                 Toast.LENGTH_SHORT).show();
 
                         Intent intent = new Intent();
-                        intent.putExtra(MainActivity.UPDATED_GROUP_KEY, group);
+                        intent.putExtra(EDIT_GROUP_EXTRA, group);
                         setResult(RESULT_OK, intent);
                         finish();
                     }
@@ -129,7 +129,7 @@ public class EditGroupActivity extends ActionBarActivity implements
                                 Toast.LENGTH_SHORT).show();
 
                         Intent intent = new Intent();
-                        intent.putExtra(MainActivity.UPDATED_GROUP_KEY, group);
+                        intent.putExtra(EDIT_GROUP_EXTRA, group);
                         setResult(RESULT_OK, intent);
                         finish();
                     }
@@ -196,7 +196,7 @@ public class EditGroupActivity extends ActionBarActivity implements
                                                     @Override
                                                     public void done() {
                                                         Intent intent = new Intent();
-                                                        intent.putExtra(MainActivity.UPDATED_GROUP_KEY, group);
+                                                        intent.putExtra(EDIT_GROUP_EXTRA, group);
                                                         setResult(RESULT_OK, intent);
                                                         finish();
                                                     }

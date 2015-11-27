@@ -53,6 +53,13 @@ public class GroupListFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        mGroupAdapter.setGroups(Utils.get_current_user().getGroups());
+        mGroupAdapter.notifyDataSetChanged();
+    }
+
     /**
      * Takes a List of Group objects and configures the RecyclerView to display these Groups via
      * the adapter.
@@ -195,6 +202,8 @@ public class GroupListFragment extends Fragment {
         public GroupAdapter(List<Group> groups) {
             mGroups = groups;
         }
+
+        public void setGroups(List<Group> groups) { mGroups = groups; }
 
         @Override
         public GroupHolder onCreateViewHolder(ViewGroup parent, int viewType) {

@@ -112,8 +112,6 @@ public class MemberGroupDetailsFragment extends GroupDetailsFragment {
                                 curUser.saveInBackground(new UserCallback() {
                                     @Override
                                     public void done() {
-                                        // TODO(victorkwan): Take into account when this is tapped
-                                        // to refresh the Fragment.
                                         JoinAppGroupDialog.show(getActivity(), fbGroupId);
                                     }
                                 });

@@ -31,12 +31,10 @@ import com.djkim.slap.match.MatchGroupListFragment;
 import com.parse.ParseUser;
 
 public class MainActivity extends ActionBarActivity {
-    public static final String sBackStackTag = "main_activity_back_stack";
-    public static final String UPDATED_GROUP_KEY = "updated_group_key";
+    private static final int MATCH_REQUEST_CODE = 0;
+    private static final int CREATE_REQUEST_CODE = 1;
 
-    private static final int GET_MATCH_TAGS_AND_TYPE = 0;
-    private static final int CREATE_GROUP = 1;
-    public static final int EDIT_GROUP_REQUEST_CODE = 2;
+    public static final String sBackStackTag = "main_activity_back_stack";
 
     private ListView mDrawerList;
     private ArrayAdapter<String> mAdapter;
@@ -109,11 +107,11 @@ public class MainActivity extends ActionBarActivity {
                         break;
                     case 2:     // Create a Group
                         Intent createGroupIntent = new Intent(MainActivity.this, CreateGroupActivity.class);
-                        startActivityForResult(createGroupIntent, CREATE_GROUP);
+                        startActivityForResult(createGroupIntent, CREATE_REQUEST_CODE);
                         break;
                     case 3:     // Find Matches
                         Intent matchGroupIntent = new Intent(MainActivity.this, MatchGroupActivity.class);
-                        startActivityForResult(matchGroupIntent, GET_MATCH_TAGS_AND_TYPE);
+                        startActivityForResult(matchGroupIntent, MATCH_REQUEST_CODE);
                         break;
                     case 5:     // Logout
                         // TODO: replace this with Utils method
@@ -183,36 +181,22 @@ public class MainActivity extends ActionBarActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
             FragmentManager fragmentManager = getFragmentManager();
-            if (requestCode == GET_MATCH_TAGS_AND_TYPE) {
+            if (requestCode == MATCH_REQUEST_CODE) {
                 Fragment fragment = new MatchGroupListFragment();
                 fragment.setArguments(data.getExtras());
                 fragmentManager.beginTransaction()
                         .replace(R.id.main_layout, fragment)
                         .addToBackStack(sBackStackTag)
                         .commit();
-            } else if (requestCode == CREATE_GROUP || requestCode == EDIT_GROUP_REQUEST_CODE) {
-                // After creating or mutating a group, we need to reset the back stack.
-                fragmentManager.popBackStack(
-                        sBackStackTag, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-
-                // Then, we can (re-)populate the GroupDetailsFragment as follows.
-                Fragment groupListFragment = new GroupListFragment();
-                fragmentManager.beginTransaction()
-                        .replace(R.id.main_layout, groupListFragment)
-                        .addToBackStack(sBackStackTag)
-                        .commit();
-
-                // Ideally, we would have this configure itself, but alas ...
-                Group updatedGroup = (Group) data.getExtras().getSerializable(UPDATED_GROUP_KEY);
-                Fragment groupDetailsFragment = updatedGroup.isOwner(Utils.get_current_user())
-                        ? new AdminGroupDetailsFragment()
-                        : new MemberGroupDetailsFragment();
-
+            } else if (requestCode == CREATE_REQUEST_CODE) {
                 Bundle bundle = new Bundle();
-                bundle.putSerializable(GroupDetailsFragment.sGroupArgumentKey, updatedGroup);
-                groupDetailsFragment.setArguments(bundle);
+                bundle.putSerializable(GroupDetailsFragment.sGroupArgumentKey,
+                        data.getExtras().getSerializable(CreateGroupActivity.CREATE_GROUP_EXTRA));
+
+                Fragment fragment = new AdminGroupDetailsFragment();
+                fragment.setArguments(bundle);
                 fragmentManager.beginTransaction()
-                        .replace(R.id.main_layout, groupDetailsFragment)
+                        .replace(R.id.main_layout, fragment)
                         .addToBackStack(sBackStackTag)
                         .commit();
             }

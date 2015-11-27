@@ -64,6 +64,8 @@ public class CreateGroupActivity extends ActionBarActivity implements
         PageFragmentCallbacks,
         ReviewFragment.Callbacks,
         ModelCallbacks {
+    public final static String CREATE_GROUP_EXTRA = "create_group_extra";
+
     private ViewPager mPager;
     private MyPagerAdapter mPagerAdapter;
 
@@ -104,7 +106,7 @@ public class CreateGroupActivity extends ActionBarActivity implements
                                 Toast.LENGTH_SHORT).show();
 
                         Intent intent = new Intent();
-                        intent.putExtra(MainActivity.UPDATED_GROUP_KEY, group);
+                        intent.putExtra(CREATE_GROUP_EXTRA, group);
                         setResult(RESULT_OK, intent);
                         finish();
                     }
@@ -119,7 +121,7 @@ public class CreateGroupActivity extends ActionBarActivity implements
                                 Toast.LENGTH_SHORT).show();
 
                         Intent intent = new Intent();
-                        intent.putExtra(MainActivity.UPDATED_GROUP_KEY, group);
+                        intent.putExtra(CREATE_GROUP_EXTRA, group);
                         setResult(RESULT_OK, intent);
                         finish();
                     }
