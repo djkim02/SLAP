@@ -21,14 +21,11 @@ import com.djkim.slap.createGroup.CreateGroupActivity;
 import com.djkim.slap.dispatch.DispatchActivity;
 import com.djkim.slap.group.AdminGroupDetailsFragment;
 import com.djkim.slap.group.GroupDetailsFragment;
-import com.djkim.slap.group.MemberGroupDetailsFragment;
 import com.djkim.slap.home.GroupListFragment;
-import com.djkim.slap.messenger.MessageService;
-import com.djkim.slap.models.Group;
-import com.djkim.slap.models.Utils;
-import com.djkim.slap.profile.MyProfileFragment;
 import com.djkim.slap.match.MatchGroupActivity;
 import com.djkim.slap.match.MatchGroupListFragment;
+import com.djkim.slap.messenger.MessageService;
+import com.djkim.slap.profile.MyProfileFragment;
 import com.parse.ParseInstallation;
 import com.parse.ParseUser;
 
@@ -76,11 +73,14 @@ public class MainActivity extends ActionBarActivity {
                 .commit();
 
         //Set up Sinch service. Might want to put this in a better place.
+        // ParseInstallation required for push notifications
         final Intent serviceIntent = new Intent(getApplicationContext(), MessageService.class);
         startService(serviceIntent);
         ParseUser currentUser = ParseUser.getCurrentUser();
+        String currentUserName = ParseUser.getCurrentUser().getUsername();
         ParseInstallation installation = ParseInstallation.getCurrentInstallation();
         installation.put("user", currentUser);
+        installation.put("username", currentUserName);
         installation.saveInBackground();
 
 

@@ -9,13 +9,11 @@ import android.os.IBinder;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.djkim.slap.R;
 import com.parse.FindCallback;
-import com.parse.ParseException;
 import com.parse.ParseInstallation;
 import com.parse.ParseObject;
 import com.parse.ParsePush;
@@ -30,11 +28,15 @@ import com.sinch.android.rtc.messaging.MessageDeliveryInfo;
 import com.sinch.android.rtc.messaging.MessageFailureInfo;
 import com.sinch.android.rtc.messaging.WritableMessage;
 
-import java.text.ParseException;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+
+//import com.parse.ParseException;
 
 /**
  * Created by kylemn on 11/17/15.
@@ -228,13 +230,26 @@ public class MessagingActivity extends Activity {
             ParseQuery pushQuery = ParseInstallation.getQuery();
             pushQuery.whereMatchesQuery("user", userQuery);
 
+            JSONObject data = new JSONObject();
+            try {
+                data.put("alert", ParseUser.getCurrentUser().getUsername()+" sent you a message");
+                data.put("recipientName", ParseUser.getCurrentUser().getUsername());
+                data.put("Recipient_ID", ParseUser.getCurrentUser().getObjectId());
+            }
+            catch (JSONException j)
+            {
+
+            }
+
+
 // Send push notification to query
             ParsePush push = new ParsePush();
             push.setQuery(pushQuery); // Set our Installation query
-            push.setMessage(ParseUser.getCurrentUser().getUsername()+" sent you a message");
+            //push.setMessage(ParseUser.getCurrentUser().getUsername()+" sent you a message");
+            push.setData(data);
             push.sendInBackground(new SendCallback() {
                 @Override
-                public void done(ParseException e) {
+                public void done(com.parse.ParseException e) {
 
                     if(e==null){
 //the push is sent!

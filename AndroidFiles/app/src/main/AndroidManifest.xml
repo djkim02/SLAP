@@ -102,7 +102,7 @@
             android:label="@string/app_name">
         </activity>
         <service android:name="com.parse.PushService" />
-        <receiver android:name="com.parse.ParsePushBroadcastReceiver"
+        <receiver android:name="com.djkim.slap.messenger.PushReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.parse.push.intent.RECEIVE" />
