@@ -5,6 +5,7 @@ import android.app.FragmentManager;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -24,6 +25,8 @@ import com.djkim.slap.group.AdminGroupDetailsFragment;
 import com.djkim.slap.group.GroupDetailsActivity;
 import com.djkim.slap.group.GroupDetailsFragment;
 import com.djkim.slap.group.MemberGroupDetailsFragment;
+import com.djkim.slap.match.MatchGroupActivity;
+import com.djkim.slap.match.MatchGroupListFragment;
 import com.djkim.slap.menubar.MainActivity;
 import com.djkim.slap.models.Group;
 import com.djkim.slap.models.GroupCallback;
@@ -49,6 +52,7 @@ public class GroupListFragment extends Fragment {
         mGroupRecyclerView = (RecyclerView) view.findViewById(R.id.group_recycler_view);
         mGroupRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         getGroupsInBackground();
+        view = noGroupsSetup(view, inflater, container);
 
         return view;
     }
@@ -84,6 +88,44 @@ public class GroupListFragment extends Fragment {
     protected void getGroupsInBackground() {
         User user = Utils.get_current_user();
         setAdapterWithGroups(user.getGroups());
+    }
+
+    protected View noGroupsSetup(View view, LayoutInflater inflater, ViewGroup container) {
+        if (mGroupAdapter.getItemCount() == 0) {
+            view = inflater.inflate(R.layout.no_group_list_fragment_layout, container, false);
+            Typeface tf = Typeface.createFromAsset(getActivity().getAssets(), "BebasNeue Bold.otf");
+            TextView headingTextView = (TextView) view.findViewById(R.id.heading);
+            headingTextView.setTypeface(tf);
+            Button button = (Button) view.findViewById(R.id.match_button);
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent matchGroupIntent = new Intent(GroupListFragment.this.getActivity(), MatchGroupActivity.class);
+                    startActivityForResult(matchGroupIntent, 0);
+                }
+            });
+            button.setTypeface(tf);
+            tf = Typeface.createFromAsset(getActivity().getAssets(), "BebasNeue Book.otf");
+            TextView subHeadingTextView = (TextView) view.findViewById(R.id.subheading);
+            subHeadingTextView.setTypeface(tf);
+        }
+
+        return view;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == -1) {
+            FragmentManager fragmentManager = getFragmentManager();
+            if (requestCode == 0) {
+                Fragment fragment = new MatchGroupListFragment();
+                fragment.setArguments(data.getExtras());
+                fragmentManager.beginTransaction()
+                        .replace(R.id.main_layout, fragment)
+                        .addToBackStack("main_activity_back_stack")
+                        .commit();
+            }
+        }
     }
 
     private class GroupHolder extends RecyclerView.ViewHolder {
