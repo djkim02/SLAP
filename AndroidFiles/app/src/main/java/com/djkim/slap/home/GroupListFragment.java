@@ -169,8 +169,8 @@ public class GroupListFragment extends Fragment {
             mTitleTextView.setText(group.get_name());
             String text = group.get_type() + " Group";
             String ownerFacebookProfileId = group.get_owner_facebook_profile_id();
-            mThumbnailImageView.setProfileId(group.get_owner_facebook_profile_id());
-            if (Utils.get_current_user().get_facebook_profile_id().equals(group.get_owner_facebook_profile_id())) {
+            mThumbnailImageView.setProfileId(ownerFacebookProfileId);
+            if (Utils.get_current_user().get_facebook_profile_id().equals(ownerFacebookProfileId)) {
                 text += " created by Me";
             } else {
                 text += " created by " + group.get_owner_name();
@@ -217,7 +217,6 @@ public class GroupListFragment extends Fragment {
             return new GroupHolder(view);
         }
 
-        // TODO(yjchoi): maybe get all list of owners here?
         @Override
         public void onBindViewHolder(GroupHolder holder, int position) {
             Group group = mGroups.get(position);

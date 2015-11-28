@@ -231,7 +231,6 @@ public class CreateGroupActivity extends ActionBarActivity implements
         }
         // reviewItems:
         // 0: Type, 1: Name, 2: Description, 3: Capacity, 4: Skills, 5: Custom Tags
-        // TODO: support custom tags
         String type = reviewItems.get(0).getDisplayValue();
         String name = reviewItems.get(1).getDisplayValue();
         String description = reviewItems.get(2).getDisplayValue();

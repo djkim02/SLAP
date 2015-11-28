@@ -11,101 +11,143 @@ Parse.Cloud.define("hello", function(request, response) {
    
 // });
    
-// TODO(yj94choi): custom tags
+// Parse.Cloud.define("match", function(request, response) {
+//     var memberQuery = request.user.relation("memberOf").query();
+//     var members = {};
+//     memberQuery.find({
+//         success: function(results) {
+//             for (var group = 0; group < results.length; group++) {
+//                 members[results[group].id] = true;
+//             }
+//             var query = new Parse.Query("Group");
+//             query.equalTo("type", request.params.type);
+//             query.descending("createdAt");
+//             // query.doesNotMatchQuery("self", memberGroupQuery);
+//             query.find({
+//                 success: function(results) {
+//                     if (request.params.type == "Hacker") {
+//                         var userSkills = request.user.get("hacker_skills");
+//                     } else {
+//                         var userSkills = request.user.get("athlete_skills");
+//                     }
+//                     var userSkillSet = {};
+//                     for (var index = 0; index < userSkills.length; index++) {
+//                         if (userSkills[index].isSelected) {
+//                             userSkillSet[userSkills[index].skill_name] = true;
+//                         }
+//                     }
+//                     var returnList = new Array();
+//                     for (var i = 0; i < results.length; i++) {
+//                         if (results[i].id in members) {
+//                             continue;
+//                         }
+//                         var skills = results[i].get("skills");
+//                         var satisfies = true;
+//                         if (skills !== "") {
+//                             var skillArray = skills.split(", ");
+//                             for (var j = 0; j < skillArray.length; j++) {
+//                                 if (!(skillArray[j] in userSkillSet)) {
+//                                     satisfies = false;
+//                                 }
+//                             }
+//                         }
+//                         if (satisfies) {
+//                             returnList.push(results[i]);
+//                         }
+//                     }
+//                     response.success(returnList);
+//                 },
+//                 error: function() {
+//                     response.error("group fetch failed");
+//                 }
+//             });
+//         },
+//         error: function() {
+//             response.error("memberOf group fetch failed");
+//         }
+//     });
+// });
+
+// computes the ratio: # of group's skills that are in skillSet over total # of group's skills
+function countMatchingSkills(group, skillSet) {
+    var score = 0;
+    var groupSkillString = group.get("skills");
+    if (groupSkillString) {
+        var groupSkills = groupSkillString.replace(/\s*,\s*/g,',').split(",");
+        for (var i = 0; i < groupSkills.length; i++) {
+            if (groupSkills[i] in skillSet)
+                score++;
+        }
+        return score / groupSkills.length;
+    } else {
+        return 0;
+    }
+}
+
+// tag has to be an exact match to contribute to the score
+// TODO(yjchoi): maybe compute string similarity?
+function countMatchingTags(group, tagSet) {
+    var score = 0;
+    var groupTagString = group.get("tags");
+    if (groupTagString) {
+        var groupTags = groupTagString.replace(/\s*,\s*/g,',').replace(/\s+/g,',').split(/[\s,]/);   // Array of group's tags
+        for (var i = 0; i < groupTags.length; i++) {
+            if (groupTags[i] in tagSet)
+                score++;
+        }
+    }
+    return score;
+}
+
+function compareBySkills(a, b, skillSet) {
+    return countMatchingSkills(b, skillSet) - countMatchingSkills(a, skillSet);
+}
+
+// compare function to sort by descending order of # of matching tags
+function compareByTags (a, b, tagSet, skillSet) {
+    var countA = countMatchingTags(a, tagSet);
+    var countB = countMatchingTags(b, tagSet);
+    if (countA === countB) {
+        return compareBySkills(a, b, skillSet);
+    }
+    return countB - countA;
+}
+
 Parse.Cloud.define("match", function(request, response) {
     var memberQuery = request.user.relation("memberOf").query();
-    var members = {};
-    memberQuery.find({
+    var query = new Parse.Query("Group");
+    query.equalTo("type", request.params.type);
+    query.doesNotMatchKeyInQuery("objectId", "objectId", memberQuery);
+    query.descending("createdAt");
+    query.find({
         success: function(results) {
-            for (var group = 0; group < results.length; group++) {
-                members[results[group].id] = true;
-            }
-            var query = new Parse.Query("Group");
-            query.equalTo("type", request.params.type);
-            query.descending("createdAt");
-            // query.doesNotMatchQuery("self", memberGroupQuery);
-            query.find({
-                success: function(results) {
-                    if (request.params.type == "Hacker") {
-                        var userSkills = request.user.get("hacker_skills");
-                    } else {
-                        var userSkills = request.user.get("athlete_skills");
-                    }
-                    var userSkillSet = {};
-                    for (var index = 0; index < userSkills.length; index++) {
-                        if (userSkills[index].isSelected) {
-                            userSkillSet[userSkills[index].skill_name] = true;
-                        }
-                    }
-                    var returnList = new Array();
-                    for (var i = 0; i < results.length; i++) {
-                        if (results[i].id in members) {
-                            continue;
-                        }
-                        var skills = results[i].get("skills");
-                        var satisfies = true;
-                        if (skills !== "") {
-                            var skillArray = skills.split(", ");
-                            for (var j = 0; j < skillArray.length; j++) {
-                                if (!(skillArray[j] in userSkillSet)) {
-                                    satisfies = false;
-                                }
-                            }
-                        }
-                        if (satisfies) {
-                            returnList.push(results[i]);
-                        }
-                    }
-                    response.success(returnList);
-                },
-                error: function() {
-                    response.error("group fetch failed");
+            var requestedTagSet = {};
+            if (request.params.tags) {
+                var requestedTags = request.params.tags.replace(/\s*,\s*/g,',').replace(/\s+/g,',').split(",");
+                for (var i = 0; i < requestedTags.length; i++) {
+                    requestedTagSet[requestedTags[i]] = true;
                 }
+            }
+            if (request.params.type == "Hacker") {
+                var userSkills = request.user.get("hacker_skills");
+            } else {
+                var userSkills = request.user.get("athlete_skills");
+            }
+            var userSkillSet = {};
+            for (var index = 0; index < userSkills.length; index++) {
+                if (userSkills[index].isSelected) {
+                    userSkillSet[userSkills[index].skill_name] = true;
+                }
+            }
+            var returnList = results.sort(function(a,b) {
+                return compareByTags(a, b, requestedTagSet, userSkillSet);
             });
+            response.success(returnList.slice(0,5));    // return the TOP 5 best-matching groups
         },
         error: function() {
-            response.error("memberOf group fetch failed");
+            response.error("Group fetch failed");
         }
     });
- 
- 
-    // query.notEqualTo("members", request.user);
-    // query.equalTo("type", request.params.type);
-    // query.descending("createdAt");
-    // query.include("owner, members");
-    // query.find({
-    //     success: function(results) {
-    //         if (request.params.type === "Hacker") {
-    //             var userSkills = request.user.get("hacker_skills");
-    //         } else {
-    //             var userSkills = request.user.get("athlete_skills");
-    //         }
-    //         var userSkillSet = {};
-    //         for (var index = 0; index < userSkills.length; index++) {
-    //             if (userSkills[index].isSelected) {
-    //                 userSkillSet[userSkills[index].skill_name] = true;
-    //             }
-    //         }
-    //         var returnList = new Array();
-    //         for (var i = 0; i < results.length; i++) {
-    //             var skills = results[i].get("skills");
-    //             var skillArray = skills.split(',');
-    //             var satisfies = true;
-    //             for (var j = 0; j < skillArray.length; j++) {
-    //                 if (!(skillArray[j] in userSkillSet)) {
-    //                     satisfies = false;
-    //                 }
-    //             }
-    //             if (satisfies) {
-    //                 returnList.push(results[i]);
-    //             }
-    //         }
-    //         response.success(returnList);
-    //     },
-    //     error: function() {
-    //         response.error("group fetch failed");
-    //     }
-    // });
 });
    
 Parse.Cloud.define("matchGroupName", function(request, response) {
