@@ -202,6 +202,16 @@ public class User implements Serializable {
         }
     }
 
+    public void updateGroup(Group group) {
+        if (m_memberOf != null && m_memberOf.containsKey(group.get_id())) {
+            m_memberOf.put(group.get_id(), group);
+        }
+
+        if (m_ownerOf != null && m_ownerOf.containsKey(group.get_id())) {
+            m_ownerOf.put(group.get_id(), group);
+        }
+    }
+
     private void uploadMemberGroups(ParseUser parseUser) {
         ParseRelation<ParseObject> relation = parseUser.getRelation("memberOf");
         for (Group group : m_memberOf.values()) {

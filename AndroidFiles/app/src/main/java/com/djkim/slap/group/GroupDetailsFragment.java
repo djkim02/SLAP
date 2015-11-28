@@ -1,6 +1,7 @@
 package com.djkim.slap.group;
 
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
@@ -12,11 +13,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.djkim.slap.R;
+import com.djkim.slap.menubar.MainActivity;
 import com.djkim.slap.messenger.MessagingActivity;
 import com.djkim.slap.models.Group;
 import com.djkim.slap.models.User;
@@ -43,18 +46,23 @@ import java.util.List;
 /**
  * Created by kylemn on 10/26/15.
  */
-public class GroupDetailsFragment extends Fragment {
+public abstract class GroupDetailsFragment extends Fragment {
     private static int VIEW_TYPE_HEADER = 0;
 
     // Placeholder for the future "Convert to FB group" option.
     private static int VIEW_TYPE_ACTION = 1;
     private static int VIEW_TYPE_CONTENT = 2;
 
+    protected final static int UPDATED_GROUP_REQUEST_CODE = 100;
+
     public final static String sGroupArgumentKey = "group_details_group_argument";
 
+    public static final String RECIPIENT = "recipientName";
+    public static final String CURRENTUSER = "currentUserName";
+
     private RecyclerView mGroupDetailsRecyclerView;
-    private UserAdapter mGroupDetailsAdapter;
-    private Group mGroup;
+    protected UserAdapter mGroupDetailsAdapter;
+    protected Group mGroup;
     final User currentUser = Utils.get_current_user();
 
     private Context globalContext = null;
@@ -82,6 +90,18 @@ public class GroupDetailsFragment extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == UPDATED_GROUP_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            mGroup = (Group) data.getExtras().getSerializable(EditGroupActivity.EDIT_GROUP_EXTRA);
+            Utils.get_current_user().updateGroup(mGroup);
+
+            // In this case, we can specify that the header has changed.
+            mGroupDetailsAdapter.notifyItemChanged(0, 1);
+        }
+    }
+
     private class SectionHeaderHolder extends RecyclerView.ViewHolder {
         private TextView mSectionHeaderTextView;
 
@@ -102,27 +122,27 @@ public class GroupDetailsFragment extends Fragment {
         private TextView mTitleTextView;
         private TextView mSubheadTextView;
         private LinearLayout mUserItem;
-        private RelativeLayout mRelativeLayout;
+        //private RelativeLayout mRelativeLayout;
+        private ImageButton mMessageButton;
 
 
         public UserHolder(View itemView) {
             super(itemView);
-                mUserItem =
-                        (LinearLayout) itemView.findViewById(R.id.group_details_item);
-            mRelativeLayout = (RelativeLayout) itemView.findViewById(R.id.group_details_layout);
+            mUserItem = (LinearLayout) itemView.findViewById(R.id.group_details_item);
             mThumbnailImageView =
                     (ProfilePictureView) itemView.findViewById(R.id.group_details_item_thumbnail_image_view);
             mTitleTextView =
                     (TextView) itemView.findViewById(R.id.group_details_item_title_text_view);
             mSubheadTextView =
                     (TextView) itemView.findViewById(R.id.group_details_item_subhead_text_view);
+            mMessageButton = (ImageButton) itemView.findViewById(R.id.message_button);
 
             //Set on-click listener for messaging with Sinch
-            mUserItem.setOnClickListener(new View.OnClickListener() {
+            mMessageButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     //Check if user is trying to click on himself/herself
-                    if(!mUser.get_id().equals(ParseUser.getCurrentUser().getObjectId())) {
+                    if (!mUser.get_id().equals(ParseUser.getCurrentUser().getObjectId())) {
                         openConversation(mUser.get_id());
                     }
                 }
@@ -136,7 +156,7 @@ public class GroupDetailsFragment extends Fragment {
             mSubheadTextView.setText(mGroup.isOwner(mUser) ? "Admin" : "Member");
 
             if (mUser.get_facebook_profile_id() != null) {
-                mRelativeLayout.setOnClickListener(new View.OnClickListener() {
+                mUserItem.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(getActivity(), OthersProfileActivity.class);
@@ -145,102 +165,19 @@ public class GroupDetailsFragment extends Fragment {
                     }
                 });
             }
-        }
-    }
 
-    private class DetailsActivityHolder extends RecyclerView.ViewHolder {
-        private TextView mTitleTextView;
-        private TextView mSubheadTextView;
-        private TextView mDescriptionTextView;
-        private Button mJoinGroupButton;
-
-        public DetailsActivityHolder(View itemView) {
-            super(itemView);
-            mJoinGroupButton =
-                    (Button) itemView.findViewById(R.id.group_details_action_join_group_button);
-            mJoinGroupButton.setVisibility(View.GONE);
-
-            // We only set the onClickListener if there is such a Facebook Group.
-            // We only show the onClickListener if that person is in the SLAP group, but not in the facebook group
-            // TODO: Need to remove the slap card if the person left the group on Facebook
-            String facebookGroupId = mGroup.get_facebookGroupId();
-            if (facebookGroupId != null) {
-                new GraphRequest(
-                        AccessToken.getCurrentAccessToken(),
-                        "/" + facebookGroupId + "/members",
-                        null,
-                        HttpMethod.GET,
-                        new GraphRequest.Callback() {
-                            public void onCompleted(GraphResponse response) {
-                                try {
-                                    boolean hideButton = false;
-                                    JSONObject jsonResult = response.getJSONObject();
-                                    if (jsonResult != null) {
-                                        JSONArray jsonDataArray = jsonResult.getJSONArray("data");
-                                        for(int i = 0; i < jsonDataArray.length(); i++) {
-                                            JSONObject jsonGroupMember =
-                                                    (JSONObject) jsonDataArray.get(i);
-                                            if(currentUser.get_facebook_id().toString()
-                                                    .equals(jsonGroupMember.getString("id"))) {
-                                                hideButton = true;
-                                                break;
-                                            }
-                                        }
-                                        configureJoinButton(!hideButton);
-                                    }
-                                } catch (JSONException e) {
-
-                                }
-                            }
-                        }
-                ).executeAsync();
-            }
-
-            mTitleTextView =
-                    (TextView) itemView.findViewById(R.id.group_details_action_title_text_view);
-            mTitleTextView.setText(mGroup.get_name());
-            mSubheadTextView =
-                    (TextView) itemView.findViewById(R.id.group_details_action_subhead_text_view);
-
-            String memberString = mGroup.get_size() == 1 ? " member" : " members";
-            mSubheadTextView.setText(
-                    mGroup.get_type() + " group • " + mGroup.get_size() + memberString);
-
-            mDescriptionTextView = (TextView) itemView.findViewById(
-                    R.id.group_details_action_description_text_view);
-            mDescriptionTextView.setText(mGroup.get_description());
-        }
-
-        // TODO(victorkwan): Need to configure the button for an admin creating the group.
-        private void configureJoinButton(boolean shouldDisplay) {
-            if (shouldDisplay) {
-                // TODO(victorkwan): Currently, this is quite jumpy. We should add an animation for
-                // the button to "slide" down.
-                mJoinGroupButton.setVisibility(View.VISIBLE);
-
-                if (currentUser.isMemberOf(mGroup)) {
-                    mJoinGroupButton.setText("Join the Facebook Group!");
-                } else {
-                    mJoinGroupButton.setText("Join the group?");
-                }
-
-                final String fbGroupId = mGroup.get_facebookGroupId();
-                if (fbGroupId != null) {
-                    mJoinGroupButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            User curUser = Utils.get_current_user();
-                            if (!curUser.isMemberOf(mGroup)) {
-                                curUser.joinAsMember(mGroup);
-                                curUser.save();
-                            }
-                            JoinAppGroupDialog.show(getActivity(), fbGroupId);
-                        }
-                    });
-                }
+            //If it's the same user, do not show the button
+            if (mUser.get_id().equals(ParseUser.getCurrentUser().getObjectId())) {
+                mMessageButton.setVisibility(View.GONE);
             }
         }
     }
+
+    /**
+     * Factory method that returns a ViewHolder for the header cell.
+     * @return The ViewHolder to be returned.
+     */
+    protected abstract RecyclerView.ViewHolder createDetailsActivityHolder(View itemView);
 
 
     private class UserAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -259,7 +196,7 @@ public class GroupDetailsFragment extends Fragment {
             } else if (viewType == VIEW_TYPE_ACTION) {
                 LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
                 View view = layoutInflater.inflate(R.layout.group_details_action, parent, false);
-                return new DetailsActivityHolder(view);
+                return createDetailsActivityHolder(view);
             } else {
                 LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
                 View view = layoutInflater.inflate(R.layout.group_details_item, parent, false);
@@ -311,6 +248,8 @@ public class GroupDetailsFragment extends Fragment {
                     if (e == null) {
                         Intent intent = new Intent(globalContext.getApplicationContext(), MessagingActivity.class);
                         intent.putExtra("RECIPIENT_ID", user.get(0).getObjectId());
+                        intent.putExtra(RECIPIENT, user.get(0).getUsername());
+                        intent.putExtra(CURRENTUSER, ParseUser.getCurrentUser().getUsername());
                         startActivity(intent);
                     } else {
                         //show some sort of error

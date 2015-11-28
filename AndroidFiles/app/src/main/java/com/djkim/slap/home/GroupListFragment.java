@@ -20,8 +20,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.djkim.slap.R;
+import com.djkim.slap.group.AdminGroupDetailsFragment;
 import com.djkim.slap.group.GroupDetailsActivity;
 import com.djkim.slap.group.GroupDetailsFragment;
+import com.djkim.slap.group.MemberGroupDetailsFragment;
 import com.djkim.slap.menubar.MainActivity;
 import com.djkim.slap.models.Group;
 import com.djkim.slap.models.GroupCallback;
@@ -32,6 +34,7 @@ import com.djkim.slap.models.Utils;
 import com.facebook.login.widget.ProfilePictureView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class GroupListFragment extends Fragment {
@@ -48,6 +51,19 @@ public class GroupListFragment extends Fragment {
         getGroupsInBackground();
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        onResumeCalled();
+    }
+
+    // I think this motivates making GroupListFragment an abstract class and making the regular
+    // GroupListFragment a subclass with its own behavior.
+    protected void onResumeCalled() {
+        mGroupAdapter.setGroups(Utils.get_current_user().getGroups());
+        mGroupAdapter.notifyDataSetChanged();
     }
 
     /**
@@ -108,16 +124,7 @@ public class GroupListFragment extends Fragment {
             mDetailsButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    FragmentManager fragmentManager = getFragmentManager();
-                    Fragment fragment = new GroupDetailsFragment();
-
-                    Bundle bundle = new Bundle();
-                    bundle.putSerializable(GroupDetailsFragment.sGroupArgumentKey, mGroup);
-                    fragment.setArguments(bundle);
-                    fragmentManager.beginTransaction()
-                            .replace(R.id.main_layout, fragment)
-                            .addToBackStack(MainActivity.sBackStackTag)
-                            .commit();
+                    openDetails();
                 }
             });
 
@@ -145,7 +152,9 @@ public class GroupListFragment extends Fragment {
 
         private void openDetails() {
             FragmentManager fragmentManager = getFragmentManager();
-            Fragment fragment = new GroupDetailsFragment();
+            Fragment fragment = mGroup.isOwner(Utils.get_current_user())
+                    ? new AdminGroupDetailsFragment()
+                    : new MemberGroupDetailsFragment();
             Bundle bundle = new Bundle();
             bundle.putSerializable(GroupDetailsFragment.sGroupArgumentKey, mGroup);
             fragment.setArguments(bundle);
@@ -163,12 +172,25 @@ public class GroupListFragment extends Fragment {
             String ownerFacebookProfileId = group.get_owner_facebook_profile_id();
             mThumbnailImageView.setProfileId(group.get_owner_facebook_profile_id());
             if (Utils.get_current_user().get_facebook_profile_id().equals(group.get_owner_facebook_profile_id())) {
-                text += " created by me";
+                text += " created by Me";
             } else {
                 text += " created by " + group.get_owner_name();
             }
             mSubheadTextView.setText(text);
             mSkillsTextView.setText(group.get_skills());
+
+            String tags = mGroup.get_tags();
+            if (tags == null || tags.equals("")) {
+                mTagsTextView.setText("#notags");
+            } else {
+                StringBuilder tagBuilder = new StringBuilder();
+                for (String tag : mGroup.get_tags().split(",")) {
+                    tagBuilder.append("#");
+                    tagBuilder.append(tag.toLowerCase());
+                    tagBuilder.append(" ");
+                }
+                mTagsTextView.setText(tagBuilder.toString());
+            }
 
             int remainingSlots = group.get_capacity() - group.get_size();
             if(remainingSlots > 1)
@@ -186,6 +208,8 @@ public class GroupListFragment extends Fragment {
         public GroupAdapter(List<Group> groups) {
             mGroups = groups;
         }
+
+        public void setGroups(List<Group> groups) { mGroups = groups; }
 
         @Override
         public GroupHolder onCreateViewHolder(ViewGroup parent, int viewType) {

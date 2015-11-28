@@ -47,4 +47,14 @@ public class EnterTextPage extends Page {
     public boolean isCompleted() {
         return !TextUtils.isEmpty(mData.getString(NAME_DATA_KEY));
     }
+
+    /**
+     * Provides a default value for the text box.
+     * @param value The value to be provided.
+     * @return An EnterTextPage, for chaining.
+     */
+    public EnterTextPage setValue(String value) {
+        mData.putString(NAME_DATA_KEY, value);
+        return this;
+    }
 }

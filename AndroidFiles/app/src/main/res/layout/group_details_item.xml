@@ -38,6 +38,16 @@
                 android:src="@drawable/subtracted_circle"
                 android:contentDescription="@null" />
 
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/icon"
+                android:id="@+id/message_button"
+                android:layout_gravity="right|center_vertical"
+                android:background="@color/white"
+                android:layout_marginRight="32dp"/>
+
+
         </FrameLayout>
 
         <LinearLayout
@@ -66,5 +76,6 @@
                 android:textColor="?android:textColorSecondary"
                 android:textSize="14sp" />
         </LinearLayout>
+
     </RelativeLayout>
 </LinearLayout>

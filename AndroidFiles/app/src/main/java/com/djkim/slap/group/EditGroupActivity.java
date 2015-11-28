@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.djkim.slap.createGroup;
+package com.djkim.slap.group;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -43,11 +43,15 @@ import com.djkim.slap.models.Group;
 import com.djkim.slap.models.GroupCallback;
 import com.djkim.slap.models.User;
 import com.djkim.slap.models.Utils;
+import com.djkim.slap.selectionModel.EnterTextPage;
 import com.djkim.slap.selectionModel.ModelCallbacks;
+import com.djkim.slap.selectionModel.MultipleFixedChoicePage;
 import com.djkim.slap.selectionModel.Page;
 import com.djkim.slap.selectionModel.PageFragmentCallbacks;
+import com.djkim.slap.selectionModel.PageList;
 import com.djkim.slap.selectionModel.ReviewFragment;
 import com.djkim.slap.selectionModel.ReviewItem;
+import com.djkim.slap.selectionModel.SingleFixedChoicePage;
 import com.djkim.slap.selectionModel.StepPagerStrip;
 import com.djkim.slap.selectionModel.AbstractWizardModel;
 import com.facebook.CallbackManager;
@@ -58,20 +62,21 @@ import com.facebook.share.model.AppGroupCreationContent;
 import com.facebook.share.widget.CreateAppGroupDialog;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-public class CreateGroupActivity extends ActionBarActivity implements
+public class EditGroupActivity extends ActionBarActivity implements
         PageFragmentCallbacks,
         ReviewFragment.Callbacks,
         ModelCallbacks {
-    public final static String CREATE_GROUP_EXTRA = "create_group_extra";
+    public static final String EDIT_GROUP_EXTRA = "edit_group_extra";
 
     private ViewPager mPager;
     private MyPagerAdapter mPagerAdapter;
 
     private boolean mEditingAfterReview;
 
-    private AbstractWizardModel mWizardModel = new SandwichWizardModel(this);
+    private AbstractWizardModel mWizardModel;
 
     private boolean mConsumePageSelectedEvent;
 
@@ -91,6 +96,9 @@ public class CreateGroupActivity extends ActionBarActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create_group_layout);
 
+        group = (Group) getIntent().getExtras().getSerializable(EDIT_GROUP_EXTRA);
+        mWizardModel = createWizardModel(group);
+
         FacebookSdk.sdkInitialize(this.getApplicationContext());
         callbackManager = CallbackManager.Factory.create();
         createAppGroupDialog = new CreateAppGroupDialog(this);
@@ -102,11 +110,11 @@ public class CreateGroupActivity extends ActionBarActivity implements
                 group.saveInBackground(new GroupCallback() {
                     @Override
                     public void done() {
-                        Toast.makeText(CreateGroupActivity.this, "Successfully created the group!",
+                        Toast.makeText(EditGroupActivity.this, "Successfully created the group!",
                                 Toast.LENGTH_SHORT).show();
 
                         Intent intent = new Intent();
-                        intent.putExtra(CREATE_GROUP_EXTRA, group);
+                        intent.putExtra(EDIT_GROUP_EXTRA, group);
                         setResult(RESULT_OK, intent);
                         finish();
                     }
@@ -117,11 +125,11 @@ public class CreateGroupActivity extends ActionBarActivity implements
                 group.saveInBackground(new GroupCallback() {
                     @Override
                     public void done() {
-                        Toast.makeText(CreateGroupActivity.this, "Failed to create the group!",
+                        Toast.makeText(EditGroupActivity.this, "Failed to create the group!",
                                 Toast.LENGTH_SHORT).show();
 
                         Intent intent = new Intent();
-                        intent.putExtra(CREATE_GROUP_EXTRA, group);
+                        intent.putExtra(EDIT_GROUP_EXTRA, group);
                         setResult(RESULT_OK, intent);
                         finish();
                     }
@@ -181,7 +189,19 @@ public class CreateGroupActivity extends ActionBarActivity implements
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
                                             createGroup();
-                                            onClickCreateButton();
+                                            if (group.get_facebookGroupId() == null) {
+                                                onClickCreateButton();
+                                            } else {
+                                                group.saveInBackground(new GroupCallback() {
+                                                    @Override
+                                                    public void done() {
+                                                        Intent intent = new Intent();
+                                                        intent.putExtra(EDIT_GROUP_EXTRA, group);
+                                                        setResult(RESULT_OK, intent);
+                                                        finish();
+                                                    }
+                                                });
+                                            }
                                         }
                                     })
                                     .setNegativeButton(android.R.string.cancel, null)
@@ -230,19 +250,79 @@ public class CreateGroupActivity extends ActionBarActivity implements
             page.getReviewItems(reviewItems);
         }
         // reviewItems:
-        // 0: Type, 1: Name, 2: Description, 3: Capacity, 4: Skills, 5: Custom Tags
+        // 0: Name, 1: Description, 2: Capacity, 3: Skills, 4: Custom Tags
         // TODO: support custom tags
-        String type = reviewItems.get(0).getDisplayValue();
-        String name = reviewItems.get(1).getDisplayValue();
-        String description = reviewItems.get(2).getDisplayValue();
-        int capacity = Integer.parseInt(reviewItems.get(3).getDisplayValue());
-        String skills = reviewItems.get(4).getDisplayValue();
-        String tags = reviewItems.get(5).getDisplayValue();
-        User user = Utils.get_current_user();
-        group = new Group(name, user, capacity, type);
+        String name = reviewItems.get(0).getDisplayValue();
+        String description = reviewItems.get(1).getDisplayValue();
+        int capacity = Integer.parseInt(reviewItems.get(2).getDisplayValue());
+        String skills = reviewItems.get(3).getDisplayValue();
+        String tags = reviewItems.get(4).getDisplayValue();
+        group.set_name(name);
+        group.set_capacity(capacity);
         group.set_description(description);
         group.set_skills(skills);
         group.set_tags(tags == null ? "" : tags);
+    }
+
+    private AbstractWizardModel createWizardModel(final Group group) {
+        return new AbstractWizardModel(this) {
+            @Override
+            protected PageList onNewRootPageList() {
+                ArrayList<String> currentSelections =
+                        new ArrayList<>(Arrays.asList(group.get_skills().split(" ,")));
+
+                // TODO(victorkwan): Maybe we can refactor this to use the Abstract Factory pattern.
+                // Also, we might be better off defining shared constants for the setChoices.
+                if (group.get_type().equals(Group.ATHLETE_GROUP)) {
+                    return new PageList(
+                            new EnterTextPage(this, "What is the group name?")
+                                    .setValue(group.get_name())
+                                    .setRequired(true),
+                            new EnterTextPage(this, "Please give the group a short description")
+                                    .setValue(group.get_description())
+                                    .setRequired(true),
+                            new SingleFixedChoicePage(this, "What is the size of the group?")
+                                    .setValue(Integer.toString(group.get_capacity()))
+                                    .setChoices("2", "3", "4", "5", "6", "7", "8", "9", "10", "11",
+                                            "12", "13", "14", "15")
+                                    .setRequired(true),
+                            new MultipleFixedChoicePage(this, "What sports are desired?")
+                                    .setValues(currentSelections)
+                                    .setChoices("Running", "Soccer", "Basketball", "Baseball",
+                                            "Football", "Weight Training", "Frisbee", "Biking",
+                                            "Bowling", "Badminton", "Ping Pong", "Cricket", "Golf",
+                                            "Handball", "Yoga", "Boxing"),
+                            new EnterTextPage(this,
+                                    "Please specify any tags to be associated with the group")
+                                    .setValue(group.get_tags()));
+                } else {
+                    return new PageList(
+                            new EnterTextPage(this, "What is the group name?")
+                                    .setValue(group.get_name())
+                                    .setRequired(true),
+                            new EnterTextPage(this, "Please give the group a short description")
+                                    .setValue(group.get_description())
+                                    .setRequired(true),
+                            new SingleFixedChoicePage(this, "What is the size of the group?")
+                                    .setValue(Integer.toString(group.get_capacity()))
+                                    .setChoices("2", "3", "4", "5", "6", "7", "8", "9", "10", "11",
+                                            "12", "13", "14", "15")
+                                    .setRequired(true),
+                            new MultipleFixedChoicePage(this, "What skills are desired?")
+                                    .setValues(currentSelections)
+                                    .setChoices("Android Development", "iOS Development",
+                                            "Web Development", "Front-end Development",
+                                            "Back-end Development", "Java", "C++", "C", "C#",
+                                            "Python", "PHP", "HTML", "CSS", "JavaScript", "Node.js",
+                                            "AngularJS", "Ruby", "Rails", "Coffeescript", "MongoDB",
+                                            "MySQL", "PostgreSQL", ".NET", "Git", "Linux",
+                                            "Photoshop", "Illustrator"),
+                            new EnterTextPage(this,
+                                    "Please specify any tags to be associated with the group")
+                                    .setValue(group.get_tags()));
+                }
+            }
+        };
     }
 
     private void updateBottomBar() {
