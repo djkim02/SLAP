@@ -129,9 +129,10 @@ Parse.Cloud.beforeSave("Group", function(request, response) {
     var group = request.object;
    
     var toLowerCase = function(w) { return w.toLowerCase(); };
-   
+    var tagString = group.get("tags").replace(/\s*,\s*/g,',');  // remove whitespaces surrounding comma
+    group.set("tags", tagString);
     var keywords = group.get("name").split(' ');
-    var hashtags = group.get("tags").split(',');
+    var hashtags = tagString.split(',');
     keywords = _.map(keywords, toLowerCase);
     hashtags = _.map(hashtags, toLowerCase);
     var stopWords = ["the", "in", "and", "to", "but", "for", "or", "yet", "so"];

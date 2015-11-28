@@ -164,7 +164,6 @@ public class GroupListFragment extends Fragment {
                     .commit();
         }
 
-        // TODO(yjchoi): this slows down main thread. Better way of getting owners?
         public void bindGroup(Group group) {
             mGroup = group;
             mTitleTextView.setText(group.get_name());
@@ -184,7 +183,7 @@ public class GroupListFragment extends Fragment {
                 mTagsTextView.setText("#notags");
             } else {
                 StringBuilder tagBuilder = new StringBuilder();
-                for (String tag : mGroup.get_tags().split(",")) {
+                for (String tag : mGroup.get_tags().replaceAll("\\s*,\\s*",",").split("[\\s,]")) {
                     tagBuilder.append("#");
                     tagBuilder.append(tag.toLowerCase());
                     tagBuilder.append(" ");
