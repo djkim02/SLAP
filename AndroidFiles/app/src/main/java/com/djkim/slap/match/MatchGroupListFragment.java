@@ -29,6 +29,11 @@ public class MatchGroupListFragment extends GroupListFragment {
     @Override
     protected void onResumeCalled() {}
 
+    @Override
+    protected View noGroupsSetup(View view, LayoutInflater inflater, ViewGroup container) {
+        return view;
+    }
+
     protected void getGroupsInBackground() {
         Utils.getGroupsFromCloudInBackground(mType, new GroupsCallback() {
             @Override
