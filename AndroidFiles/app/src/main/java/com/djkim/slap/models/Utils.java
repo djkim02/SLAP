@@ -28,9 +28,10 @@ public class Utils{
         return current_user;
     }
 
-    public static void getGroupsFromCloudInBackground(String type, final GroupsCallback callback) {
+    public static void getGroupsFromCloudInBackground(String type, String tags, final GroupsCallback callback) {
         Map<String, String> map = new HashMap<String, String>();
         map.put("type", type);
+        map.put("tags", tags);
         ParseCloud.callFunctionInBackground(
                 "match", map, new FunctionCallback<List<ParseObject> >() {
                     @Override
@@ -45,10 +46,11 @@ public class Utils{
                 });
     }
 
-    public static List<Group> getGroupsFromCloud(String type) {
+    public static List<Group> getGroupsFromCloud(String type, String tags) {
         try {
             Map<String, String> map = new HashMap<String, String>();
             map.put("type", type);
+            map.put("tags", tags);
             List<ParseObject> parseGroups = ParseCloud.callFunction("match", map);
             List<Group> groups = new ArrayList<Group>();
             for (ParseObject parseGroup : parseGroups) {

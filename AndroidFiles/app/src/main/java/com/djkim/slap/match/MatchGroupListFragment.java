@@ -35,7 +35,7 @@ public class MatchGroupListFragment extends GroupListFragment {
     }
 
     protected void getGroupsInBackground() {
-        Utils.getGroupsFromCloudInBackground(mType, new GroupsCallback() {
+        Utils.getGroupsFromCloudInBackground(mType, mTags, new GroupsCallback() {
             @Override
             public void done(List<Group> groups) {
                 setAdapterWithGroups(groups);
