@@ -9,15 +9,17 @@ import android.os.IBinder;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.djkim.slap.R;
 import com.parse.FindCallback;
+import com.parse.ParseInstallation;
 import com.parse.ParseObject;
+import com.parse.ParsePush;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.SendCallback;
 import com.sinch.android.rtc.PushPair;
 import com.sinch.android.rtc.messaging.Message;
 import com.sinch.android.rtc.messaging.MessageClient;
@@ -26,11 +28,15 @@ import com.sinch.android.rtc.messaging.MessageDeliveryInfo;
 import com.sinch.android.rtc.messaging.MessageFailureInfo;
 import com.sinch.android.rtc.messaging.WritableMessage;
 
-import java.text.ParseException;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+
+//import com.parse.ParseException;
 
 /**
  * Created by kylemn on 11/17/15.
@@ -64,6 +70,7 @@ public class MessagingActivity extends Activity {
         recipientName = intent.getStringExtra(RECIPIENT);
         currentUserName = intent.getStringExtra(CURRENTUSER);
         currentUserId = ParseUser.getCurrentUser().getObjectId();
+
         messageBodyField = (EditText) findViewById(R.id.txtTextBody);
 
         messagesList = (ListView) findViewById(R.id.lstMessages);
@@ -214,6 +221,45 @@ public class MessagingActivity extends Activity {
         public void onMessageDelivered(MessageClient client, MessageDeliveryInfo deliveryInfo) {}
         //Don't worry about this right now
         @Override
-        public void onShouldSendPushData(MessageClient client, Message message, List<PushPair> pushPairs) {}
+        public void onShouldSendPushData(MessageClient client, Message message, List<PushPair> pushPairs) {
+            final WritableMessage writableMessage = new WritableMessage(message.getRecipientIds().get(0), message.getTextBody());
+
+            ParseQuery userQuery = ParseUser.getQuery();
+            userQuery.whereEqualTo("objectId", writableMessage.getRecipientIds().get(0));
+
+            ParseQuery pushQuery = ParseInstallation.getQuery();
+            pushQuery.whereMatchesQuery("user", userQuery);
+
+            JSONObject data = new JSONObject();
+            try {
+                data.put("alert", ParseUser.getCurrentUser().getUsername()+" sent you a message");
+                data.put("recipientName", ParseUser.getCurrentUser().getUsername());
+                data.put("Recipient_ID", ParseUser.getCurrentUser().getObjectId());
+            }
+            catch (JSONException j)
+            {
+
+            }
+
+
+// Send push notification to query
+            ParsePush push = new ParsePush();
+            push.setQuery(pushQuery); // Set our Installation query
+            //push.setMessage(ParseUser.getCurrentUser().getUsername()+" sent you a message");
+            push.setData(data);
+            push.sendInBackground(new SendCallback() {
+                @Override
+                public void done(com.parse.ParseException e) {
+
+                    if(e==null){
+//the push is sent!
+                    }else{
+
+//some problem occured. Analyze what is happening
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
     }
 }

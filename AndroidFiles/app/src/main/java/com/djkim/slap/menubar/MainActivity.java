@@ -1,33 +1,32 @@
 package com.djkim.slap.menubar;
 
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.app.FragmentManager;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v4.widget.DrawerLayout;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+
 import com.djkim.slap.R;
+import com.djkim.slap.createGroup.CreateGroupActivity;
 import com.djkim.slap.dispatch.DispatchActivity;
 import com.djkim.slap.group.AdminGroupDetailsFragment;
 import com.djkim.slap.group.GroupDetailsFragment;
-import com.djkim.slap.group.MemberGroupDetailsFragment;
 import com.djkim.slap.home.GroupListFragment;
-import com.djkim.slap.createGroup.CreateGroupActivity;
-import com.djkim.slap.messenger.MessageService;
-import com.djkim.slap.models.Group;
-import com.djkim.slap.models.Utils;
-import com.djkim.slap.profile.MyProfileFragment;
 import com.djkim.slap.match.MatchGroupActivity;
 import com.djkim.slap.match.MatchGroupListFragment;
+import com.djkim.slap.messenger.MessageService;
+import com.djkim.slap.profile.MyProfileFragment;
+import com.parse.ParseInstallation;
 import com.parse.ParseUser;
 
 public class MainActivity extends ActionBarActivity {
@@ -74,8 +73,17 @@ public class MainActivity extends ActionBarActivity {
                 .commit();
 
         //Set up Sinch service. Might want to put this in a better place.
+        // ParseInstallation required for push notifications
         final Intent serviceIntent = new Intent(getApplicationContext(), MessageService.class);
         startService(serviceIntent);
+        ParseUser currentUser = ParseUser.getCurrentUser();
+        String currentUserName = ParseUser.getCurrentUser().getUsername();
+        ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+        installation.put("user", currentUser);
+        installation.put("username", currentUserName);
+        installation.saveInBackground();
+
+
     }
 
     private void addDrawerItems() {
