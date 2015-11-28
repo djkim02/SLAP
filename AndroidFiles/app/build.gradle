@@ -23,7 +23,6 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:22.2.0'
     compile 'com.viewpagerindicator:library:2.4.1@aar'
-    compile 'com.facebook.android:facebook-android-sdk:4.7.0'
     compile 'com.parse.bolts:bolts-android:1.+'
     compile 'com.parse:parse-android:1.+'
     compile 'com.android.support:recyclerview-v7:23.1.0'
@@ -33,4 +32,5 @@ dependencies {
     compile files('libs/sinch-android-rtc-3.7.1.jar')
     compile 'org.mockito:mockito-core:2.0.31-beta'
     testCompile 'org.json:json:20140107'
+    compile 'com.facebook.android:facebook-android-sdk:4.8.2'
 }

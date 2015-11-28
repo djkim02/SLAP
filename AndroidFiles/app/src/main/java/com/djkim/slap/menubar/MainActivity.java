@@ -17,18 +17,24 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import com.djkim.slap.R;
 import com.djkim.slap.dispatch.DispatchActivity;
+import com.djkim.slap.group.AdminGroupDetailsFragment;
+import com.djkim.slap.group.GroupDetailsFragment;
+import com.djkim.slap.group.MemberGroupDetailsFragment;
 import com.djkim.slap.home.GroupListFragment;
 import com.djkim.slap.createGroup.CreateGroupActivity;
 import com.djkim.slap.messenger.MessageService;
+import com.djkim.slap.models.Group;
+import com.djkim.slap.models.Utils;
 import com.djkim.slap.profile.MyProfileFragment;
 import com.djkim.slap.match.MatchGroupActivity;
 import com.djkim.slap.match.MatchGroupListFragment;
 import com.parse.ParseUser;
 
 public class MainActivity extends ActionBarActivity {
-    public static final String sBackStackTag = "main_activity_back_stack";
+    private static final int MATCH_REQUEST_CODE = 0;
+    private static final int CREATE_REQUEST_CODE = 1;
 
-    private static final int GET_MATCH_TAGS_AND_TYPE = 0;
+    public static final String sBackStackTag = "main_activity_back_stack";
 
     private ListView mDrawerList;
     private ArrayAdapter<String> mAdapter;
@@ -64,6 +70,7 @@ public class MainActivity extends ActionBarActivity {
         Fragment fragment = new GroupListFragment();
         getFragmentManager().beginTransaction()
                 .replace(R.id.main_layout, fragment)
+                .addToBackStack(sBackStackTag)
                 .commit();
 
         //Set up Sinch service. Might want to put this in a better place.
@@ -100,11 +107,11 @@ public class MainActivity extends ActionBarActivity {
                         break;
                     case 2:     // Create a Group
                         Intent createGroupIntent = new Intent(MainActivity.this, CreateGroupActivity.class);
-                        startActivity(createGroupIntent);
+                        startActivityForResult(createGroupIntent, CREATE_REQUEST_CODE);
                         break;
                     case 3:     // Find Matches
                         Intent matchGroupIntent = new Intent(MainActivity.this, MatchGroupActivity.class);
-                        startActivityForResult(matchGroupIntent, GET_MATCH_TAGS_AND_TYPE);
+                        startActivityForResult(matchGroupIntent, MATCH_REQUEST_CODE);
                         break;
                     case 5:     // Logout
                         // TODO: replace this with Utils method
@@ -172,13 +179,27 @@ public class MainActivity extends ActionBarActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == GET_MATCH_TAGS_AND_TYPE && resultCode == RESULT_OK) {
-            Fragment fragment = new MatchGroupListFragment();
-            fragment.setArguments(data.getExtras());
-            getFragmentManager().beginTransaction()
-                    .replace(R.id.main_layout, fragment)
-                    .addToBackStack(sBackStackTag)
-                    .commit();
+        if (resultCode == RESULT_OK) {
+            FragmentManager fragmentManager = getFragmentManager();
+            if (requestCode == MATCH_REQUEST_CODE) {
+                Fragment fragment = new MatchGroupListFragment();
+                fragment.setArguments(data.getExtras());
+                fragmentManager.beginTransaction()
+                        .replace(R.id.main_layout, fragment)
+                        .addToBackStack(sBackStackTag)
+                        .commit();
+            } else if (requestCode == CREATE_REQUEST_CODE) {
+                Bundle bundle = new Bundle();
+                bundle.putSerializable(GroupDetailsFragment.sGroupArgumentKey,
+                        data.getExtras().getSerializable(CreateGroupActivity.CREATE_GROUP_EXTRA));
+
+                Fragment fragment = new AdminGroupDetailsFragment();
+                fragment.setArguments(bundle);
+                fragmentManager.beginTransaction()
+                        .replace(R.id.main_layout, fragment)
+                        .addToBackStack(sBackStackTag)
+                        .commit();
+            }
         }
     }
 }
