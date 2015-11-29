@@ -4,13 +4,13 @@
 Parse.Cloud.define("hello", function(request, response) {
   response.success("Hello world!");
 });
-   
+    
 // Parse.Cloud.define("search", function(request, response) {
 //  var query = new Parse.Query("Group");
 //  query.contains("name", request.params.searchKey);
-   
+    
 // });
-   
+    
 // Parse.Cloud.define("match", function(request, response) {
 //     var memberQuery = request.user.relation("memberOf").query();
 //     var members = {};
@@ -67,7 +67,7 @@ Parse.Cloud.define("hello", function(request, response) {
 //         }
 //     });
 // });
-
+ 
 // computes the ratio: # of group's skills that are in skillSet over total # of group's skills
 function countMatchingSkills(group, skillSet) {
     var score = 0;
@@ -83,7 +83,7 @@ function countMatchingSkills(group, skillSet) {
         return 0;
     }
 }
-
+ 
 // tag has to be an exact match to contribute to the score
 // TODO(yjchoi): maybe compute string similarity?
 function countMatchingTags(group, tagSet) {
@@ -98,11 +98,11 @@ function countMatchingTags(group, tagSet) {
     }
     return score;
 }
-
+ 
 function compareBySkills(a, b, skillSet) {
     return countMatchingSkills(b, skillSet) - countMatchingSkills(a, skillSet);
 }
-
+ 
 // compare function to sort by descending order of # of matching tags
 function compareByTags (a, b, tagSet, skillSet) {
     var countA = countMatchingTags(a, tagSet);
@@ -112,7 +112,7 @@ function compareByTags (a, b, tagSet, skillSet) {
     }
     return countB - countA;
 }
-
+ 
 Parse.Cloud.define("match", function(request, response) {
     var memberQuery = request.user.relation("memberOf").query();
     var query = new Parse.Query("Group");
@@ -149,7 +149,7 @@ Parse.Cloud.define("match", function(request, response) {
         }
     });
 });
-   
+    
 Parse.Cloud.define("matchGroupName", function(request, response) {
     var query = new Parse.Query("Group");
     query.equalTo("name", request.params.name);
@@ -164,12 +164,12 @@ Parse.Cloud.define("matchGroupName", function(request, response) {
         }
     });
 });
-   
-   
+    
+    
 var _ = require("underscore");
 Parse.Cloud.beforeSave("Group", function(request, response) {
     var group = request.object;
-   
+    
     var toLowerCase = function(w) { return w.toLowerCase(); };
     var tagString = group.get("tags").replace(/\s*,\s*/g,',');  // remove whitespaces surrounding comma
     group.set("tags", tagString);
@@ -178,27 +178,27 @@ Parse.Cloud.beforeSave("Group", function(request, response) {
     keywords = _.map(keywords, toLowerCase);
     hashtags = _.map(hashtags, toLowerCase);
     var stopWords = ["the", "in", "and", "to", "but", "for", "or", "yet", "so"];
-      
+       
     Array.prototype.contains = function ( needle ) {
     for (i in this) {
        if (this[i] == needle) return true;
     }
     return false;
     }
-      
+       
     keywords = keywords.filter(function (w) {
     return w.match(/[a-zA-Z0-9]+/) && !stopWords.contains(w);
     });
-
+ 
     hashtags = hashtags.filter(function (w) {
     return w.match(/[a-zA-Z0-9]+/) && !stopWords.contains(w);
     });
-  
+   
  //    var hashtags = keywords;
-	// hashtags = hashtags.filter(function (w) {
+    // hashtags = hashtags.filter(function (w) {
  //    return w.indexOf('#') > -1;
  //    });
-  
+   
     group.set("keywords", keywords);
     group.set("hashtags", hashtags);
     response.success();
@@ -206,22 +206,24 @@ Parse.Cloud.beforeSave("Group", function(request, response) {
   
 Parse.Cloud.define("partialStringSearch", function(request, response) {
     var toLowerCase = function(w) { return w.toLowerCase(); };
-   
+    var removeNewline = function(w) {return w.replace(/(\r\n|\n|\r)/gm,"");};
+	
     var keywords = request.params.name.split(' ');
     keywords = _.map(keywords, toLowerCase);
+	keywords = _.map(keywords, removeNewline);
     var stopWords = ["the", "in", "and", "to", "but", "for", "or", "yet", "so"];
-      
+       
     Array.prototype.contains = function ( needle ) {
     for (i in this) {
        if (this[i] == needle) return true;
     }
     return false;
     }
-      
+       
     keywords = keywords.filter(function (w) {
     return w.match(/[a-zA-Z0-9]+/) && !stopWords.contains(w);
     });
-      
+       
     var query = new Parse.Query("Group");
     query.containsAll("keywords", keywords);
     query.include("owner, members");
@@ -235,25 +237,27 @@ Parse.Cloud.define("partialStringSearch", function(request, response) {
         }
     });
 });
-
+ 
 Parse.Cloud.define("customTagsSearch", function(request, response) {
     var toLowerCase = function(w) { return w.toLowerCase(); };
-  
+	var removeNewline = function(w) {return w.replace(/(\r\n|\n|\r)/gm,"");};
+   
     var keywords = request.params.tags.split(',');
     keywords = _.map(keywords, toLowerCase);
+	keywords = _.map(keywords, removeNewline);
     var stopWords = ["the", "in", "and", "to", "but", "for", "or", "yet", "so"];
-     
+      
     Array.prototype.contains = function ( needle ) {
     for (i in this) {
        if (this[i] == needle) return true;
     }
     return false;
     }
-     
+      
     keywords = keywords.filter(function (w) {
     return w.match(/[a-zA-Z0-9]+/) && !stopWords.contains(w);
     });
-     
+      
     var query = new Parse.Query("Group");
     query.containsAll("hashtags", keywords);
     query.include("owner, members");
