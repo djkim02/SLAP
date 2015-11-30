@@ -2,6 +2,8 @@ package com.djkim.slap.menubar;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -15,6 +17,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.SearchView;
 
 import com.djkim.slap.R;
 import com.djkim.slap.createGroup.CreateGroupActivity;
@@ -118,8 +121,8 @@ public class MainActivity extends ActionBarActivity {
                         startActivityForResult(createGroupIntent, CREATE_REQUEST_CODE);
                         break;
                     case 3:     // Find Matches
-                        Intent matchGroupIntent = new Intent(MainActivity.this, MatchGroupActivity.class);
-                        startActivityForResult(matchGroupIntent, MATCH_REQUEST_CODE);
+                        // Intent matchGroupIntent = new Intent(MainActivity.this, MatchGroupActivity.class);
+                        // startActivityForResult(matchGroupIntent, MATCH_REQUEST_CODE);
                         break;
                     case 5:     // Logout
                         // TODO: replace this with Utils method
@@ -160,6 +163,15 @@ public class MainActivity extends ActionBarActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.activity_main_actions, menu);
+        menuInflater.inflate(R.menu.searchview, menu);
+
+        // Associate searchable configuration with the SearchView
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+        searchView.setIconifiedByDefault(true);
+        searchView.setSearchableInfo(
+                searchManager.getSearchableInfo(getComponentName()));
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -183,6 +195,23 @@ public class MainActivity extends ActionBarActivity {
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         mDrawerToggle.onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            String query = intent.getStringExtra(SearchManager.QUERY);
+            Bundle bundle = new Bundle();
+            bundle.putString("name", query);
+            Fragment fragment = new StringSearchGroupListFragment();
+            fragment.setArguments(bundle);
+            getFragmentManager().beginTransaction()
+                    .replace(R.id.main_layout, fragment)
+                    .addToBackStack(sBackStackTag)
+                    .commit();
+        }
     }
 
     @Override

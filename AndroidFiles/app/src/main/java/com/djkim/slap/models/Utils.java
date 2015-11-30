@@ -64,4 +64,21 @@ public class Utils{
         }
     }
 
+    public static void getStringSearchGroupsFromCloudInBackground(String queryName, final GroupsCallback callback) {
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("name", queryName);
+        ParseCloud.callFunctionInBackground(
+                "partialStringSearch", map, new FunctionCallback<List<ParseObject> >() {
+                    @Override
+                    public void done(List<ParseObject> parseGroups, ParseException e) {
+                        List<Group> groups = new ArrayList<Group>();
+                        for (ParseObject parseGroup : parseGroups) {
+                            Group group = new Group(parseGroup);
+                            groups.add(group);
+                        }
+                        callback.done(groups);
+                    }
+                });
+    }
+
 }
