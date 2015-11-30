@@ -121,8 +121,8 @@ public class MainActivity extends ActionBarActivity {
                         startActivityForResult(createGroupIntent, CREATE_REQUEST_CODE);
                         break;
                     case 3:     // Find Matches
-                        // Intent matchGroupIntent = new Intent(MainActivity.this, MatchGroupActivity.class);
-                        // startActivityForResult(matchGroupIntent, MATCH_REQUEST_CODE);
+                        Intent matchGroupIntent = new Intent(MainActivity.this, MatchGroupActivity.class);
+                        startActivityForResult(matchGroupIntent, MATCH_REQUEST_CODE);
                         break;
                     case 5:     // Logout
                         // TODO: replace this with Utils method
