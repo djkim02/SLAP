@@ -4,7 +4,8 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.2.3'
+        classpath 'com.android.tools.build:gradle:1.5.0'
+        classpath 'com.github.jcandksolutions.gradle:android-unit-test:2.1.1'
     }
 }
 
@@ -12,5 +13,6 @@ allprojects {
     repositories {
         maven { url "http://dl.bintray.com/populov/maven" }
         mavenCentral()
+        jcenter()
     }
 }
