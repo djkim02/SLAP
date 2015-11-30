@@ -85,8 +85,6 @@ public class MainActivity extends ActionBarActivity {
         installation.put("user", currentUser);
         installation.put("username", currentUserName);
         installation.saveInBackground();
-
-
     }
 
     private void addDrawerItems() {
@@ -124,7 +122,7 @@ public class MainActivity extends ActionBarActivity {
                         Intent matchGroupIntent = new Intent(MainActivity.this, MatchGroupActivity.class);
                         startActivityForResult(matchGroupIntent, MATCH_REQUEST_CODE);
                         break;
-                    case 5:     // Logout
+                    case 4:     // Logout
                         // TODO: replace this with Utils method
                         ParseUser.getCurrentUser().logOut();    // preferably use logOutInBackground...
                         startActivity(new Intent(MainActivity.this, DispatchActivity.class));
