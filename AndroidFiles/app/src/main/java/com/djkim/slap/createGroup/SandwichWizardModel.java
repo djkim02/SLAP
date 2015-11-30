@@ -50,7 +50,7 @@ public class SandwichWizardModel extends AbstractWizardModel {
                                         .setChoices("Running", "Soccer", "Basketball", "Baseball", "Football",
                                                 "Weight Training", "Frisbee", "Biking", "Bowling", "Badminton",
                                                 "Ping Pong", "Cricket", "Golf", "Handball", "Yoga", "Boxing"),
-                                new EnterTextPage(this, "Please specify any tags to be associated with the group")
+                                new EnterTextPage(this, "Please specify any tags to be associated with the group (separate with commas)")
                         )
 
                                 // Second branch of questions
@@ -67,7 +67,7 @@ public class SandwichWizardModel extends AbstractWizardModel {
                                                 "Node.js", "AngularJS", "Ruby", "Rails", "Coffeescript",
                                                 "MongoDB", "MySQL", "PostgreSQL", ".NET", "Git", "Linux",
                                                 "Photoshop", "Illustrator"),
-                                new EnterTextPage(this, "Please specify any tags to be associated with the group")
+                                new EnterTextPage(this, "Please specify any tags to be associated with the group (separate with commas)")
                         )
 
         );
